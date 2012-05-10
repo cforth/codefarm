@@ -1,9 +1,10 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
-// #include<windows.h>
-int prize_pool[10000];
-int award[10] = {5,10,15,20,30,50,100,500,1000,10000};
+#include<windows.h>
+const int award[10] = {5,10,15,20,30,50,100,500,1000,10000};
+static int prize_pool[10000];
+static int sum = 0;
 
 int main()
 {
@@ -16,6 +17,8 @@ int main()
 		srand((int)time(0));
 		make_lottery(money);   
 		printf("\n"); 
+		printf("You win %d yuan!!!\n",sum);
+		sum = 0;
 	}
 	return 0;
 }
@@ -28,6 +31,7 @@ int make_lottery(int money)
 	int award_money;
 	int max_num = 10;
 	
+	
 	printf("WinNumber\tYouNumber\tAwardMoney\n");
 	for(i = 0; i < money; i++) {
 		you_num = roll(max_num);
@@ -36,6 +40,7 @@ int make_lottery(int money)
 		printf("%d\t\t%d\t\t", win_num, you_num);
 		if(you_num == win_num) {
 			award_money = prize_pool[roll(10000)];
+			sum += award_money;
 			printf("%d\tWin!",award_money);
 		}
 		else {

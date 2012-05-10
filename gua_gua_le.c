@@ -3,6 +3,7 @@
 #include<time.h>
 // #include<windows.h>
 int prize_pool[10000];
+int award[10] = {5,10,15,20,30,50,100,500,1000,10000};
 
 int main()
 {
@@ -25,17 +26,22 @@ int make_lottery(int money)
 	int win_num;
 	int you_num;
 	int award_money;
-	int max_num = 25;
+	int max_num = 10;
 	
 	printf("WinNumber\tYouNumber\tAwardMoney\n");
 	for(i = 0; i < money; i++) {
 		you_num = roll(max_num);
 		win_num = roll(max_num);
-		award_money = prize_pool[roll(10000)];
-		printf("%d\t\t%d\t\t%d", win_num, you_num,award_money);
-		if(you_num == win_num) 
-			printf("\tWin!");
-		else	printf("\tLose!");
+		
+		printf("%d\t\t%d\t\t", win_num, you_num);
+		if(you_num == win_num) {
+			award_money = prize_pool[roll(10000)];
+			printf("%d\tWin!",award_money);
+		}
+		else {
+			award_money = award[roll(10) - 1];
+			printf("%d\tLose!",award_money);
+		}
 		printf("\n");
 //		Sleep(1000);		
 	}	
@@ -50,7 +56,7 @@ int roll(int max_num)
 int generate_prize_pool()
 {
 	int i,j,k,temp;
-	int award[10] = {5,10,15,20,30,50,100,500,1000,10000};
+	
 	int award_num[10] = {7370,1000,666,500,333,200,100,20,10,1};
 	
 	for(i=0; i<10000; i++)

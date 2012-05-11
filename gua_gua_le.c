@@ -1,25 +1,47 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<time.h>
-#include<windows.h>
+// #include<windows.h>
 const int award[10] = {5,10,15,20,30,50,100,500,1000,10000};
 static int prize_pool[10000];
-static int sum = 0;
 
 int main()
-{
+{	
+	int init_sum;
+	int avail_sum;
+	int coin_money;
+	int sum_award_money;
+	
 	generate_prize_pool();
 //	look_prize_pool();
-	while(1) {
-		printf("Start!Please coin: ");
-		int money;
-		scanf("%d",&money);
+
+	printf("Your initial capital : ");
+	scanf("%d",&init_sum);
+	printf("\n"); 
+	avail_sum = init_sum;
+	
+	while(avail_sum > 0) {
+		printf("Start!Please coin: ");		
+		scanf("%d",&coin_money);
+		printf("\n");
+		avail_sum -= coin_money;
+		
+		if(avail_sum < 0) {
+			avail_sum += coin_money;
+			printf("Your available funds too less! Try again!\n");
+			continue;
+		}
+		
 		srand((int)time(0));
-		make_lottery(money);   
-		printf("\n"); 
-		printf("You win %d yuan!!!\n",sum);
-		sum = 0;
+		sum_award_money  = make_lottery(coin_money);   		
+		avail_sum += sum_award_money;	
+		 
+		printf("You win %d yuan!!!\n",sum_award_money);
+		printf("Your available funds : %d yuan\n",avail_sum);
 	}
+	
+	printf("Sorry! You have no money!!");
+	system("pause");
 	return 0;
 }
 
@@ -29,9 +51,9 @@ int make_lottery(int money)
 	int win_num;
 	int you_num;
 	int award_money;
-	int max_num = 10;
-	
-	
+	int sum_award_money = 0;
+	int max_num = 15;		/*6.6% Probability of winning */
+		
 	printf("WinNumber\tYouNumber\tAwardMoney\n");
 	for(i = 0; i < money; i++) {
 		you_num = roll(max_num);
@@ -40,7 +62,7 @@ int make_lottery(int money)
 		printf("%d\t\t%d\t\t", win_num, you_num);
 		if(you_num == win_num) {
 			award_money = prize_pool[roll(10000)];
-			sum += award_money;
+			sum_award_money += award_money;
 			printf("%d\tWin!",award_money);
 		}
 		else {
@@ -50,7 +72,7 @@ int make_lottery(int money)
 		printf("\n");
 //		Sleep(1000);		
 	}	
-	return 0;
+	return sum_award_money;
 }
 
 int roll(int max_num)

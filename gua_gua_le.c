@@ -1,106 +1,164 @@
 #include<stdio.h>
-#include<stdlib.h>
-#include<time.h>
-// #include<windows.h>
-const int award[10] = {5,10,15,20,30,50,100,500,1000,10000};
-static int prize_pool[10000];
-
+#define TRUE 1
+#define FALSE 0
+#define MAX 3
+#define ON_A 1
+#define ON_B 2
+#define ON_C 3
+int a_tower[MAX+1], b_tower[MAX+1], c_tower[MAX+1];
+int *a_top = &a_tower[MAX], *b_top = b_tower, *c_top = c_tower;
+int now_status = ON_A;
+int catch_status = FALSE;
+	
 int main()
-{	
-	int init_sum;
-	int avail_sum;
-	int coin_money;
-	int sum_award_money;
+{
+	char c;
+	int max_num = MAX;
+	init_hanoi(max_num);
+	printf("\n\n\n\n\n\n\n\n\n\n");
+	show_hanoi();
 	
-	generate_prize_pool();
-//	look_prize_pool();
-
-	printf("Your initial capital : ");
-	scanf("%d",&init_sum);
-	printf("\n"); 
-	avail_sum = init_sum;
-	
-	while(avail_sum > 0) {
-		printf("Start!Please coin: ");		
-		scanf("%d",&coin_money);
-		printf("\n");
-		avail_sum -= coin_money;
-		
-		if(avail_sum < 0) {
-			avail_sum += coin_money;
-			printf("Your available funds too less! Try again!\n");
-			continue;
+	while(1){
+		while(catch_status == FALSE) {
+			c = getch();
+			if(c == 'd'){
+				switch(now_status) {
+					case ON_A: now_status = ON_B; break;
+					case ON_B: now_status = ON_C; break;
+					case ON_C: now_status = ON_A; break;				
+				}
+				show_hanoi();
+			}
+			else if(c == 'a'){
+				switch(now_status) {
+					case ON_A: now_status = ON_C; break;
+					case ON_B: now_status = ON_A; break;
+					case ON_C: now_status = ON_B; break;
+				}
+				show_hanoi();
+			}
+			else if(c == 's') {
+				catch_status = TRUE;
+				show_hanoi();
+				break;
+			}
 		}
-		
-		srand((int)time(0));
-		sum_award_money  = make_lottery(coin_money);   		
-		avail_sum += sum_award_money;	
-		 
-		printf("You win %d yuan!!!\n",sum_award_money);
-		printf("Your available funds : %d yuan\n",avail_sum);
+	
+		while(catch_status == TRUE) {
+			c = getch();		
+			if(c == 'd'){
+				switch(now_status) {
+					case ON_A: a_to_b(); now_status = ON_B; break;
+					case ON_B: b_to_c(); now_status = ON_C; break;
+					case ON_C: c_to_a(); now_status = ON_A; break;
+				}
+				show_hanoi();
+			}
+			else if(c == 'a'){
+				switch(now_status) {
+					case ON_A: a_to_c(); now_status = ON_C; break;
+					case ON_B: b_to_a(); now_status = ON_A; break;
+					case ON_C: c_to_b(); now_status = ON_B; break;
+				}
+				show_hanoi();
+			}
+			else if(c == 's') {
+				catch_status = FALSE;
+				show_hanoi();
+				break;
+			}
+		}
 	}
-	
-	printf("Sorry! You have no money!!");
-	system("pause");
-	return 0;
-}
-
-int make_lottery(int money)
-{
-	int i;
-	int win_num;
-	int you_num;
-	int award_money;
-	int sum_award_money = 0;
-	int max_num = 15;		/*6.6% Probability of winning */
-		
-	printf("WinNumber\tYouNumber\tAwardMoney\n");
-	for(i = 0; i < money; i++) {
-		you_num = roll(max_num);
-		win_num = roll(max_num);
-		
-		printf("%d\t\t%d\t\t", win_num, you_num);
-		if(you_num == win_num) {
-			award_money = prize_pool[roll(10000)];
-			sum_award_money += award_money;
-			printf("%d\tWin!",award_money);
-		}
-		else {
-			award_money = award[roll(10) - 1];
-			printf("%d\tLose!",award_money);
-		}
-		printf("\n");
-//		Sleep(1000);		
-	}	
-	return sum_award_money;
-}
-
-int roll(int max_num)
-{
-	return 1+(int)(max_num*rand()/(RAND_MAX+1.0));
-}
-
-int generate_prize_pool()
-{
-	int i,j,k,temp;
-	
-	int award_num[10] = {7370,1000,666,500,333,200,100,20,10,1};
-	
-	for(i=0; i<10000; i++)
-		prize_pool[i] = 5;
-	for(j=0; j<10; j++)
-		for(k=0; k<award_num[j]; k++){
-			temp = roll(10000);
-			prize_pool[temp] = award[j];
-		}
 	return 0;	
 }
 
-int look_prize_pool()
+int a_to_b()
 {
-	int i;
-	for(i=0; i<10000; i++)
-		printf("%d ",prize_pool[i]);
-	printf("\n");
+	if((a_top == &a_tower[0]) || (b_top == &b_tower[MAX]) || (*b_top < *a_top))
+		return 0;
+	b_top++;
+	*b_top = *a_top;
+	*a_top = 0;
+	a_top--;
 	return 0;
 }
+
+int a_to_c()
+{
+	if((a_top == &a_tower[0]) || (c_top == &c_tower[MAX]) || (*c_top < *a_top))
+		return 0;
+	c_top++;
+	*c_top = *a_top;
+	*a_top = 0;
+	a_top--;
+	return 0;
+}
+
+int b_to_a()
+{
+	if((b_top == &b_tower[0]) || (a_top == &a_tower[MAX]) || (*a_top < *b_top))
+		return 0;	
+	a_top++;
+	*a_top = *b_top;
+	*b_top = 0;
+	b_top--;
+	return 0;
+}
+int b_to_c()
+{
+	if((b_top == &b_tower[0]) || (c_top == &c_tower[MAX]) || (*c_top < *b_top))
+		return 0;
+	c_top++;
+	*c_top = *b_top;
+	*b_top = 0;
+	b_top--;
+	return 0;
+}
+
+int c_to_a()
+{
+	if((c_top == &c_tower[0]) || (a_top == &a_tower[MAX]) || (*a_top < *c_top))
+		return 0;
+	a_top++;
+	*a_top = *c_top;
+	*c_top = 0;
+	c_top--;
+	return 0;
+}
+
+int c_to_b()
+{
+	if((c_top == &c_tower[0]) || (b_top == &b_tower[MAX]) || (*b_top < *c_top))
+		return 0;
+	b_top++;
+	*b_top = *c_top;
+	*c_top = 0;
+	c_top--;
+	return 0;
+}
+
+int show_hanoi()
+{
+	int i;
+//	printf("\t\t\t\t\Hanoi Tower\n\n");
+	for(i=1; i<now_status; i++)
+		printf("\t");
+	if(catch_status == FALSE)
+		printf("\t\t\t\t*\n");
+	else
+		printf("\t\t\t\t!\n");
+	for(i=MAX; i>0; i--)
+		printf("\t\t\t\t%d\t%d\t%d\n",a_tower[i], b_tower[i], c_tower[i]);
+	printf("\n\n\n\n\n\n\n\n\n\n");
+	return 0;
+}
+
+int init_hanoi(int max_num)
+{
+	int i;
+	for(i=1; i<=MAX; i++,max_num--)
+		a_tower[i] = max_num;
+	a_tower[0] = b_tower[0] = c_tower[0] = 100;
+	return 0;
+}
+

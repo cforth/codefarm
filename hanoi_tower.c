@@ -2,11 +2,13 @@
 #define TRUE 1
 #define FALSE 0
 #define MAX 3
-#define LENGTH 4
-int a_tower[LENGTH], b_tower[LENGTH], c_tower[LENGTH];
+#define ON_A 1
+#define ON_B 2
+#define ON_C 3
+int a_tower[MAX+1], b_tower[MAX+1], c_tower[MAX+1];
 int *a_top = &a_tower[MAX], *b_top = b_tower, *c_top = c_tower;
-int now_status = 1;
-int pointer_status = FALSE;
+int now_status = ON_A;
+int catch_status = FALSE;
 	
 int main()
 {
@@ -17,51 +19,51 @@ int main()
 	show_hanoi();
 	
 	while(1){
-		while(pointer_status == FALSE) {
+		while(catch_status == FALSE) {
 			c = getch();
 			if(c == 'd'){
 				switch(now_status) {
-					case 1: now_status = 2; break;
-					case 2: now_status = 3; break;
-					case 3: now_status = 1; break;				
+					case ON_A: now_status = ON_B; break;
+					case ON_B: now_status = ON_C; break;
+					case ON_C: now_status = ON_A; break;				
 				}
 				show_hanoi();
 			}
 			else if(c == 'a'){
 				switch(now_status) {
-					case 1: now_status = 3; break;
-					case 2: now_status = 1; break;
-					case 3: now_status = 2; break;
+					case ON_A: now_status = ON_C; break;
+					case ON_B: now_status = ON_A; break;
+					case ON_C: now_status = ON_B; break;
 				}
 				show_hanoi();
 			}
 			else if(c == 's') {
-				pointer_status = TRUE;
+				catch_status = TRUE;
 				show_hanoi();
 				break;
 			}
 		}
 	
-		while(pointer_status == TRUE) {
+		while(catch_status == TRUE) {
 			c = getch();		
 			if(c == 'd'){
 				switch(now_status) {
-					case 1: a_to_b(); now_status = 2; break;
-					case 2: b_to_c(); now_status = 3; break;
-					case 3: c_to_a(); now_status = 1; break;
+					case ON_A: a_to_b(); now_status = ON_B; break;
+					case ON_B: b_to_c(); now_status = ON_C; break;
+					case ON_C: c_to_a(); now_status = ON_A; break;
 				}
 				show_hanoi();
 			}
 			else if(c == 'a'){
 				switch(now_status) {
-					case 1: a_to_c(); now_status = 3; break;
-					case 2: b_to_a(); now_status = 1; break;
-					case 3: c_to_b(); now_status = 2; break;
+					case ON_A: a_to_c(); now_status = ON_C; break;
+					case ON_B: b_to_a(); now_status = ON_A; break;
+					case ON_C: c_to_b(); now_status = ON_B; break;
 				}
 				show_hanoi();
 			}
 			else if(c == 's') {
-				pointer_status = FALSE;
+				catch_status = FALSE;
 				show_hanoi();
 				break;
 			}
@@ -138,14 +140,15 @@ int c_to_b()
 int show_hanoi()
 {
 	int i;
+//	printf("\t\t\t\t\Hanoi Tower\n\n");
 	for(i=1; i<now_status; i++)
 		printf("\t");
-	if(pointer_status == FALSE)
-		printf("*\n");
+	if(catch_status == FALSE)
+		printf("\t\t\t\t*\n");
 	else
-		printf("!\n");
+		printf("\t\t\t\t!\n");
 	for(i=MAX; i>0; i--)
-		printf("%d\t%d\t%d\n",a_tower[i], b_tower[i], c_tower[i]);
+		printf("\t\t\t\t%d\t%d\t%d\n",a_tower[i], b_tower[i], c_tower[i]);
 	printf("\n\n\n\n\n\n\n\n\n\n");
 	return 0;
 }

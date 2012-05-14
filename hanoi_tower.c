@@ -74,8 +74,10 @@ int main()
 
 int a_to_b()
 {
-	if((a_top == &a_tower[0]) || (b_top == &b_tower[MAX]) || (*b_top < *a_top))
+	if((a_top == &a_tower[0]) || (b_top == &b_tower[MAX]) || (*b_top < *a_top)) {
+		catch_status = FALSE;
 		return 0;
+	}
 	b_top++;
 	*b_top = *a_top;
 	*a_top = 0;
@@ -85,8 +87,10 @@ int a_to_b()
 
 int a_to_c()
 {
-	if((a_top == &a_tower[0]) || (c_top == &c_tower[MAX]) || (*c_top < *a_top))
+	if((a_top == &a_tower[0]) || (c_top == &c_tower[MAX]) || (*c_top < *a_top)) {
+		catch_status = FALSE;
 		return 0;
+	}
 	c_top++;
 	*c_top = *a_top;
 	*a_top = 0;
@@ -96,8 +100,10 @@ int a_to_c()
 
 int b_to_a()
 {
-	if((b_top == &b_tower[0]) || (a_top == &a_tower[MAX]) || (*a_top < *b_top))
-		return 0;	
+	if((b_top == &b_tower[0]) || (a_top == &a_tower[MAX]) || (*a_top < *b_top)) {
+		catch_status = FALSE;
+		return 0;
+	}
 	a_top++;
 	*a_top = *b_top;
 	*b_top = 0;
@@ -106,8 +112,10 @@ int b_to_a()
 }
 int b_to_c()
 {
-	if((b_top == &b_tower[0]) || (c_top == &c_tower[MAX]) || (*c_top < *b_top))
+	if((b_top == &b_tower[0]) || (c_top == &c_tower[MAX]) || (*c_top < *b_top)) {
+		catch_status = FALSE;
 		return 0;
+	}
 	c_top++;
 	*c_top = *b_top;
 	*b_top = 0;
@@ -117,8 +125,10 @@ int b_to_c()
 
 int c_to_a()
 {
-	if((c_top == &c_tower[0]) || (a_top == &a_tower[MAX]) || (*a_top < *c_top))
+	if((c_top == &c_tower[0]) || (a_top == &a_tower[MAX]) || (*a_top < *c_top)) {
+		catch_status = FALSE;
 		return 0;
+	}
 	a_top++;
 	*a_top = *c_top;
 	*c_top = 0;
@@ -128,8 +138,10 @@ int c_to_a()
 
 int c_to_b()
 {
-	if((c_top == &c_tower[0]) || (b_top == &b_tower[MAX]) || (*b_top < *c_top))
+	if((c_top == &c_tower[0]) || (b_top == &b_tower[MAX]) || (*b_top < *c_top)) {
+		catch_status = FALSE;
 		return 0;
+	}
 	b_top++;
 	*b_top = *c_top;
 	*c_top = 0;
@@ -140,7 +152,7 @@ int c_to_b()
 int show_hanoi()
 {
 	int i;
-//	printf("\t\t\t\t\Hanoi Tower\n\n");
+//	printf("\t\t\t\t------Hanoi------\n");
 	for(i=1; i<now_status; i++)
 		printf("\t");
 	if(catch_status == FALSE)

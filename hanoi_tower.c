@@ -1,4 +1,5 @@
 #include<stdio.h>
+// #include<windows.h>
 #define TRUE 1
 #define FALSE 0
 #define MAX 3
@@ -20,6 +21,7 @@ int main()
 	
 	while(1){
 		while(catch_status == FALSE) {
+//			Sleep(100);
 			c = getch();
 			if(c == 'd'){
 				switch(now_status) {
@@ -42,9 +44,15 @@ int main()
 				show_hanoi();
 				break;
 			}
+			else if(c == '>') {
+				dohanio(max_num,65,66,67);
+				printf("\n\n\n\n\n\n\n\n");
+				break;
+			}
 		}
 	
 		while(catch_status == TRUE) {
+//			Sleep(100);
 			c = getch();		
 			if(c == 'd'){
 				switch(now_status) {
@@ -67,7 +75,13 @@ int main()
 				show_hanoi();
 				break;
 			}
+			else if(c == '>') {
+				dohanio(max_num,65,66,67);
+				printf("\n\n\n\n\n\n\n\n");
+				break;
+			}
 		}
+
 	}
 	return 0;	
 }
@@ -161,7 +175,8 @@ int show_hanoi()
 		printf("\t\t\t\t!\n");
 	for(i=MAX; i>0; i--)
 		printf("\t\t\t\t%d\t%d\t%d\n",a_tower[i], b_tower[i], c_tower[i]);
-	printf("\n\n\n\n\n\n\n\n\n\n");
+	printf("\t\t\t\tA\tB\tC");
+	printf("\n\n\n\n\n\n\n\n\n\n\n");
 	return 0;
 }
 
@@ -173,4 +188,16 @@ int init_hanoi(int max_num)
 	a_tower[0] = b_tower[0] = c_tower[0] = 100;
 	return 0;
 }
+
+int  dohanio(int n,int a,int b,int c) 
+{
+	if(n==1)
+		printf("%c->%c ",a,c);      
+	else    {
+		dohanio(n-1,a,c,b);                     
+		printf("%c->%c ",a,c);         
+		dohanio(n-1,b,a,c);   
+	} 
+	return 0;
+} 
 

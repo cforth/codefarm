@@ -32,7 +32,7 @@ int main()
 			continue;
 		}
 		
-		srand((int)time(0));
+		srand((unsigned)time(0));
 		sum_award_money  = make_lottery(coin_money);   		
 		avail_sum += sum_award_money;	
 		 
@@ -40,7 +40,7 @@ int main()
 		printf("Your available funds : %d yuan\n",avail_sum);
 	}
 	
-	printf("Sorry! You have no money!!");
+	printf("Sorry! You have no money!!\n");
 	system("pause");
 	return 0;
 }
@@ -77,7 +77,7 @@ int make_lottery(int money)
 
 int roll(int max_num)
 {
-	return 1+(int)(max_num*rand()/(RAND_MAX+1.0));
+	return 1+rand()%max_num;
 }
 
 int generate_prize_pool()

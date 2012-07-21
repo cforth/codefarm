@@ -2,7 +2,6 @@
 #include<stdlib.h>
 #include<termios.h>
 #include<unistd.h>
-// #include<windows.h>
 #define TRUE 1
 #define FALSE 0
 #define MAX 3
@@ -38,7 +37,6 @@ int main()
 	while(1){
 		while(catch_status == FALSE) {
 			c = my_getch();
-//			Sleep(100);
 			if(c == 'd'){
 				switch(now_status) {
 					case ON_A: now_status = ON_B; break;
@@ -73,7 +71,6 @@ int main()
 	
 		while(catch_status == TRUE) {
 			c = my_getch();
-//			Sleep(100);
 			if(c == 'd'){
 				switch(now_status) {
 					case ON_A: a_to_b(); now_status = ON_B; break;
@@ -230,14 +227,14 @@ int  dohanio(int n,int a,int b,int c)
 
 int my_getch(void)
 {
-struct termios oldt,
-newt;
-int ch;
-tcgetattr( STDIN_FILENO, &oldt );
-newt = oldt;
-newt.c_lflag &= ~( ICANON | ECHO );
-tcsetattr( STDIN_FILENO, TCSANOW, &newt );
-ch = getchar();
-tcsetattr( STDIN_FILENO, TCSANOW, &oldt );
-return ch;
+	struct termios oldt,
+	newt;
+	int ch;
+	tcgetattr( STDIN_FILENO, &oldt );
+	newt = oldt;
+	newt.c_lflag &= ~( ICANON | ECHO );
+	tcsetattr( STDIN_FILENO, TCSANOW, &newt );
+	ch = getchar();
+	tcsetattr( STDIN_FILENO, TCSANOW, &oldt );
+	return ch;
 }

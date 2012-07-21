@@ -1,4 +1,6 @@
 #include<stdio.h>
+#include<termios.h>
+#include<unistd.h>
 // #include<windows.h>
 #define TRUE 1
 #define FALSE 0
@@ -6,6 +8,16 @@
 #define ON_A 1
 #define ON_B 2
 #define ON_C 3
+int getch( void );
+int a_to_b( void );
+int a_to_c( void );
+int b_to_a( void );
+int b_to_c( void );
+int c_to_a( void );
+int c_to_b( void );
+int show_hanoi( void );
+int  dohanio(int n,int a,int b,int c); 
+int init_hanoi(int max_num);
 int a_tower[MAX+1], b_tower[MAX+1], c_tower[MAX+1];
 int *a_top = &a_tower[MAX], *b_top = b_tower, *c_top = c_tower;
 int now_status = ON_A;
@@ -201,3 +213,18 @@ int  dohanio(int n,int a,int b,int c)
 	return 0;
 } 
 
+
+
+int getch(void)
+{
+struct termios oldt,
+newt;
+int ch;
+tcgetattr( STDIN_FILENO, &oldt );
+newt = oldt;
+newt.c_lflag &= ~( ICANON | ECHO );
+tcsetattr( STDIN_FILENO, TCSANOW, &newt );
+ch = getchar();
+tcsetattr( STDIN_FILENO, TCSANOW, &oldt );
+return ch;
+}

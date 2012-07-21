@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<stdlib.h>
 // #include<windows.h>
 #define TRUE 1
 #define FALSE 0
@@ -6,6 +7,17 @@
 #define ON_A 1
 #define ON_B 2
 #define ON_C 3
+
+int a_to_b( void );
+int a_to_c( void );
+int b_to_a( void );
+int b_to_c( void );
+int c_to_a( void );
+int c_to_b( void );
+int show_hanoi( void );
+int dohanio(int n,int a,int b,int c); 
+int init_hanoi(int max_num);
+
 int a_tower[MAX+1], b_tower[MAX+1], c_tower[MAX+1];
 int *a_top = &a_tower[MAX], *b_top = b_tower, *c_top = c_tower;
 int now_status = ON_A;
@@ -16,12 +28,12 @@ int main()
 	char c;
 	int max_num = MAX;
 	init_hanoi(max_num);
-	printf("\n\n\n\n\n\n\n\n\n\n");
+	printf("\n\n\n\n\n\n\n");
+	printf("\t\tHanio Game\n\t\tEnter '<' to quit!Enter '>' to show cheats!\n\n");
 	show_hanoi();
 	
 	while(1){
 		while(catch_status == FALSE) {
-//			Sleep(100);
 			c = getch();
 			if(c == 'd'){
 				switch(now_status) {
@@ -49,11 +61,14 @@ int main()
 				printf("\n\n\n\n\n\n\n\n");
 				break;
 			}
+			else if(c == '<') {
+				printf("Good Game! Bye!\n");
+				exit(0);
+			}
 		}
 	
 		while(catch_status == TRUE) {
-//			Sleep(100);
-			c = getch();		
+			c = getch();
 			if(c == 'd'){
 				switch(now_status) {
 					case ON_A: a_to_b(); now_status = ON_B; break;
@@ -80,6 +95,11 @@ int main()
 				printf("\n\n\n\n\n\n\n\n");
 				break;
 			}
+			else if(c == '<') {
+				printf("Good Game! Bye!\n");
+				exit(0);
+			}
+			
 		}
 
 	}
@@ -200,3 +220,6 @@ int  dohanio(int n,int a,int b,int c)
 	} 
 	return 0;
 } 
+
+
+

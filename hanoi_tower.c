@@ -17,7 +17,7 @@ int b_to_c( void );
 int c_to_a( void );
 int c_to_b( void );
 int show_hanoi( void );
-int dohanio(int n,int a,int b,int c); 
+int dohanoi(int n,int a,int b,int c); 
 int init_hanoi(int max_num);
 
 int a_tower[MAX+1], b_tower[MAX+1], c_tower[MAX+1];
@@ -30,8 +30,9 @@ int main()
 	char c;
 	int max_num = MAX;
 	init_hanoi(max_num);
-	printf("\n\n\n\n\n\n\n");
-	printf("\t\tHanio Game\n\t\tEnter '<' to quit!Enter '>' to show cheats!\n\n");
+	printf("\n\n\n\n\n\n");
+	printf("\t\t\t\tHanoi Game\n\t\t\t\t");
+	printf("Enter '<' to quit!\n\t\t\t\tEnter '>' to show cheats!\n\n");
 	show_hanoi();
 	
 	while(1){
@@ -59,8 +60,9 @@ int main()
 				break;
 			}
 			else if(c == '>') {
-				dohanio(max_num,65,66,67);
-				printf("\n\n\n\n\n\n\n\n");
+				dohanoi(max_num,65,66,67);
+				printf("\n");
+				show_hanoi();
 				break;
 			}
 			else if(c == '<') {
@@ -93,8 +95,9 @@ int main()
 				break;
 			}
 			else if(c == '>') {
-				dohanio(max_num,65,66,67);
-				printf("\n\n\n\n\n\n\n\n");
+				dohanoi(max_num,65,66,67);
+				printf("\n");
+				show_hanoi();
 				break;
 			}
 			else if(c == '<') {
@@ -211,14 +214,14 @@ int init_hanoi(int max_num)
 	return 0;
 }
 
-int  dohanio(int n,int a,int b,int c) 
+int  dohanoi(int n,int a,int b,int c) 
 {
 	if(n==1)
 		printf("%c->%c ",a,c);      
 	else    {
-		dohanio(n-1,a,c,b);                     
+		dohanoi(n-1,a,c,b);                     
 		printf("%c->%c ",a,c);         
-		dohanio(n-1,b,a,c);   
+		dohanoi(n-1,b,a,c);   
 	} 
 	return 0;
 } 

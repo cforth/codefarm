@@ -4,7 +4,8 @@
 #include<unistd.h>
 #define TRUE 1
 #define FALSE 0
-#define MAX 3
+#define MAX 5
+#define MAX_FACT 15
 #define ON_A 1
 #define ON_B 2
 #define ON_C 3
@@ -19,6 +20,7 @@ int c_to_b( void );
 int show_hanoi( void );
 int dohanoi(int n,int a,int b,int c); 
 int init_hanoi(int max_num);
+int is_complete( int* top );
 
 int a_tower[MAX+1], b_tower[MAX+1], c_tower[MAX+1];
 int *a_top = &a_tower[MAX], *b_top = b_tower, *c_top = c_tower;
@@ -35,7 +37,7 @@ int main()
 	printf("Enter '<' to quit!\n\t\t\t\tEnter '>' to show cheats!\n\n");
 	show_hanoi();
 	
-	while(1){
+	while(!is_complete(c_top)){
 		while(catch_status == FALSE) {
 			c = my_getch();
 			if(c == 'd'){
@@ -101,13 +103,14 @@ int main()
 				break;
 			}
 			else if(c == '<') {
-				printf("Good Game! Bye!\n");
+				printf("Game Over! Bye!\n");
 				exit(0);
 			}
 			
 		}
 
 	}
+	printf("Good Game! Bye!\n");
 	return 0;	
 }
 
@@ -240,4 +243,13 @@ int my_getch(void)
 	ch = getchar();
 	tcsetattr( STDIN_FILENO, TCSANOW, &oldt );
 	return ch;
+}
+
+
+int is_complete( int* top )
+{
+	int sum = 0;
+	for(; top > c_tower; top-- )
+		sum += *top;
+	return (sum == MAX_FACT);
 }

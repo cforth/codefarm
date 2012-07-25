@@ -5,7 +5,7 @@
 #define TRUE 1
 #define FALSE 0
 #define MAX 5
-#define MAX_FACT 15
+#define MAX_FACT 15		//MAX!
 #define ON_A 1
 #define ON_B 2
 #define ON_C 3
@@ -68,7 +68,7 @@ int main()
 				break;
 			}
 			else if(c == '<') {
-				printf("Good Game! Bye!\n");
+				printf("Game Over! Bye!\n");
 				exit(0);
 			}
 		}
@@ -194,7 +194,6 @@ int c_to_b()
 int show_hanoi()
 {
 	int i;
-//	printf("\t\t\t\t------Hanoi------\n");
 	for(i=1; i<now_status; i++)
 		printf("\t");
 	if(catch_status == FALSE)

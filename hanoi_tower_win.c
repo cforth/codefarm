@@ -1,9 +1,9 @@
 #include<stdio.h>
 #include<stdlib.h>
-// #include<windows.h>
 #define TRUE 1
 #define FALSE 0
-#define MAX 3
+#define MAX 5
+#define MAX_FACT 15		//MAX!
 #define ON_A 1
 #define ON_B 2
 #define ON_C 3
@@ -15,8 +15,9 @@ int b_to_c( void );
 int c_to_a( void );
 int c_to_b( void );
 int show_hanoi( void );
-int dohanio(int n,int a,int b,int c); 
+int dohanoi(int n,int a,int b,int c); 
 int init_hanoi(int max_num);
+int is_complete( int* top );
 
 int a_tower[MAX+1], b_tower[MAX+1], c_tower[MAX+1];
 int *a_top = &a_tower[MAX], *b_top = b_tower, *c_top = c_tower;
@@ -28,11 +29,12 @@ int main()
 	char c;
 	int max_num = MAX;
 	init_hanoi(max_num);
-	printf("\n\n\n\n\n\n\n");
-	printf("\t\tHanio Game\n\t\tEnter '<' to quit!Enter '>' to show cheats!\n\n");
+	printf("\n\n\n\n\n\n");
+	printf("\t\t\t\tHanoi Game\n\t\t\t\t");
+	printf("Enter '<' to quit!\n\t\t\t\tEnter '>' to show cheats!\n\n");
 	show_hanoi();
 	
-	while(1){
+	while(!is_complete(c_top)){
 		while(catch_status == FALSE) {
 			c = getch();
 			if(c == 'd'){
@@ -57,12 +59,13 @@ int main()
 				break;
 			}
 			else if(c == '>') {
-				dohanio(max_num,65,66,67);
-				printf("\n\n\n\n\n\n\n\n");
+				dohanoi(max_num,65,66,67);
+				printf("\n");
+				show_hanoi();
 				break;
 			}
 			else if(c == '<') {
-				printf("Good Game! Bye!\n");
+				printf("Game Over! Bye!\n");
 				exit(0);
 			}
 		}
@@ -91,18 +94,20 @@ int main()
 				break;
 			}
 			else if(c == '>') {
-				dohanio(max_num,65,66,67);
-				printf("\n\n\n\n\n\n\n\n");
+				dohanoi(max_num,65,66,67);
+				printf("\n");
+				show_hanoi();
 				break;
 			}
 			else if(c == '<') {
-				printf("Good Game! Bye!\n");
+				printf("Game Over! Bye!\n");
 				exit(0);
 			}
 			
 		}
 
 	}
+	printf("Good Game! Bye!\n");
 	return 0;	
 }
 
@@ -186,7 +191,6 @@ int c_to_b()
 int show_hanoi()
 {
 	int i;
-//	printf("\t\t\t\t------Hanoi------\n");
 	for(i=1; i<now_status; i++)
 		printf("\t");
 	if(catch_status == FALSE)
@@ -209,17 +213,23 @@ int init_hanoi(int max_num)
 	return 0;
 }
 
-int  dohanio(int n,int a,int b,int c) 
+int  dohanoi(int n,int a,int b,int c) 
 {
 	if(n==1)
 		printf("%c->%c ",a,c);      
 	else    {
-		dohanio(n-1,a,c,b);                     
+		dohanoi(n-1,a,c,b);                     
 		printf("%c->%c ",a,c);         
-		dohanio(n-1,b,a,c);   
+		dohanoi(n-1,b,a,c);   
 	} 
 	return 0;
 } 
 
 
-
+int is_complete( int* top )
+{
+	int sum = 0;
+	for(; top > c_tower; top-- )
+		sum += *top;
+	return (sum == MAX_FACT);
+}

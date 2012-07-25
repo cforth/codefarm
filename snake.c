@@ -13,7 +13,7 @@ int main( void )
 		for(j = 0; j < MAX*2; j++)
 			plot[i][j] = ' ';
 
-	for( i = 0; i < SNAKE_MAX; i++) {
+	for( i = 0; (i < SNAKE_MAX) && (step <= 'z'); i++) {
 
 		if( roll(2) )
 			point_x += (roll(3) - 1);
@@ -33,14 +33,14 @@ int main( void )
 		old_y = point_y;
 		plot[point_y + MAX/2][point_x*2 + MAX] = step;
 
-		if(step == '9')
-			step = 'A';
-		else if(step == 'Z')
-			step = 'a';
-		else if(step == 'z') 
-			break;
-		else
+		switch(step) {
+		case '9':
+			step = 'A'; break;
+		case 'Z':
+			step = 'a'; break;
+		default:
 			step++;
+		}
 		
 	}
 	
@@ -57,7 +57,7 @@ int main( void )
 		printf("-");
 	printf("\n");
 	
-	if(step == 'z')
+	if(step > 'z')
 		printf("Your snake alive!\n");
 	return 0;
 }

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #define MAX 20
-#define MAX_STEP 100
+#define MAX_STEP 10000
 typedef struct {
 	int x;
 	int y;
@@ -31,8 +31,8 @@ int main( void )
 		old_x = snake_a.x;
 		old_y = snake_a.y;
 		snake_a = make_point( snake_a, one_step() ); 
-		if ( (c = space[snake_a.x][(snake_a.y)*2]) == ' ' || c == '1' )
-			space[snake_a.x][(snake_a.y)*2]= '1';
+		if ( (c = space[snake_a.x][(snake_a.y)*2]) == ' ' || c == '*' )
+			space[snake_a.x][(snake_a.y)*2]= '*';
 		else {
 			snake_a.x = old_x;
 			snake_a.y = old_y;
@@ -41,8 +41,8 @@ int main( void )
 		old_x = snake_b.x;
 		old_y = snake_b.y;
 		snake_b = make_point( snake_b, one_step() ); 
-		if ( (c = space[snake_b.x][(snake_b.y)*2]) == ' ' || c == '2' )
-			space[snake_b.x][(snake_b.y)*2]= '2';
+		if ( (c = space[snake_b.x][(snake_b.y)*2]) == ' ' || c == '#' )
+			space[snake_b.x][(snake_b.y)*2]= '#';
 		else {
 			snake_b.x = old_x;
 			snake_b.y = old_y;
@@ -51,8 +51,8 @@ int main( void )
 		old_x = snake_c.x;
 		old_y = snake_c.y;
 		snake_c = make_point( snake_c, one_step() ); 
-		if ( (c = space[snake_c.x][(snake_c.y)*2]) == ' ' || c == '3' )
-			space[snake_c.x][(snake_c.y)*2]= '3';
+		if ( (c = space[snake_c.x][(snake_c.y)*2]) == ' ' || c == '@' )
+			space[snake_c.x][(snake_c.y)*2]= '@';
 		else {
 			snake_c.x = old_x;
 			snake_c.y = old_y;
@@ -61,8 +61,8 @@ int main( void )
 		old_x = snake_d.x;
 		old_y = snake_d.y;
 		snake_d = make_point( snake_d, one_step() ); 
-		if ( (c = space[snake_d.x][(snake_d.y)*2]) == ' ' || c == '4' )
-			space[snake_d.x][(snake_d.y)*2]= '4';
+		if ( (c = space[snake_d.x][(snake_d.y)*2]) == ' ' || c == '$' )
+			space[snake_d.x][(snake_d.y)*2]= '$';
 		else {
 			snake_d.x = old_x;
 			snake_d.y = old_y;

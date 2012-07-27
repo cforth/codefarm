@@ -13,9 +13,7 @@ int one_step( void );
 
 int main( void )
 {
-	int i, j, old_x, old_y, c;
-	int step = 0;
-	int is_full = 0;
+	int i, j, old_x, old_y, c, step, is_full;
 	char space[MAX][MAX*2];
 	point spore_a = {roll(MAX), roll(MAX)};
 	point spore_b = {roll(MAX), roll(MAX)};
@@ -27,8 +25,9 @@ int main( void )
 	      for(j = 0; j < MAX*2; j++)
 		    space[i][j] = ' ';
 	
-	while(!is_full) {
+	for(step = 0, is_full = 0; is_full == 0; step++) {
 
+		/*spore_a执行一步*/
 		old_x = spore_a.x;
 		old_y = spore_a.y;
 		spore_a = make_point( spore_a, one_step() ); 
@@ -39,6 +38,7 @@ int main( void )
 			spore_a.y = old_y;
 		}
 
+		/*spore_b执行一步*/
 		old_x = spore_b.x;
 		old_y = spore_b.y;
 		spore_b = make_point( spore_b, one_step() ); 
@@ -49,6 +49,7 @@ int main( void )
 			spore_b.y = old_y;
 		}
 
+		/*spore_c执行一步*/
 		old_x = spore_c.x;
 		old_y = spore_c.y;
 		spore_c = make_point( spore_c, one_step() ); 
@@ -59,6 +60,7 @@ int main( void )
 			spore_c.y = old_y;
 		}
 
+		/*spore_d执行一步*/
 		old_x = spore_d.x;
 		old_y = spore_d.y;
 		spore_d = make_point( spore_d, one_step() ); 
@@ -68,11 +70,9 @@ int main( void )
 			spore_d.x = old_x;
 			spore_d.y = old_y;
 		}
-		
-		step++;
 
-		is_full = 1;
-		for(i = 0; i < MAX; i++) { 
+		/*测试space数组中是否有空位，有空位返回0，无空位返回1*/
+		for(i = 0, is_full = 1; i < MAX; i++) { 
 	    	for(j = 0; j < MAX*2; j+=2)
 		    	if (space[i][j] == ' ') {
 					is_full = 0;
@@ -81,8 +81,10 @@ int main( void )
 			if(is_full == 0)
 				break;
 		}
+
 	}
 
+	/*打印整个space数组，显示到屏幕上*/
 	for(i = 0; i < MAX*2 + 2; i++)
 		printf("-");
 	printf("\n");
@@ -97,6 +99,8 @@ int main( void )
 	for(i = 0; i < MAX*2 + 2; i++)
 		printf("-");
 	printf("\n");
+
+	/*打印出总共执行的步数step*/
 	printf("Used %d steps.\n", step);
 
 	return 0;

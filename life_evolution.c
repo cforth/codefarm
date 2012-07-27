@@ -13,7 +13,7 @@ int one_step( void );
 
 int main( void )
 {
-	int i, j, step, old_x, old_y, c;
+	int i, j, old_x, old_y, c;
 	char space[MAX][MAX*2];
 	point spore_a = {roll(MAX), roll(MAX)};
 	point spore_b = {roll(MAX), roll(MAX)};

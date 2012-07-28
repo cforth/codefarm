@@ -23,7 +23,7 @@ int main( void )
 
 	/*初始化随机数发生器、space数组、spoce结构体*/
 	srand((unsigned)time(0));
-	point spore = {roll(2), roll(2)};
+	point spore = {roll(MAX), roll(MAX)};
 	memset( space, ' ', sizeof(space) );
 
 

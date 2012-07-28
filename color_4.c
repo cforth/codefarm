@@ -1,13 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 #define MAX 20
+#define NUM 8
+#define CLASS '1'
 typedef struct {
 	int x;
 	int y;
 } point;
 
 int roll( int max_num );
+point init_point(int x, int y);
 point make_point( point spore, int n );
 int one_step( void );
 int is_full( char (*s)[MAX] );
@@ -16,60 +20,32 @@ int main( void )
 {
 	int i, j, old_x, old_y, c, step;
 	char space[MAX][MAX];
-	point spore_a = {roll(MAX), roll(MAX)};
-	point spore_b = {roll(MAX), roll(MAX)};
-	point spore_c = {roll(MAX), roll(MAX)};
-	point spore_d = {roll(MAX), roll(MAX)};
+	char class;
+
 	srand((unsigned)time(0));
+	point spore[NUM];
+	memset( spore, 0, sizeof(spore) );
+
+	for(i = 0; i < NUM; i++)
+	     spore[i] = init_point(roll(MAX), roll(MAX));
 
 	for(i = 0; i < MAX; i++)
 	      for(j = 0; j < MAX; j++)
 		    space[i][j] = ' ';
 	
 	for(step = 0; is_full( &space[0] ) == 0; step++) {
-
-		/*spore_a执行一步*/
-		old_x = spore_a.x;
-		old_y = spore_a.y;
-		spore_a = make_point( spore_a, one_step() ); 
-		if ( (c = space[spore_a.x][spore_a.y]) == ' ' || c == '*' )
-			space[spore_a.x][spore_a.y]= '*';
-		else {
-			spore_a.x = old_x;
-			spore_a.y = old_y;
-		}
-
-		/*spore_b执行一步*/
-		old_x = spore_b.x;
-		old_y = spore_b.y;
-		spore_b = make_point( spore_b, one_step() ); 
-		if ( (c = space[spore_b.x][spore_b.y]) == ' ' || c == '#' )
-			space[spore_b.x][spore_b.y]= '#';
-		else {
-			spore_b.x = old_x;
-			spore_b.y = old_y;
-		}
-
-		/*spore_c执行一步*/
-		old_x = spore_c.x;
-		old_y = spore_c.y;
-		spore_c = make_point( spore_c, one_step() ); 
-		if ( (c = space[spore_c.x][spore_c.y]) == ' ' || c == '@' )
-			space[spore_c.x][spore_c.y]= '@';
-		else {
-			spore_c.x = old_x;
-			spore_c.y = old_y;
-		}
-
-		/*spore_d执行一步*/
-		old_x = spore_d.x;
-		old_y = spore_d.y;
-		spore_d = make_point( spore_d, one_step() ); 
-		if ( (c = space[spore_d.x][spore_d.y]) == ' ' || c == '$' )
-			space[spore_d.x][spore_d.y]= '$';
-		else {
-			spore_d.x = old_x;
-			spore_d.y = old_y;
+		class = CLASS;
+		for(i = 0; i < NUM; i++) {
+			old_x = spore[i].x;
+			old_y = spore[i].y;
+			spore[i] = make_point( spore[i], one_step() );
+			if ( (c = space[spore[i].x][spore[i].y]) == ' ' || c == class )
+				space[spore[i].x][spore[i].y]= class;
+			else {
+				spore[i].x = old_x;
+				spore[i].y = old_y;
+			}
+			class++;
 		}
 	}
 
@@ -99,6 +75,14 @@ int main( void )
 int roll(int max_num)
 {
 	return rand()%max_num;
+}
+
+point init_point(int x, int y)
+{
+	point temp;
+	temp.x = x;
+	temp.y = y;
+	return temp;
 }
 
 point make_point( point spore, int n )

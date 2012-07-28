@@ -1,4 +1,19 @@
 2012-07-28
+重构了life_game
+重构了life_evolution
+重构了snake，改为单步执行版本。
+重构了random_walk,最后一步用'*'注明。
+代码演化树:	random_walk	7-23
+		|
+		snake		7-25
+		|
+		life_game	7-26
+		|
+		life_evolution	7-27
+		|
+		color_4		7-28
+
+2012-07-28
 更新了color_4
 使用结构体数组重构了代码。
 封装了检测矩阵是否满的模块和打印整个矩阵的模块。

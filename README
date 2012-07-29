@@ -1,3 +1,9 @@
+2012-07-29
+上传了random_motion
+life_evolution变种，每次每个字符随机游走一步。
+摁'\n'单步执行，摁其他字符+'\n'退出。
+打印出执行步数和每次发生的碰撞数。
+
 2012-07-28
 重构了life_game
 重构了life_evolution

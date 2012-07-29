@@ -23,9 +23,10 @@ int main( void )
 
 	/*初始化随机数发生器、space数组、spoce结构体*/
 	srand((unsigned)time(0));
-	point spore = {MAX/2, MAX/2};
+	point spore = {MAX/2 - 1, MAX/2 - 1};
 	memset( space, ' ', sizeof(space) );
-
+	space[spore.x][spore.y]= class;
+	class++;
 
 	/*每个标号每一次随机扩展一格。
 	 *执行100步。			*/

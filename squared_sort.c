@@ -25,25 +25,39 @@ int main( void )
 	char space[MAX][MAX];
 	char class;
 
-	/*初始化随机数发生器、space数组、spoce结构体数组*/
+	/*初始化随机数发生器、space矩阵、spoce结构体数组*/
 	srand((unsigned)time(0));
 	point spore[NUM];
 	memset( spore, 0, sizeof(spore) );
 	memset( space, ' ', sizeof(space) );
+	
+	/*初始化最初随机乱序的矩阵space*/
+	printf("I'm initializing...\n");
 
 	for(i = 0, class = CLASS; i < NUM; i++, class++) {
 		spore[i] = init_point(roll(MAX), roll(MAX));
+		
+		while(space[spore[i].x][spore[i].y] != ' ')
+			spore[i] = init_point(roll(MAX), roll(MAX));
+		
 		space[spore[i].x][spore[i].y]= class;
 	}
 
-	/*每个标号每一次扩展一格，遇到空间边框或其他标号则该次停止，等待下次循环。
-	 *从键盘接受字符，'\n'单步执行，摁其他任意键退出。			*/
+	printf_space( &space[0] );
+	printf("I'm working...\n");
+
+
+	/*通过随机移动来对space矩阵中的标号排序。
+	 *每个标号每一次随机移动一格，遇到空间边框或其他标号则该次移动无效。
+	 *排序成功后，打印出标号经排序后的矩阵，游戏成功。
+	 *执行了MAX_STEP步数后仍未完成，则游戏失败						*/
 	for(step = 0; is_win(&space[0]) != 1; step++) {
 		class = CLASS;
 
 		for(i = 0; i < NUM; i++) {
 			old_x = spore[i].x;
 			old_y = spore[i].y;
+
 			spore[i] = make_point( spore[i], one_step() );
 
 			if ( (c = space[spore[i].x][spore[i].y]) == ' ') {
@@ -54,6 +68,7 @@ int main( void )
 				spore[i].x = old_x;
 				spore[i].y = old_y;
 			}
+
 			class++;
 		}
 
@@ -66,7 +81,7 @@ int main( void )
 
 	}
 
-	/*打印整个space数组，显示到屏幕上*/
+	/*打印出经过排序的space矩阵，显示到屏幕上*/
 	printf_space( &space[0] );
 
 	/*打印出总共执行的步数step*/

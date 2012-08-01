@@ -197,9 +197,14 @@ int is_win( char(*s)[MAX] )
 	int i, j, n;
 	char c = CLASS;
 	for(i = 0, n = 0; i < MAX; i++, s++)
-		for(j = 0; j < MAX && n < NUM; j++, n++)
-			if((*s)[j] != c++)
+		for(j = 0; j < MAX && n < NUM; j++, n++) {
+			if((*s)[j] != c)
 				return 0;
+			if(c == '9')
+				c = 'A';
+			else
+				c++;
+		}
 	return 1;
 }
 

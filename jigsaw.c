@@ -123,6 +123,7 @@ int main( void )
 				matrix[site.x + 1][site.y] = ' ';
 			} break;
 		case '>':
+			printf("Used %lu steps.\n", step);
 			exit(0);
 		default:
 			break;

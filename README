@@ -1,6 +1,7 @@
 2012-08-02
 将jigsaw改名为8_puzzle。
 重构了squared_sort,运行速度大大提升。
+上传了8_puzzle_auto，重排九宫的自动运行版本。
 
 2012-08-01
 上传了15_puzzle

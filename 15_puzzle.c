@@ -169,18 +169,6 @@ int roll( int max_num )
 
 
 /*
-** init_Point
-*/
-Point init_Point( int x, int y )
-{
-	Point Temp;
-	Temp.x = x;
-	Temp.y = y;
-	return Temp;
-}
-
-
-/*
 ** printf_matrix
 */
 void printf_matrix( char (*s)[MAX] )

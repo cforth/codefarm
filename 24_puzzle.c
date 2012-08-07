@@ -10,7 +10,8 @@
 #include <termios.h>
 #include <unistd.h>
 
-/* MAX为矩阵边长。
+/* 
+** MAX为矩阵边长。
 ** NUM为矩阵中的数字标号个数，必须是最大个数减1。
 ** CLASS为起始数字标号。
 */
@@ -19,13 +20,14 @@
 #define CLASS '1'
 #define MAX_STEP 100000
 
-/* 定义point类型结构体。
+/*
+** 定义Point类型结构体。
 ** 用来保存矩阵中单元的横坐标和纵坐标。
 */
 typedef struct {
 	int x;
 	int y;
-} point;
+} Point;
 
 /*
 ** roll
@@ -58,10 +60,10 @@ int my_getch( void );
 
 /*
 ** find_point
-** 寻找matrix矩阵中的空格位置，将坐标存入point类型的结构体返回。
+** 寻找matrix矩阵中的空格位置，将坐标存入Point类型的结构体返回。
 ** 用来找出指定矩阵中的空位，确定能够移动的数字标号的位置。
 */
-point find_point( char(*s)[MAX] );
+Point find_point( char(*s)[MAX] );
 
 
 int main( void )
@@ -73,7 +75,7 @@ int main( void )
 
 	/*初始化随机数发生器、matrix矩阵、site结构体*/
 	srand((unsigned)time(0));
-	point site;
+	Point site;
 	
 	/*初始化矩阵matrix，填入顺序的数字标号*/
 	printf("I'm initializing...\n");
@@ -146,8 +148,6 @@ int main( void )
 		case '>':
 			printf("Used %lu steps.\n", step);
 			exit(0);
-		default:
-			break;
 		}		
 		printf_matrix( &matrix[0] );
 	}
@@ -169,11 +169,11 @@ int roll( int max_num )
 
 
 /*
-** init_point
+** init_Point
 */
-point init_point( int x, int y )
+Point init_Point( int x, int y )
 {
-	point temp;
+	Point temp;
 	temp.x = x;
 	temp.y = y;
 	return temp;
@@ -196,7 +196,7 @@ void printf_matrix( char (*s)[MAX] )
 		      printf("%c ", (*s)[j]);
 		printf("|\n");
 	}
-
+	
 	for(i = 0; i < MAX*2 + 2; i++)
 		printf("-");
 	printf("\n");
@@ -245,9 +245,9 @@ int my_getch(void)
 /*
 ** find_point
 */
-point find_point( char(*s)[MAX] )
+Point find_point( char(*s)[MAX] )
 {
-	point temp = {0, 0};
+	Point temp = {0, 0};
 	int i, j;
 	for(i = 0; i < MAX; i++, s++) 
 		for(j = 0; j < MAX; j++)

@@ -73,9 +73,9 @@ int main( void )
 	char matrix[MAX][MAX];
 	char class;
 
-	/*初始化随机数发生器、matrix矩阵、site结构体*/
+	/*初始化随机数发生器、matrix矩阵、Site结构体*/
 	srand((unsigned)time(0));
-	Point site;
+	Point Site;
 	
 	/*初始化矩阵matrix，填入顺序的数字标号*/
 	printf("I'm initializing...\n");
@@ -93,27 +93,27 @@ int main( void )
 	/*随机移动矩阵matrix中的数字标号，作为游戏起始状态*/
 	for(step = 0; step < MAX_STEP; step++) {
 		c = roll(4);
-		site = find_point( &matrix[0] );
+		Site = find_point( &matrix[0] );
 		switch(c) {
 		case 0:
-			if((site.y + 1) < MAX) {
-				matrix[site.x][site.y] = matrix[site.x][site.y + 1];
-				matrix[site.x][site.y + 1] = ' ';
+			if((Site.y + 1) < MAX) {
+				matrix[Site.x][Site.y] = matrix[Site.x][Site.y + 1];
+				matrix[Site.x][Site.y + 1] = ' ';
 			} break;
 		case 1:
-			if((site.y - 1) >= 0) {
-				matrix[site.x][site.y] = matrix[site.x][site.y - 1];
-				matrix[site.x][site.y - 1] = ' ';
+			if((Site.y - 1) >= 0) {
+				matrix[Site.x][Site.y] = matrix[Site.x][Site.y - 1];
+				matrix[Site.x][Site.y - 1] = ' ';
 			} break;
 		case 2:
-			if((site.x - 1) >= 0) {
-				matrix[site.x][site.y] = matrix[site.x - 1][site.y];
-				matrix[site.x - 1][site.y] = ' ';
+			if((Site.x - 1) >= 0) {
+				matrix[Site.x][Site.y] = matrix[Site.x - 1][Site.y];
+				matrix[Site.x - 1][Site.y] = ' ';
 			} break;
 		case 3:
-			if((site.x + 1) < MAX) {
-				matrix[site.x][site.y] = matrix[site.x + 1][site.y];
-				matrix[site.x + 1][site.y] = ' ';
+			if((Site.x + 1) < MAX) {
+				matrix[Site.x][Site.y] = matrix[Site.x + 1][Site.y];
+				matrix[Site.x + 1][Site.y] = ' ';
 			} break;
 		}		
 	}
@@ -123,27 +123,27 @@ int main( void )
 	/*游戏部分，从键盘接收命令，执行相应的动作，并打印出矩阵*/
 	for(step = 0; is_win(&matrix[0]) != 1; step++) {
 		c = my_getch();
-		site = find_point( &matrix[0] );
+		Site = find_point( &matrix[0] );
 		switch(c) {
 		case 'a':
-			if((site.y + 1) < MAX) {
-				matrix[site.x][site.y] = matrix[site.x][site.y + 1];
-				matrix[site.x][site.y + 1] = ' ';
+			if((Site.y + 1) < MAX) {
+				matrix[Site.x][Site.y] = matrix[Site.x][Site.y + 1];
+				matrix[Site.x][Site.y + 1] = ' ';
 			} break;
 		case 'd':
-			if((site.y - 1) >= 0) {
-				matrix[site.x][site.y] = matrix[site.x][site.y - 1];
-				matrix[site.x][site.y - 1] = ' ';
+			if((Site.y - 1) >= 0) {
+				matrix[Site.x][Site.y] = matrix[Site.x][Site.y - 1];
+				matrix[Site.x][Site.y - 1] = ' ';
 			} break;
 		case 's':
-			if((site.x - 1) >= 0) {
-				matrix[site.x][site.y] = matrix[site.x - 1][site.y];
-				matrix[site.x - 1][site.y] = ' ';
+			if((Site.x - 1) >= 0) {
+				matrix[Site.x][Site.y] = matrix[Site.x - 1][Site.y];
+				matrix[Site.x - 1][Site.y] = ' ';
 			} break;
 		case 'w':
-			if((site.x + 1) < MAX) {
-				matrix[site.x][site.y] = matrix[site.x + 1][site.y];
-				matrix[site.x + 1][site.y] = ' ';
+			if((Site.x + 1) < MAX) {
+				matrix[Site.x][Site.y] = matrix[Site.x + 1][Site.y];
+				matrix[Site.x + 1][Site.y] = ' ';
 			} break;
 		case '>':
 			printf("Used %lu steps.\n", step);
@@ -173,10 +173,10 @@ int roll( int max_num )
 */
 Point init_Point( int x, int y )
 {
-	Point temp;
-	temp.x = x;
-	temp.y = y;
-	return temp;
+	Point Temp;
+	Temp.x = x;
+	Temp.y = y;
+	return Temp;
 }
 
 
@@ -247,14 +247,14 @@ int my_getch(void)
 */
 Point find_point( char(*s)[MAX] )
 {
-	Point temp = {0, 0};
+	Point Temp = {0, 0};
 	int i, j;
 	for(i = 0; i < MAX; i++, s++) 
 		for(j = 0; j < MAX; j++)
 			if((*s)[j] == ' ') {
-				temp.x = i;
-				temp.y = j;
-				return temp;
+				Temp.x = i;
+				Temp.y = j;
+				return Temp;
 			}
 	printf("No space!Error!\n");
 	exit(0);

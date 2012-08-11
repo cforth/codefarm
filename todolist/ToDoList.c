@@ -2,6 +2,7 @@
 #include <time.h>
 
 void filecopy(FILE *, FILE*);
+void get_date( void );
 
 int main( int argc, char *argv[] )
 {
@@ -30,10 +31,22 @@ void filecopy(FILE *ifp, FILE *ofp)
 	while((c = getc(ifp)) != EOF) {
 		switch(c){
 		case '&':
-			printf("2012-08-10");
+			get_date();
 			break;
 		default :
 			putc(c, ofp);
 		}
 	}
+}
+
+
+void get_date( void )
+{
+	time_t my_time;
+	struct tm *at;
+	char now[80];
+	time(&my_time);
+	at = localtime(&my_time);
+	strftime(now, 79, "%Y-%m-%d\n%H:%M:%S",at);
+	puts(now);
 }

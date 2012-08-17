@@ -3,6 +3,7 @@
 
 void filecopy(FILE *, FILE*);
 void get_date( void );
+void print_rim( void );
 
 int main( int argc, char *argv[] )
 {
@@ -33,6 +34,9 @@ void filecopy(FILE *ifp, FILE *ofp)
 		case '&':
 			get_date();
 			break;
+		case '^':
+			print_rim();
+			break;
 		default :
 			putc(c, ofp);
 		}
@@ -49,4 +53,10 @@ void get_date( void )
 	at = localtime(&my_time);
 	strftime(now, 79, "%Y-%m-%d\n%H:%M:%S",at);
 	puts(now);
+}
+
+
+void print_rim( void )
+{
+	printf(" 0 \n/I\\\n ^\n/ \\\n");
 }

@@ -27,15 +27,24 @@ int main( int argc, char *argv[] )
 
 void filecopy(FILE *ifp, FILE *ofp)
 {
-	int c;
+	int c, old_f;
 
 	while((c = getc(ifp)) != EOF) {
 		switch(c){
-		case '&':
-			get_date();
-			break;
-		case '^':
-			print_rim();
+		case '$':
+			old_f = c;
+			c = getc(ifp);
+			switch(c) {
+			case '1':
+				get_date();
+				break;
+			case '2':
+				print_rim();
+				break;
+			default :
+				putc(old_f, ofp);
+				putc(c, ofp);
+			}
 			break;
 		default :
 			putc(c, ofp);
@@ -51,8 +60,8 @@ void get_date( void )
 	char now[80];
 	time(&my_time);
 	at = localtime(&my_time);
-	strftime(now, 79, "%Y-%m-%d\n%H:%M:%S",at);
-	puts(now);
+	strftime(now, 79, "%Y-%m-%d %H:%M:%S",at);
+	fputs(now,stdout);
 }
 
 

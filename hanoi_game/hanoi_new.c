@@ -5,7 +5,7 @@
 #define MAX_LEVEL 99
  
 typedef struct HANOI {
-	int tower[MAX_LEVEL];
+	int tower[MAX_LEVEL+1];
 	int length;
 	int *top;
 } Hanoi;
@@ -20,10 +20,11 @@ Hanoi *init_hanoi(int max)
 
 	new = (Hanoi *)malloc(sizeof(Hanoi));
 	assert(new != NULL);
-	for(i = max, p = new->tower; i > 0; i--, p++)
-		*p = i;
+	p = new->tower;
+	for(i = max; i > 0; i--)
+		*(++p) = i;
 	new->length = max;
-	new->top = --p;
+	new->top = p;
 	
 	return new;
 }
@@ -34,7 +35,7 @@ void printf_hanoi(Hanoi *p)
 	int i;
 	int *temp;
 
-	for(i = p->length, temp = p->tower; i > 0; i--, temp++)
+	for(i = p->length, temp = (p->tower) + 1; i > 0; i--, temp++)
 		printf("%d ", *temp);
 	printf("\n");
 }
@@ -66,8 +67,14 @@ int pop_hanoi(Hanoi *p)
 
 void move_hanoi(Hanoi *from, Hanoi *to)
 {
-	if ((from->length > 0) && (to->length < MAX_LEVEL))
-		push_hanoi(to, pop_hanoi(from));
+	if ((from->length <= 0) 
+		|| (to->length >= MAX_LEVEL))
+		return;
+	else if ((to->top != to->tower) 
+		&& (*(to->top) < *(from->top)))
+		return;
+
+	push_hanoi(to, pop_hanoi(from));
 }
 
 int main()
@@ -86,11 +93,14 @@ int main()
 
 	move_hanoi(hanoi_a, hanoi_b);
 	move_hanoi(hanoi_c, hanoi_a);
+	move_hanoi(hanoi_a, hanoi_c);
 	printf_hanoi(hanoi_a);
 	printf_hanoi(hanoi_b);
 	printf_hanoi(hanoi_c);
 
 	move_hanoi(hanoi_a, hanoi_c);
+	move_hanoi(hanoi_a, hanoi_b);
+	move_hanoi(hanoi_b, hanoi_c);
 	printf_hanoi(hanoi_a);
 	printf_hanoi(hanoi_b);
 	printf_hanoi(hanoi_c);

@@ -15,16 +15,16 @@ typedef struct HANOI {
 Hanoi *init_hanoi(int max)
 {
 	int i;
-	int *p;
+	int *temp;
 	Hanoi *new;
 
 	new = (Hanoi *)malloc(sizeof(Hanoi));
 	assert(new != NULL);
-	p = new->tower;
+	temp = new->tower;
 	for(i = max; i > 0; i--)
-		*(++p) = i;
+		*(++temp) = i;
 	new->length = max;
-	new->top = p;
+	new->top = temp;
 	
 	return new;
 }
@@ -34,9 +34,10 @@ void printf_hanoi(Hanoi *p)
 {
 	int i;
 	int *temp;
-
-	for(i = p->length, temp = (p->tower) + 1; i > 0; i--, temp++)
-		printf("%d ", *temp);
+	
+	temp = p->tower;
+	for(i = p->length; i > 0; i--)
+		printf("%d ", *(++temp));
 	printf("\n");
 }
 
@@ -90,6 +91,7 @@ int main()
 	printf_hanoi(hanoi_a);
 	printf_hanoi(hanoi_b);
 	printf_hanoi(hanoi_c);
+	printf("\n");
 
 	move_hanoi(hanoi_a, hanoi_b);
 	move_hanoi(hanoi_c, hanoi_a);
@@ -97,6 +99,7 @@ int main()
 	printf_hanoi(hanoi_a);
 	printf_hanoi(hanoi_b);
 	printf_hanoi(hanoi_c);
+	printf("\n");
 
 	move_hanoi(hanoi_a, hanoi_c);
 	move_hanoi(hanoi_a, hanoi_b);
@@ -104,6 +107,7 @@ int main()
 	printf_hanoi(hanoi_a);
 	printf_hanoi(hanoi_b);
 	printf_hanoi(hanoi_c);
+	printf("\n");
 
 	return 0;
 }

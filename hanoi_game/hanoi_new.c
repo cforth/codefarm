@@ -123,32 +123,32 @@ void display_game(Hanoi *x, Hanoi *y, Hanoi *z, int l, int catch, int now)
 {
 	int i, j;
 	char s;
-	char buffer[l][6];
+	char buffer[l][3];
 
 	for(i = 0; i < l; i++)
-		for(j = 0; j < 6; j++)
+		for(j = 0; j < 3; j++)
 			buffer[i][j] = ' ';
 	
 	for(i = l - x->length, j = x->length; i < l; i++, j--)
 		buffer[i][0] = *(x->tower + j) + '0';
 	for(i = l - y->length, j = y->length; i < l; i++, j--)
-		buffer[i][2] = *(y->tower + j) + '0';
+		buffer[i][1] = *(y->tower + j) + '0';
 	for(i = l - z->length, j = z->length; i < l; i++, j--)
-		buffer[i][4] = *(z->tower + j) + '0';
+		buffer[i][2] = *(z->tower + j) + '0';
 	
-	printf("\n\t\t\t");
+	printf("\n\n\n\n\n\n\n\t\t\t");
 	s = (catch == 1) ? '!' : '*';
-	for(j = 0; j < now*2; j++)
-		printf(" ");
+	for(j = 0; j < now; j++)
+		printf("\t");
 	printf("%c\n",s);
 
 	for(i = 0; i < l; i++) {
 		printf("\t\t\t");
-		for(j = 0; j < 6; j++)
-			printf("%c",buffer[i][j]);
+		for(j = 0; j < 3; j++)
+			printf("%c\t",buffer[i][j]);
 		printf("\n");
 	}
-	printf("\t\t\tA B C\n");
+	printf("\t\t\tA\tB\tC\n\n\n\n\n\n\n");
 }
 
 

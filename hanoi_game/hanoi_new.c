@@ -97,9 +97,9 @@ int move_hanoi(Hanoi *from, Hanoi *to)
 ** 使用数字标号标示汉诺塔，0号塔、1号塔和2号塔。
 */
 int status [3][3] = {/* 'd' 'a' other */
-	/*tower 0*/			{ 1, 2, 0 },	
-	/*tower 1*/			{ 2, 0, 1 },	
-	/*tower 2*/			{ 0, 1, 2 }
+	/*tower 0*/	{ 1, 2, 0 },	
+	/*tower 1*/	{ 2, 0, 1 },	
+	/*tower 2*/	{ 0, 1, 2 }
 };
 
 

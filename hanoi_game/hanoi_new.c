@@ -96,16 +96,15 @@ int move_hanoi(Hanoi *from, Hanoi *to)
 ** 返回每一次移塔后所在的汉诺塔标号。
 ** 使用数字标号标示汉诺塔，0号塔、1号塔和2号塔。
 */
-int status [3][3] = {/* 'd' 'a' other */
-	/*tower 0*/	{ 1, 2, 0 },	
-	/*tower 1*/	{ 2, 0, 1 },	
-	/*tower 2*/	{ 0, 1, 2 }
-};
-
-
 int next_s(int now, char c)
 {
+	int status [3][3] = {/* 'd' 'a' other */
+		/*tower 0*/	{ 1, 2, 0 },	
+		/*tower 1*/	{ 2, 0, 1 },	
+		/*tower 2*/	{ 0, 1, 2 }
+	};
 	int i;
+
 	if (c == 'd')
 		i = 0;
 	else if (c == 'a')
@@ -114,6 +113,42 @@ int next_s(int now, char c)
 		i = 2;
 
 	return status[now][i]; 
+}
+
+
+/*
+** 图形显示模块
+*/
+void display_game(Hanoi *x, Hanoi *y, Hanoi *z, int l, int catch, int now)
+{
+	int i, j;
+	char s;
+	char buffer[l][6];
+
+	for(i = 0; i < l; i++)
+		for(j = 0; j < 6; j++)
+			buffer[i][j] = ' ';
+	
+	for(i = l - x->length, j = x->length; i < l; i++, j--)
+		buffer[i][0] = *(x->tower + j) + '0';
+	for(i = l - y->length, j = y->length; i < l; i++, j--)
+		buffer[i][2] = *(y->tower + j) + '0';
+	for(i = l - z->length, j = z->length; i < l; i++, j--)
+		buffer[i][4] = *(z->tower + j) + '0';
+	
+	printf("\n\t\t\t");
+	s = (catch == 1) ? '!' : '*';
+	for(j = 0; j < now*2; j++)
+		printf(" ");
+	printf("%c\n",s);
+
+	for(i = 0; i < l; i++) {
+		printf("\t\t\t");
+		for(j = 0; j < 6; j++)
+			printf("%c",buffer[i][j]);
+		printf("\n");
+	}
+	printf("\t\t\tA B C\n");
 }
 
 
@@ -142,17 +177,14 @@ int my_getch(void)
 int main()
 {
 	Hanoi *hanoi[3];
-	hanoi[0] = init_hanoi(3);
+	hanoi[0] = init_hanoi(5);
 	hanoi[1] = init_hanoi(0);
 	hanoi[2] = init_hanoi(0);
 
-	int i;
 	int now = 0;
 	int catch = 0;
 	
-	for (i = 0; i < 3; i++)
-		printf_hanoi(hanoi[i]);
-	printf("now = %d\ncatch = %d\n\n", now, catch);
+	display_game(hanoi[0], hanoi[1], hanoi[2], 5, catch, now);
 
 	char c;
 	int next, ifmove;
@@ -171,9 +203,7 @@ int main()
 
 		now = next;
 
-		for (i = 0; i < 3; i++)
-			printf_hanoi(hanoi[i]);
-		printf("now = %d\ncatch = %d\n\n", now, catch);
+		display_game(hanoi[0], hanoi[1], hanoi[2], 5, catch, now);
 	}
 
 	return 0;

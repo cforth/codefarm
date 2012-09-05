@@ -8,12 +8,13 @@
 
 
 /*
-** 汉诺塔模块
+** 汉诺塔实现与操作
+** 
 ** 使用堆栈来实现汉诺塔。
 ** 包括动态建立和销毁堆栈，打印堆栈内容，入栈和出栈操作。
 ** move_hanoi函数旨在实现安全的移塔操作，不会使堆栈溢出。
 */
-#define MAX_LEVEL 99
+#define MAX_LEVEL 64
  
 typedef struct HANOI {
 	int tower[MAX_LEVEL+1];
@@ -93,10 +94,13 @@ int move_hanoi(Hanoi *from, Hanoi *to)
 
 
 /*
-** 状态机模块
+** 游戏操作与实现
+** 
+** next_s
 ** 设定汉诺塔操作起始状态为0号塔。
-** 返回每一次移塔后所在的汉诺塔标号。
+** 接收当前操作的塔标号now、键盘接收的操作命令c。
 ** 使用数字标号标示汉诺塔，0号塔、1号塔和2号塔。
+** 返回每一次移塔后所在的汉诺塔标号。
 */
 int next_s(int now, char c)
 {
@@ -119,7 +123,10 @@ int next_s(int now, char c)
 
 
 /*
-** 图形显示模块
+** display_game
+** 接收三个汉诺塔结构体指针。
+** 塔的高度l，抓起状态catch，当前操作位置now。
+** 打印出游戏图形。
 */
 void display_game(Hanoi *x, Hanoi *y, Hanoi *z, int l, int catch, int now)
 {
@@ -174,36 +181,61 @@ int my_getch(void)
 
 
 /*
+** level_ok
+** 接收终点2号塔结构体指针和目标高度。
+** 返回当前级别是否已经完成的标志。
+**
+*/
+int level_ok(Hanoi *z, int l)
+{
+	return (z->length == l) ? TRUE : FALSE;
+}
+
+
+/*
 ** 主控制结构，测试中。
 */
 int main()
 {
-	Hanoi *hanoi[3];
-	hanoi[0] = init_hanoi(5);
-	hanoi[1] = init_hanoi(0);
-	hanoi[2] = init_hanoi(0);
-
-	int now = 0;
-	int catch = FALSE;
-	
-	display_game(hanoi[0], hanoi[1], hanoi[2], 5, catch, now);
-
+	int max;
+	int now;
+	int catch;
 	char c;
 	int next, ifmove;
+	for(max = 3; max <= 9; max++) {
+		Hanoi *hanoi[3];
+		hanoi[0] = init_hanoi(max);
+		hanoi[1] = init_hanoi(0);
+		hanoi[2] = init_hanoi(0);
+
+		now = 0;
+		catch = FALSE;
 	
-	while ((c = my_getch()) != '>') {
+		display_game(hanoi[0], hanoi[1], hanoi[2], max, catch, now);
+	
+		while ((c = my_getch()) != '>') {
+	
+			catch = (c == 's') ? !catch : catch;
+			next = next_s(now, c);
 
-		catch = (c == 's') ? !catch : catch;
-		next = next_s(now, c);
+			if(catch == TRUE) {
+				ifmove = move_hanoi(hanoi[now], hanoi[next]);
+				catch = (ifmove == TRUE) ? TRUE : FALSE;
+			}
 
-		if(catch == TRUE) {
-			ifmove = move_hanoi(hanoi[now], hanoi[next]);
-			catch = (ifmove == FALSE) ? FALSE : TRUE;
+			now = next;
+
+			display_game(hanoi[0], hanoi[1], hanoi[2], max, catch, now);
+
+			if(level_ok(hanoi[2], max) == TRUE) {
+				printf("\nGOOD GAME!\n");
+				break;
+			}
 		}
 
-		now = next;
-
-		display_game(hanoi[0], hanoi[1], hanoi[2], 5, catch, now);
+		destroy_hanoi(hanoi[0]);
+		destroy_hanoi(hanoi[1]);
+		destroy_hanoi(hanoi[2]);
 	}
 
 	return 0;

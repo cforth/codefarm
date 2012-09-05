@@ -200,10 +200,10 @@ int main()
 	char c;
 	int level, steps, now, next;
 	int catch, moved;
+	Hanoi *hanoi[3];
 	
 	for (level = 3; level <= MAX_LEVEL; level++) {
 		
-		Hanoi *hanoi[3];
 		hanoi[0] = init_hanoi(level);
 		hanoi[1] = init_hanoi(0);
 		hanoi[2] = init_hanoi(0);

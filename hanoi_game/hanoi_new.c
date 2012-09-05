@@ -232,10 +232,10 @@ int main()
 			now = next;
 
 			display_game(hanoi[0], hanoi[1], hanoi[2], level, catch, now);
-			printf("%d", steps);
+			printf("Used %d steps.\n", steps);
 
 			if (level_ok(hanoi[2], level) == TRUE) {
-				printf("\nGOOD GAME!Used %d steps.\n", steps);
+				printf("GOOD GAME!\n");
 				break;
 			}
 		}

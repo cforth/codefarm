@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <assert.h>
-#include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
+#define TRUE	1
+#define FALSE	0
+
 
 /*
 ** 汉诺塔模块
@@ -80,13 +82,13 @@ int move_hanoi(Hanoi *from, Hanoi *to)
 {
 	if ((from->length <= 0) 
 		|| (to->length >= MAX_LEVEL))
-		return 0;
+		return FALSE;
 	else if ((to->top != to->tower) 
 		&& (*(to->top) < *(from->top)))
-		return 0;
+		return FALSE;
 
 	push_hanoi(to, pop_hanoi(from));
-	return 1;
+	return TRUE;
 }
 
 
@@ -182,7 +184,7 @@ int main()
 	hanoi[2] = init_hanoi(0);
 
 	int now = 0;
-	int catch = 0;
+	int catch = FALSE;
 	
 	display_game(hanoi[0], hanoi[1], hanoi[2], 5, catch, now);
 
@@ -194,12 +196,10 @@ int main()
 		catch = (c == 's') ? !catch : catch;
 		next = next_s(now, c);
 
-		if(catch == 1) {
+		if(catch == TRUE) {
 			ifmove = move_hanoi(hanoi[now], hanoi[next]);
-			catch = (ifmove == 0) ? 0 : 1;
-			}
-		else 
-			catch = 0;
+			catch = (ifmove == FALSE) ? FALSE : TRUE;
+		}
 
 		now = next;
 

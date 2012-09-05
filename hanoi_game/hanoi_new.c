@@ -14,7 +14,7 @@
 ** 包括动态建立和销毁堆栈，打印堆栈内容，入栈和出栈操作。
 ** move_hanoi函数旨在实现安全的移塔操作，不会使堆栈溢出。
 */
-#define MAX_LEVEL 64
+#define MAX_LEVEL 9
  
 typedef struct HANOI {
 	int tower[MAX_LEVEL+1];
@@ -33,7 +33,7 @@ Hanoi *init_hanoi(int max)
 	new = (Hanoi *)malloc(sizeof(Hanoi));
 	assert(new != NULL);
 	temp = new->tower;
-	for(i = max; i > 0; i--)
+	for (i = max; i > 0; i--)
 		*(++temp) = i;
 	new->length = max;
 	new->top = temp;
@@ -48,7 +48,7 @@ void printf_hanoi(Hanoi *p)
 	int *temp;
 	
 	temp = p->tower;
-	for(i = p->length; i > 0; i--)
+	for (i = p->length; i > 0; i--)
 		printf("%d ", *(++temp));
 	printf("\n");
 }
@@ -134,26 +134,26 @@ void display_game(Hanoi *x, Hanoi *y, Hanoi *z, int l, int catch, int now)
 	char s;
 	char buffer[l][3];
 
-	for(i = 0; i < l; i++)
-		for(j = 0; j < 3; j++)
+	for (i = 0; i < l; i++)
+		for (j = 0; j < 3; j++)
 			buffer[i][j] = ' ';
 	
-	for(i = l - x->length, j = x->length; i < l; i++, j--)
+	for (i = l - x->length, j = x->length; i < l; i++, j--)
 		buffer[i][0] = *(x->tower + j) + '0';
-	for(i = l - y->length, j = y->length; i < l; i++, j--)
+	for (i = l - y->length, j = y->length; i < l; i++, j--)
 		buffer[i][1] = *(y->tower + j) + '0';
-	for(i = l - z->length, j = z->length; i < l; i++, j--)
+	for (i = l - z->length, j = z->length; i < l; i++, j--)
 		buffer[i][2] = *(z->tower + j) + '0';
 	
 	printf("\n\n\n\n\n\n\n\t\t\t");
 	s = (catch == 1) ? '!' : '*';
-	for(j = 0; j < now; j++)
+	for (j = 0; j < now; j++)
 		printf("\t");
 	printf("%c\n",s);
 
-	for(i = 0; i < l; i++) {
+	for (i = 0; i < l; i++) {
 		printf("\t\t\t");
-		for(j = 0; j < 3; j++)
+		for (j = 0; j < 3; j++)
 			printf("%c\t",buffer[i][j]);
 		printf("\n");
 	}
@@ -197,38 +197,45 @@ int level_ok(Hanoi *z, int l)
 */
 int main()
 {
-	int max;
-	int now;
-	int catch;
 	char c;
-	int next, ifmove;
-	for(max = 3; max <= 9; max++) {
+	int level, steps, now, next;
+	int catch, moved;
+	
+	for (level = 3; level <= MAX_LEVEL; level++) {
+		
 		Hanoi *hanoi[3];
-		hanoi[0] = init_hanoi(max);
+		hanoi[0] = init_hanoi(level);
 		hanoi[1] = init_hanoi(0);
 		hanoi[2] = init_hanoi(0);
 
+		steps = 0;
 		now = 0;
 		catch = FALSE;
-	
-		display_game(hanoi[0], hanoi[1], hanoi[2], max, catch, now);
+
+		display_game(hanoi[0], hanoi[1], hanoi[2], level, catch, now);
 	
 		while ((c = my_getch()) != '>') {
 	
+			moved = FALSE;
 			catch = (c == 's') ? !catch : catch;
 			next = next_s(now, c);
 
-			if(catch == TRUE) {
-				ifmove = move_hanoi(hanoi[now], hanoi[next]);
-				catch = (ifmove == TRUE) ? TRUE : FALSE;
-			}
+			if (catch == TRUE) 
+				moved = move_hanoi(hanoi[now], hanoi[next]);
+
+			if ((moved == TRUE) && (next != now))
+				steps++;
+			
+			if (moved == FALSE)
+				catch = FALSE;
 
 			now = next;
 
-			display_game(hanoi[0], hanoi[1], hanoi[2], max, catch, now);
+			display_game(hanoi[0], hanoi[1], hanoi[2], level, catch, now);
+			printf("%d", steps);
 
-			if(level_ok(hanoi[2], max) == TRUE) {
-				printf("\nGOOD GAME!\n");
+			if (level_ok(hanoi[2], level) == TRUE) {
+				printf("\nGOOD GAME!Used %d steps.\n", steps);
 				break;
 			}
 		}
@@ -236,6 +243,7 @@ int main()
 		destroy_hanoi(hanoi[0]);
 		destroy_hanoi(hanoi[1]);
 		destroy_hanoi(hanoi[2]);
+	
 	}
 
 	return 0;

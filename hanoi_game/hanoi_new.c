@@ -13,6 +13,7 @@
     |  |     |  `--'  |    \    /\    /    |  |____ |  |\  \----.
     |__|      \______/      \__/  \__/     |_______|| _| `._____|
 */
+
 #include <stdio.h>
 #include <malloc.h>
 #include <assert.h>
@@ -238,10 +239,11 @@ int main()
 			if (catch == TRUE) 
 				moved = move_hanoi(hanoi[now], hanoi[next]);
 
-			if ((moved == TRUE) && (next != now))
-				steps++;
-			
-			if (moved == FALSE)
+			if (moved == TRUE) {
+				if (next != now)
+					steps++;
+			}
+			else
 				catch = FALSE;
 
 			now = next;

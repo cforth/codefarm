@@ -173,7 +173,7 @@ void display_game(Hanoi *x, Hanoi *y, Hanoi *z, int l, int catch, int now)
 			printf("%c\t",buffer[i][j]);
 		printf("\n");
 	}
-	printf("\t\t\tA\tB\tC\n\n\n\n\n\n\n");
+	printf("\t\t\tA\tB\tC\n");
 }
 
 
@@ -249,10 +249,10 @@ int main()
 			now = next;
 
 			display_game(hanoi[0], hanoi[1], hanoi[2], level, catch, now);
-			printf("Used %d steps.\n", steps);
+			printf("\n\t\t\tThe %d LEVEL\n\t\t\tUsed %d steps.\n", level, steps);
 
 			if (level_ok(hanoi[2], level) == TRUE) {
-				printf("GOOD GAME!\n");
+				printf("\t\t\tGOOD GAME!\n");
 				break;
 			}
 		}

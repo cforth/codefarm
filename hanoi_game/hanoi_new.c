@@ -144,7 +144,7 @@ int next_s(int now, char c)
 ** 塔的高度l，抓起状态catch，当前操作位置now。
 ** 打印出游戏图形。
 */
-void display_game(Hanoi *x, Hanoi *y, Hanoi *z, int l, int catch, int now)
+void display_game(Hanoi *x, Hanoi *y, Hanoi *z, int l, int catch, int now, int steps)
 {
 	int i, j;
 	char s;
@@ -161,7 +161,8 @@ void display_game(Hanoi *x, Hanoi *y, Hanoi *z, int l, int catch, int now)
 	for (i = l - z->length, j = z->length; i < l; i++, j--)
 		buffer[i][2] = *(z->tower + j) + '0';
 	
-	printf("\n\n\n\n\n\n\n\t\t\t");
+	printf("\n\t\t\tThe %d LEVEL\n",l);
+	printf("\n\t\t\t");
 	s = (catch == 1) ? '!' : '*';
 	for (j = 0; j < now; j++)
 		printf("\t");
@@ -173,7 +174,8 @@ void display_game(Hanoi *x, Hanoi *y, Hanoi *z, int l, int catch, int now)
 			printf("%c\t",buffer[i][j]);
 		printf("\n");
 	}
-	printf("\t\t\tA\tB\tC\n");
+	printf("\t\t\tA\tB\tC\n\n");
+	printf("\t\t\tUsed %d steps\n\n\n\n\n\n\n\n", steps);
 }
 
 
@@ -228,7 +230,7 @@ int main()
 		now = 0;
 		catch = FALSE;
 
-		display_game(hanoi[0], hanoi[1], hanoi[2], level, catch, now);
+		display_game(hanoi[0], hanoi[1], hanoi[2], level, catch, now, steps);
 	
 		while ((c = my_getch()) != '>') {
 	
@@ -248,11 +250,11 @@ int main()
 
 			now = next;
 
-			display_game(hanoi[0], hanoi[1], hanoi[2], level, catch, now);
-			printf("\n\t\t\tThe %d LEVEL\n\t\t\tUsed %d steps.\n", level, steps);
+			display_game(hanoi[0], hanoi[1], hanoi[2], level, catch, now, steps);
 
 			if (level_ok(hanoi[2], level) == TRUE) {
-				printf("\t\t\tGOOD GAME!\n");
+				printf("\nEnter any key to next level.\n");
+				my_getch();
 				break;
 			}
 		}

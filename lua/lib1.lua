@@ -17,3 +17,22 @@ function maximum (a)
 	end
 	return m,mi
 end
+
+
+function foo0 () end
+function foo1 () return "a" end
+function foo2 () return "a", "b" end
+
+
+function add(...)
+	local s = 0
+	for i,v in ipairs{...} do
+		s = s + v
+	end
+	return s
+end
+
+function add1(...)
+	print("calling add:", ...)
+	return add(...)
+end

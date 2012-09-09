@@ -36,3 +36,49 @@ function add1(...)
 	print("calling add:", ...)
 	return add(...)
 end
+
+
+--hanoi test
+
+function fwrite(fmt, ...)
+	return io.write(string.format(fmt, ...))
+end
+
+
+function hanoi_init(level, time)
+	fwrite("Level is %d\nMust in %d seconds\n",level, time)
+end
+
+
+function hanoi_set(options)
+	if type(options.level) ~= "number" then
+		error("Not set level!")
+	end
+
+	hanoi_init(options.level,
+		options.time or 600
+		)
+end
+
+
+--cforth test
+
+dirt = {
+	{name = "dup2",		defin = "dup dup"	},
+	{name = "2drop",	defin = "dorp drop"	},
+	{name = "square", 	defin = "dup *"		},
+	{name = "add2",		defin = "2 +"		},
+	{name = "++",		defin = "1 +"		},
+}
+
+
+function sort_dirt()
+	table.sort(dirt, function(a,b) return (a.name < b.name) end)
+end
+
+
+function print_dirt()
+	for i=1,#dirt do
+		print(dirt[i].name, dirt[i].defin)
+	end
+end

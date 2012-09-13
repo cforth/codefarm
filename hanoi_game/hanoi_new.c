@@ -141,7 +141,7 @@ int next_s(int now, char c)
 /*
 ** display_game
 ** 接收三个汉诺塔结构体指针。
-** 塔的高度l，抓起状态catch，当前操作位置now。
+** 塔的高度l，抓起状态catch，当前操作位置now，当前已经移动的步数steps。
 ** 打印出游戏图形。
 */
 void display_game(Hanoi *x, Hanoi *y, Hanoi *z, int l, int catch, int now, int steps)

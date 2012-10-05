@@ -120,10 +120,11 @@ int move_hanoi(Hanoi *from, Hanoi *to)
 */
 int next_s(int now, char c)
 {
-	int status [3][3] = {/* 'd' 'a' other */
-		/*tower 0*/	{ 1, 2, 0 },	
-		/*tower 1*/	{ 2, 0, 1 },	
-		/*tower 2*/	{ 0, 1, 2 }
+	int status [3][3] = 
+	{/*				'd'	'a'	other	*/
+	/*tower 0*/	{	1,	2,	0 },	
+	/*tower 1*/	{	2,	0,	1 },	
+	/*tower 2*/	{	0,	1,	2 }
 	};
 	int i;
 
@@ -161,7 +162,7 @@ void display_game(Hanoi *x, Hanoi *y, Hanoi *z, int l, int catch, int now, int s
 	for (i = l - z->length, j = z->length; i < l; i++, j--)
 		buffer[i][2] = *(z->tower + j) + '0';
 	
-	printf("\n\t\t\tThe %d LEVEL\n",l);
+	printf("\n\t\t\tThe LEVEL %d\n",l);
 	printf("\n\t\t\t");
 	s = (catch == 1) ? '!' : '*';
 	for (j = 0; j < now; j++)
@@ -175,7 +176,7 @@ void display_game(Hanoi *x, Hanoi *y, Hanoi *z, int l, int catch, int now, int s
 		printf("\n");
 	}
 	printf("\t\t\tA\tB\tC\n\n");
-	printf("\t\t\tUsed %d steps\n\n\n\n\n\n\n\n", steps);
+	printf("\t\t\tMoved %d steps.\n\n\n\n\n\n\n\n", steps);
 }
 
 

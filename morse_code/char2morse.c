@@ -1,4 +1,5 @@
 #include <stdio.h>
+#define MAX 1000
 
 static char dict[26][5] =
 {
@@ -22,7 +23,7 @@ int char2morse(int c)
 	else if (c == '?')
 		printf("..--..");
 	else if (c == ' ')
-		printf("  ");
+		printf("\n");
 	else
 		return -1;
 	return 0;
@@ -32,14 +33,14 @@ int char2morse(int c)
 int main()
 {
 	int i, status, c;
-	char buff[1000];
+	char buff[MAX];
 
-	gets(buff);
-	for(i = 0; (c = buff[i]) != '\0'; i++) {
-		status = char2morse(c);
+	fgets(buff, MAX, stdin);
+	for(i = 0; (c = buff[i]) != '\n'; i++) {
 		printf(" ");
+		status = char2morse(c);
 		if (status != 0) {
-			printf("\nError! Undefine word: '%c'\n", c);
+			fprintf(stderr, "\nError! Undefine word: '%c'\n", c);
 			break;
 		}
 	}

@@ -17,3 +17,9 @@ puzzle_game
 
 lua
 学习lua的练习代码库。
+
+morse_code
+莫尔斯电码转换。
+
+scheme
+学习SICP的练习代码。

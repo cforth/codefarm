@@ -14,9 +14,9 @@ int main()
 		printf("Enter t and n: ");
 		scanf("%d %d", &t, &n);
 		
-		if(t > 7 || t < 1 || n < 0 || n > 10000) {
+		if (t > 7 || t < 1 || n < 0 || n > 10000) {
 			printf("error!\n");
-			break;
+			return -1;
 		}
 
 		if (t >= 1 && t <= 5) {

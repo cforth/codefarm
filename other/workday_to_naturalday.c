@@ -10,30 +10,29 @@
 int main()
 {
 	int t, n, d;
-	while (1) {
-		printf("Enter t and n: ");
-		scanf("%d %d", &t, &n);
+	printf("Enter t and n: ");
+	scanf("%d %d", &t, &n);
 		
-		if (t > 7 || t < 1 || n < 0 || n > 10000) {
-			printf("error!\n");
-			return -1;
-		}
-
-		if (t >= 1 && t <= 5) {
-			if (n <= 5 - t)
-				d = n;
-			else
-				d = ((n - (5 - t) - 1)/5 + 1) * 2 + n;
-		}
-		else if (t > 5){
-			if (n <= 5)
-				d = 7 - t + n;
-			else
-				d = ((n - 1) / 5) * 2  + 7 - t + n;
-		}
-
-		printf("Today is the %d day of the week.\n", t);
-		printf("%d working days = %d natural days.\n", n, d);
+	if (t > 7 || t < 1 || n < 0 || n > 10000) {
+		printf("error!\n");
+		return -1;
 	}
+
+	if (t >= 1 && t <= 5) {
+		if (n <= 5 - t)
+			d = n;
+		else
+			d = ((n - (5 - t) - 1)/5 + 1) * 2 + n;
+	}
+	else if (t > 5){
+		if (n <= 5)
+			d = 7 - t + n;
+		else
+			d = ((n - 1) / 5) * 2  + 7 - t + n;
+	}
+
+	printf("Today is the %d day of the week.\n", t);
+	printf("%d working days = %d natural days.\n", n, d);
+
 	return 0;
 }

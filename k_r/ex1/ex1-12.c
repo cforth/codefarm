@@ -15,10 +15,12 @@ int main()
 	old_state = FIRST;
 
 	while ((c = getchar()) != EOF) {
-		if (c == ' ' || c == '\n' || c == '\t')
-			state = OUT;
-		else 
+		if ((c >= '0' && c <= '9')
+			|| (c >= 'a' && c <= 'z')
+			|| (c >= 'A' && c <= 'Z'))
 			state = IN;
+		else 
+			state = OUT;
 
 		if (old_state == OUT && state == IN)
 			putchar('\n');

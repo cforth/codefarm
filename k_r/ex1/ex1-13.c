@@ -23,7 +23,8 @@ int main()
 
 		if ((c >= '0' && c <= '9')
 			|| (c >= 'a' && c <= 'z')
-			|| (c >= 'A' && c <= 'Z'))
+			|| (c >= 'A' && c <= 'Z')
+			|| c == '\'')
 			state = IN;
 		else 
 			state = OUT;

@@ -2,13 +2,13 @@
 !#
 
 (define (sum-of-two-large-number a b c)
-	(if (> a b)
+	(if (>= a b)
 
-		(if (> b c)
+		(if (>= b c)
 			(+ a b)
 			(+ a c))
 	
-		(if (> a c)
+		(if (>= a c)
 			(+ a b)
 			(+ b c))))
 

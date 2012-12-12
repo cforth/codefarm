@@ -22,4 +22,10 @@ morse_code
 莫尔斯电码转换。
 
 scheme
-学习SICP的练习代码。
+SICP练习题代码。
+
+k_r
+K&R练习题代码。
+
+other
+其他代码。

@@ -44,11 +44,5 @@
 			(search-for-primes (+ start 2) end)))))
 
 ;测试用例
-(search-for-primes 1000 1010)
-(newline)
-(search-for-primes 10000 10010)
-(newline)
-(search-for-primes 100000 100010)
-(newline)
-(search-for-primes 1000000 1000010)
+(search-for-primes 1000000000000 1000000000100)
 (newline)

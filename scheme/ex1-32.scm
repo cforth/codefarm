@@ -18,11 +18,19 @@
 
 ;定义一般性的累积函数组合起一系列项
 ;递归法
+;(define (accumulate combiner null-value term a next b)
+;	(if (> a b)
+;		null-value
+;		(combiner (term a)
+;			(accumulate combiner null-value term (next a) next b))))
+
+;迭代法
 (define (accumulate combiner null-value term a next b)
-	(if (> a b)
-		null-value
-		(combiner (term a)
-			(accumulate combiner null-value term (next a) next b))))
+	(define (iter a result)
+		(if (> a b)
+			result
+			(iter (next a) (combiner result (term a)))))
+	(iter a null-value))
 
 ;定义一般性的累加器与累积器
 (define (sum term a next b)

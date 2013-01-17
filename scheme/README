@@ -1,2 +1,4 @@
-SICP练习题答案
+Structure and Interpretation of Computer Programs --练习题
 
+使用guile来做练习，运行平台为windows + cygwin
+在linux环境下，须修改guile的运行路径

@@ -25,7 +25,16 @@
 (define (new-sqrt x)
 	(fixed-point (average-damp (lambda (y) (/ x y)))
 				1.0))
+;求立方根
+(define (square x)
+	(* x x))
 
+(define (cube-root x)
+	(fixed-point (average-damp (lambda (y) (/ x (square y))))
+				1.0))
 
+;
 (display (new-sqrt 3))
+(newline)
+(display (cube-root 27))
 (newline)

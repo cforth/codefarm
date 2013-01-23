@@ -1,4 +1,13 @@
-Structure and Interpretation of Computer Programs --练习题
+《Structure and Interpretation of Computer Programs》 --练习题
 
 使用guile来做练习，运行平台为windows + cygwin
 在linux环境下，须修改guile的运行路径
+
+2013-01-23
+今天结束了第一章的学习，lisp开始初步展现出魔法。
+将过程（也就是函数）作为第一级元素，给了lisp强大的表达力。
+过程可以用变量命名，可以给过程做参数，可以作为过程的返回值。
+我看到，lisp代码几乎是数学公式的精确定义。
+第一章主要是讲的过程的抽象，如何将算法精准的编程。
+我大开了眼界，这是在其他编程语言中没法体会到的神奇。
+第二章将主要讲数据的抽象，希望继续好好学习，好好掌握。

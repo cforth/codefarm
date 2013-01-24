@@ -2,14 +2,14 @@
 !#
 
 ;make-rectangle
-;构造平面上的矩形，用矩形对角线的一对点表示
+;构造平面上的矩形,用两种方法实现矩形
 
 ;		    width
-;		p1   seg1   p2
-;		+-----------+
-;seg4	|			|	seg2 height
-;		+-----------+
-;		p4   seg3   p3
+;       p1   seg1   p2
+;       +-----------+
+;seg4   |           |  seg2 height
+;       +-----------+
+;       p4   seg3   p3
 
 (define (make-point x y)
 	(cons x y))
@@ -20,6 +20,23 @@
 (define (y-point p) 
 	(cdr p))
 
+;使用矩形的四个顶点坐标表示
+;(define (make-rectangle p1 p2 p3 p4)
+;	(cons p1 (cons p2 (cons p3 p4))))
+
+;(define (rectangle-p1 rect)
+;	(car rect))
+
+;(define (rectangle-p2 rect)
+;	(car (cdr rect)))
+
+;(define (rectangle-p3 rect)
+;	(car (cdr (cdr rect))))
+
+;(define (rectangle-p4 rect)
+;	(cdr (cdr (cdr rect))))
+
+;使用矩形对角线一对点的坐标表示
 (define (make-rectangle p1 p3)
 	(cons p1 p3))
 
@@ -43,6 +60,8 @@
 				(p4-y (y-point p3)))
 			(make-point p4-x p4-y))))
 
+
+;求矩形宽度和高度
 (define (width-rect rect)
 	(let (	(p1 (rectangle-p1 rect))
 			(p3 (rectangle-p3 rect)))
@@ -57,6 +76,7 @@
 				(p3-y (y-point p3)))
 			(- p1-y p3-y))))
 
+;求矩形周长和面积
 (define (perimeter-rect rect)
 	(let (	(width (width-rect rect))
 			(height (height-rect rect)))
@@ -67,6 +87,7 @@
 			(height (height-rect rect)))
 	(* width height)))
 
+;打印出矩形的四个点坐标
 (define (print-point p)
 	(newline)
 	(display "(")
@@ -87,7 +108,18 @@
 
 ;测试
 ;打印出矩形四个点的坐标，并求出周长和面积
-(define rect1 (make-rectangle (make-point -1 2) (make-point 1 0)))
+;(define rect1 
+;	(make-rectangle 
+;		(make-point -1 2) 
+;		(make-point 1 2) 
+;		(make-point 1 0) 
+;		(make-point -1 0)))
+
+(define rect1 
+	(make-rectangle 
+		(make-point -1 2) 
+		(make-point 1 0)))
+
 (print-rectangle rect1)
 (newline)
 (newline)

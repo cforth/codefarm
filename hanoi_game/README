@@ -1,3 +1,18 @@
+2013-02-26
+修复了hanoi_new层数9时无法移动的BUG。
+
+上传了hanoi_auto.c:
+    编译执行，首先接受汉诺塔游戏的层数，再接受移塔步骤，操作方法见hanoi_new说明。
+
+上传了hanoi_alg.scm:
+    使用scheme编写，主要是接受汉诺塔游戏的层数，输出移塔步骤，通过管道给hanoi_auto.exe。
+
+hanoi_auto与hanoi_alg配合使用，可自动完成汉诺塔游戏。
+操作步骤如下：
+    ./hanoi_alg.scm | ./hanoi_auto.exe
+    5                                   //输入要完成的hanoi层数
+试一下吧！
+
 2012-09-05
 新版汉诺塔游戏hanoi_new已完成。
 新增加的功能有：

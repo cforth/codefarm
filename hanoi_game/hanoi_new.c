@@ -30,7 +30,7 @@
 ** 包括动态建立和销毁堆栈，打印堆栈内容，入栈和出栈操作。
 ** move_hanoi函数旨在实现安全的移塔操作，不会使堆栈溢出。
 */
-#define MAX_LEVEL 9
+#define MAX_LEVEL 10
  
 typedef struct HANOI {
 	int tower[MAX_LEVEL+1];

@@ -31,7 +31,7 @@
 ** 包括动态建立和销毁堆栈，打印堆栈内容，入栈和出栈操作。
 ** move_hanoi函数旨在实现安全的移塔操作，不会使堆栈溢出。
 */
-#define MAX_LEVEL 25
+#define MAX_LEVEL 9
  
 typedef struct HANOI {
 	int tower[MAX_LEVEL+1];
@@ -99,7 +99,7 @@ int pop_hanoi(Hanoi *p)
 int move_hanoi(Hanoi *from, Hanoi *to)
 {
 	if ((from->length <= 0) 
-		|| (to->length >= MAX_LEVEL))
+		|| (to->length > MAX_LEVEL))
 		return FALSE;
 	else if ((to->top != to->tower) 
 		&& (*(to->top) < *(from->top)))

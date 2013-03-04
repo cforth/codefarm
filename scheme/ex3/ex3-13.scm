@@ -1,30 +1,20 @@
 #!/bin/guile -s
 !#
 
-(define (append! x y)
-    (set-cdr! (last-pair x) y)
-    x)
 
 (define (last-pair x)
     (if (null? (cdr x))
         x
         (last-pair (cdr x))))
 
+(define (make-cycle x)
+    (set-cdr! (last-pair x) x)
+    x)
 
-(define x (list 'a 'b))
+;构成一个环
+(define z (make-cycle (list 'a 'b 'c)))
 
-(define y (list 'c 'd))
 
-(define z (append x y))
-
-(display z)
-(newline)
-(display (cdr x))
-(newline)
-
-(define w (append! x y))
-
-(display w)
-(newline)
-(display (cdr x))
+;last-pair将无法求出z，因为z是一个环
+(display (last-pair z))
 (newline)

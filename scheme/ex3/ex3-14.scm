@@ -13,21 +13,11 @@
 
 (define v (list 'a 'b 'c 'd))
 
-(define v2 (cons 'a (cons 'b (cons 'c (cons 'd '())))))
-
 (define w (mystery v))
-
-(define x '(1 2 3 4))
 
 (display (list 'a 'b 'c 'd))
 (newline)
-(display v)
+(display v)   ;;你一定奇怪为什么打印出v的值是(a),因为(mystery v)破坏了v的结构。
 (newline)
 (display w)
-(newline)
-(display v)
-(newline)
-(display x)
-(newline)
-(display v2)
 (newline)

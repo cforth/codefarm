@@ -95,19 +95,31 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;汉诺塔游戏界面
-;待完成,因游戏界面的设计思路与C语言版本是一致的，暂时不写了。
-;最激动人心的部分，还是scheme实现堆栈操作。后面的汉诺塔内部实现其实用C语言写也是一样的。
-;用scheme写汉诺塔游戏，其实就是把C语言写的代码翻译成scheme，没有什么特别的优势。
-;2013-3-6    chaif
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;汉诺塔算法模块
 
+;显示三个汉诺塔
+(define (print-all-hanoi h1 h2 h3)
+    (let ((a (print-hanoi h1))
+          (b (print-hanoi h2))
+          (c (print-hanoi h3)))
+         (begin
+            (display a)
+            (display b)
+            (display c)
+            (newline))))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;汉诺塔非递归算法模块
-;待完成
+;递归版的hanoi塔算法
+(define (dohanoi n to from using)
+  (if (> n 0)
+      (begin
+        (dohanoi (- n 1) using from to)
+        (move-hanoi from to)
+        (dohanoi (- n 1) to using from) 
+        #t)
+      #f))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -115,83 +127,23 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;测试，汉诺塔雏形
-(define h1 (init-hanoi 3))
+(define level 20)
+
+(define h1 (init-hanoi level))
 
 (define h2 (init-hanoi 0))
 
 (define h3 (init-hanoi 0))
 
-(display (print-hanoi h1))
-(display (print-hanoi h2))
-(display (print-hanoi h3))
+(print-all-hanoi h1 h2 h3)
+
+(dohanoi level h3 h1 h2)
+(newline)
+
+(display (complete-hanoi? level h3))
 (newline)
 (newline)
 
-(move-hanoi h2 h1)
-(display (print-hanoi h1))
-(display (print-hanoi h2))
-(display (print-hanoi h3))
-(newline)
-(newline)
-
-(move-hanoi h1 h3)
-(display (print-hanoi h1))
-(display (print-hanoi h2))
-(display (print-hanoi h3))
-(newline)
-(newline)
-
-(move-hanoi h1 h2)
-(display (print-hanoi h1))
-(display (print-hanoi h2))
-(display (print-hanoi h3))
-(newline)
-(newline)
-
-(move-hanoi h3 h2)
-(display (print-hanoi h1))
-(display (print-hanoi h2))
-(display (print-hanoi h3))
-(newline)
-(newline)
-
-(move-hanoi h1 h3)
-(display (print-hanoi h1))
-(display (print-hanoi h2))
-(display (print-hanoi h3))
-(newline)
-(newline)
-
-(move-hanoi h2 h1)
-(display (print-hanoi h1))
-(display (print-hanoi h2))
-(display (print-hanoi h3))
-(newline)
-(newline)
-
-(move-hanoi h2 h3)
-(display (print-hanoi h1))
-(display (print-hanoi h2))
-(display (print-hanoi h3))
-(newline)
-(newline)
-
-(move-hanoi h1 h3)
-(display (print-hanoi h1))
-(display (print-hanoi h2))
-(display (print-hanoi h3))
-(newline)
-(newline)
-
-(move-hanoi h1 h3)
-(display (print-hanoi h1))
-(display (print-hanoi h2))
-(display (print-hanoi h3))
-(newline)
-(newline)
-
-(display (complete-hanoi? 3 h3))
-(newline)
-(newline)
+(print-all-hanoi h1 h2 h3)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

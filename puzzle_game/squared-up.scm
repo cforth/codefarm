@@ -33,6 +33,9 @@
             (newline)
             (print-matrix (cdr matrix)))))
 
+;求矩阵第X行，第Y列的数值，行列数以1为初始值
+(define (value-matrix matrix x y)
+    (list-ref (list-ref matrix (- x 1)) (- y 1)))
 
 ;测试
 (display (list-ref (list-ref '((1 2) 2 3 4) 0) 0))
@@ -41,3 +44,5 @@
 (display x)
 (newline)
 (print-matrix x)
+(display (value-matrix x 3 2))
+(newline)

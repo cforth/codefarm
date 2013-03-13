@@ -17,6 +17,22 @@
                  (make-matrix-iter wide (- high 1) (cons (make-list start end) result)))))
     (make-matrix-iter wide wide '()))
 
+;打印矩阵
+(define (print-matrix matrix)
+    (define (print-list lst)
+        (if (null? lst)
+            #f
+            (begin
+                (display (car lst))
+                (display "\t")
+                (print-list (cdr lst)))))
+    (if (null? matrix)
+        #f
+        (begin
+            (print-list (car matrix))
+            (newline)
+            (print-matrix (cdr matrix)))))
+
 
 ;测试
 (display (list-ref (list-ref '((1 2) 2 3 4) 0) 0))
@@ -24,3 +40,4 @@
 (define x (make-matrix 4))
 (display x)
 (newline)
+(print-matrix x)

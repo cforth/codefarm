@@ -9,9 +9,19 @@
 <body>
 
   <script>
+    var xxx;
     makeTable(hqArr);
-    changeTable(hqArr, "tableLine0Row2", "元器件");
+    function changex() {
+      var i=0;
+      return  function() {
+        xxx= "tableLine0Row" + i;
+        changeTable(hqArr, xxx, "软件服务");
+        i++;
+      }
+    }
+    f=changex();
   </script>
+  <button onclick="f()">点击这里</button>
 
 
 </body>

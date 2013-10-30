@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body>
+  
+  <h1 id="xxx">闪瞎了我的氪金狗眼！！</h1>
+
+  <script>
+  
+  var fade = function (node) {
+    var level = 1;
+    var times = 1;
+    var step = function () {
+      var hex = level.toString(16);
+      node.style.color = '#FF' + hex + hex + hex + hex;
+      if (times < 15) {
+        level += 1;
+        times++;
+      }
+      else if(times >= 15 && times < 29) {
+        level -= 1;
+        times++;
+      }
+      else {
+        times = 1;
+      } 
+      setTimeout(step, 100);
+    };
+    setTimeout(step, 100);
+  };
+    
+    fade(document.getElementById("xxx"));  
+  </script>
+
+</body>
+
+
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body>
+  <h1 id=myname> </h1>
+  <input type="button" onclick="prom()" value="点我" />
+  
+  <script>
+  
+  function prom() {  
+        var name = prompt("请输入您的名字", "");   
+  
+        if (name) 
+        {  
+            alert("输入成功");
+            document.getElementById("myname").innerHTML="欢迎您：" + name;  
+        }  
+  
+    }  
+    
+  </script>
+
+</body>
+
+
+</html>

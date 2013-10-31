@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body>
+  
+  <h1>闪瞎了我的氪金狗眼！！</h1>
+  <h1 id="changeme"></h1>  
+
+  <script>
+    function f1(callback) {
+      setTimeout(function () {
+      document.getElementById("changeme").innerHTML= "我是f1函数，我延时了5秒后运行了!";
+      callback();
+      }, 4000);
+    } 
+
+    function f2() {
+        document.getElementById("changeme").innerHTML= "我是f2函数，f1运行结束后，我运行了！";
+    }
+
+    f1(f2);
+    document.getElementById("changeme").innerHTML= "我是f3，我其实在f1函数的后面，但我先运行了！";
+  </script>
+
+</body>
+
+
+</html>

@@ -46,14 +46,17 @@
   </table>  
 
   <script>
-    var JSONObject = {
-      "gpdm":"300253",
-      "gphq":"hq_str_sz300253",
-      "hyfl":"软件服务",
-      "gzrq":"2013-10-14",
-      "gzjg":"57.75",
-      "mbjg":"70.00"
-    };
+    var txt = '{' +
+      ' "gpdm":"300253", ' +
+      ' "gphq":"hq_str_sz300253", ' +
+      ' "hyfl":"软件服务", ' +
+      ' "gzrq":"2013-10-14",' +
+      ' "gzjg":"57.75", ' +
+      ' "mbjg":"70.00"  ' +
+    '}';
+    
+    var JSONObject = eval ("(" + txt +")");
+
     document.getElementById("gpdm").innerHTML=JSONObject.gpdm;
     document.getElementById("gphq").innerHTML=JSONObject.gphq;
     document.getElementById("hyfl").innerHTML=JSONObject.hyfl;

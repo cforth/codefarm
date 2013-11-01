@@ -55,7 +55,7 @@
       ' "mbjg":"70.00"  ' +
     '}';
     
-    var JSONObject = eval ("(" + txt +")");
+    var JSONObject = JSON.parse(txt);
 
     document.getElementById("gpdm").innerHTML=JSONObject.gpdm;
     document.getElementById("gphq").innerHTML=JSONObject.gphq;

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <style type="text/css">
+    table,td,th {
+      border:1px solid black;
+    }
+
+    table {
+      border-collapse:collapse;
+      width:100%;
+    }
+
+    th {
+      height:50px;
+    }
+
+    td {
+      padding:5px;
+    }
+  </style>
+</head>
+
+<body>
+  
+  <h1>闪瞎了我的氪金狗眼！！</h1>
+  <table>
+    <tr>
+      <td>股票代码</td>
+      <td>股票行情</td>
+      <td>行业分类</td>
+      <td>关注日期</td>
+      <td>关注价格</td>
+      <td>目标价格</td>
+    </tr>
+    <tr>
+      <td id="gpdm"> </td>
+      <td id="gphq"> </td>
+      <td id="hyfl"> </td>
+      <td id="gzrq"> </td>
+      <td id="gzjg"> </td>
+      <td id="mbjg"> </td>
+    </tr>
+  </table>  
+
+  <script>
+    var JSONObject = {
+      "gpdm":"300253",
+      "gphq":"hq_str_sz300253",
+      "hyfl":"软件服务",
+      "gzrq":"2013-10-14",
+      "gzjg":"57.75",
+      "mbjg":"70.00"
+    };
+    document.getElementById("gpdm").innerHTML=JSONObject.gpdm;
+    document.getElementById("gphq").innerHTML=JSONObject.gphq;
+    document.getElementById("hyfl").innerHTML=JSONObject.hyfl;
+    document.getElementById("gzrq").innerHTML=JSONObject.gzrq;
+    document.getElementById("gzjg").innerHTML=JSONObject.gzjg;
+    document.getElementById("mbjg").innerHTML=JSONObject.mbjg;
+  </script>
+
+</body>
+
+
+</html>

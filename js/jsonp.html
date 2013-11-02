@@ -2,14 +2,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title></title>
+</head>
+
+<body>
+
+  <p id="stockname"> </p>
+
+
     <script type="text/javascript">
     // 得到股票查询结果后的回调函数
     var _ntes_quote_callback13451765 = function(data){
-        alert('股票代码' + data[1002151].code);
+        document.getElementById("stockname").innerHTML = " 股票代码:" + data[1002151].code +" 价格:" + data[1002151].price + " 股票名字:" + data[1002151].name;
     };
 
     function f1(callback) {
-      setTimeout (function () {
         // 提供jsonp服务的url地址（不管是什么类型的地址，最终生成的返回值都是一段javascript代码）
         var url = "http://api.money.126.net/data/feed/1002151,money.api?callback=_ntes_quote_callback13451765";
         // 创建script标签，设置其属性
@@ -18,14 +24,11 @@
         // 把script标签加入head，此时调用开始
         document.getElementsByTagName('head')[0].appendChild(script); 
 
-      },10000);
     }
     
     f1(_ntes_quote_callback13451765);
 
     </script>
-</head>
-<body>
 
 </body>
 </html>

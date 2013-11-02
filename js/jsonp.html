@@ -1,23 +1,43 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title></title>
+    <title>jsonp测试</title>
 </head>
 
 <body>
+  
+  <div id="stocks">
 
-  <p id="stockname"> </p>
+  </div>
 
 
-    <script type="text/javascript">
+  <script type="text/javascript">
+
+    //建立元素并插入指定父元素的末尾
+    function insertEle(newEleName, fatherEleName, text) {
+      var para=document.createElement(newEleName);
+      var node=document.createTextNode(text);
+      para.appendChild(node);
+
+      var element=document.getElementById(fatherEleName);
+      element.appendChild(para);
+    }    
+
+
     // 得到股票查询结果后的回调函数
-    var _ntes_quote_callback13451765 = function(data){
-        document.getElementById("stockname").innerHTML = " 股票代码:" + data[1002151].code +" 价格:" + data[1002151].price + " 股票名字:" + data[1002151].name;
-    };
+    function stockApiCallback(data){
+      for(var i in data) {
+        insertEle("p", "stocks", i);
 
-    function f1(callback) {
-        // 提供jsonp服务的url地址（不管是什么类型的地址，最终生成的返回值都是一段javascript代码）
-        var url = "http://api.money.126.net/data/feed/1002151,money.api?callback=_ntes_quote_callback13451765";
+        for(var j in data[i]) {
+          insertEle("p", "stocks", (j + ": " + data[i][j]));
+          
+        } 
+      }
+    }
+
+
+    function doJsonp(url, callback) {
         // 创建script标签，设置其属性
         var script = document.createElement('script');
         script.setAttribute('src', url);
@@ -26,7 +46,9 @@
 
     }
     
-    f1(_ntes_quote_callback13451765);
+    // 提供jsonp服务的url地址（不管是什么类型的地址，最终生成的返回值都是一段javascript代码）
+    var url = "http://api.money.126.net/data/feed/1002151,0600000,money.api?callback=stockApiCallback";
+    doJsonp(url, stockApiCallback);
 
     </script>
 

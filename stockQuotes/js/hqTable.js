@@ -60,5 +60,15 @@
         script.setAttribute('src', url);
         // 把script标签加入head，此时调用开始
         document.getElementsByTagName('head')[0].appendChild(script); 
+       
+         
+        script.onload = script.onreadystatechange = function(){ 
+          if (!this.readyState || 
+          this.readyState === "loaded" || 
+          this.readyState === "complete" ) {
+          this.onload = this.onreadystatechange = null;
+          this.parentNode.removeChild(this);
+          }
+        }
 
     }

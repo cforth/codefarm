@@ -100,14 +100,14 @@ function doJsonp(url, callback) {
         document.getElementsByTagName('head')[0].appendChild(script); 
        
          
-//        script.onload = script.onreadystatechange = function(){ 
- //         if (!this.readyState || 
-  //        this.readyState === "loaded" || 
-  //        this.readyState === "complete" ) {
-   //       this.onload = this.onreadystatechange = null;
-   //       this.parentNode.removeChild(this);
-    //      }
-    //    }
+        script.onload = script.onreadystatechange = function(){ 
+         if (!this.readyState || 
+          this.readyState === "loaded" || 
+          this.readyState === "complete" ) {
+          this.onload = this.onreadystatechange = null;
+          this.parentNode.removeChild(this);
+          }
+        }
 
     }
 
@@ -132,7 +132,7 @@ function emptyTableMake(name) {
   for(var i=0;i<tableLength;i++) {
     document.write("<tr>");
     for(var j=0;j<tableWidth;j++) {
-      document.write("<td id=\"" + name + "L" + i +"R" + j +"\">"+ " " + "</td>");
+      document.write("<td id=\"" + name + "L" + i +"R" + j +"\">"+ "初始化" + "</td>");
     }
     document.write("</tr>");
   }

@@ -114,7 +114,7 @@ function doJsonp(url, callback) {
 
 //建立空表格，并给每个单元格设置id，如第3行第2列，则此单元格id为name+“L3R2”
 function emptyTableMake(name) {
-  document.write("<table class=\"sortable\" id=\"stocktable\">\
+  document.write("<table id=\"stocktable\">\
       <tr id=\"sthead\">\
         <td>序号<\/td>\
         <td>股票代码<\/td>\

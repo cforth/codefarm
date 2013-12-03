@@ -1,3 +1,33 @@
+//建立空表格，并给每个单元格设置id，如第3行第2列，则此单元格id为name+“L2R1”
+function emptyTableMake(name) {
+  document.write("<table id=\"stocktable\">\
+      <tr id=\"sthead\">\
+        <td>序号<\/td>\
+        <td>股票代码<\/td>\
+        <td>股票名称<\/td>\
+        <td>当日涨跌<\/td>\
+        <td>当前价格<\/td>\
+        <td>行业分类<\/td>\
+        <td>关注日期<\/td>\
+        <td>累计涨跌<\/td>\
+        <td>目标价格(6个月)<\/td>\
+        <td>溢价空间<\/td>\
+      <\/tr>");
+
+  tableLength = 68;
+  tableWidth = 10;  
+
+  for(var i=0;i<tableLength;i++) {
+    document.write("<tr>");
+    for(var j=0;j<tableWidth;j++) {
+      document.write("<td id=\"" + name + "L" + i +"R" + j +"\">"+ "初始化" + "</td>");
+    }
+    document.write("</tr>");
+  }
+
+  document.write("</table>");
+}
+
 
 //根据json数据建立股票数据二维数组
 function stockArrayMake(data) {
@@ -85,62 +115,17 @@ function stockArrayMake(data) {
     stockArr[i][4] = data[id]["price"]; 
     stockArr[i][5] = hqArr[i][1]; 
     stockArr[i][6] = hqArr[i][2]; 
-    stockArr[i][7] = hqArr[i][4]; 
+    stockArr[i][7] = (((data[id]["price"] - hqArr[i][3]) / hqArr[i][3]) * 100).toFixed(2) + "%";
+    stockArr[i][8] = hqArr[i][4]; 
+    stockArr[i][9] = (((hqArr[i][4] - data[id]["price"]) / data[id]["price"]) * 100).toFixed(2) + "%";
   }
   
   tableMake(stockArr, "gdzq");  
 
 }
 
-function doJsonp(url, callback) {
-        // 创建script标签，设置其属性
-        var script = document.createElement('script');
-        script.setAttribute('src', url);
-        // 把script标签加入head，此时调用开始
-        document.getElementsByTagName('head')[0].appendChild(script); 
-       
-         
-        script.onload = script.onreadystatechange = function(){ 
-         if (!this.readyState || 
-          this.readyState === "loaded" || 
-          this.readyState === "complete" ) {
-          this.onload = this.onreadystatechange = null;
-          this.parentNode.removeChild(this);
-          }
-        }
 
-    }
-
-
-//建立空表格，并给每个单元格设置id，如第3行第2列，则此单元格id为name+“L2R1”
-function emptyTableMake(name) {
-  document.write("<table id=\"stocktable\">\
-      <tr id=\"sthead\">\
-        <td>序号<\/td>\
-        <td>股票代码<\/td>\
-        <td>股票名称<\/td>\
-        <td>当日涨跌<\/td>\
-        <td>当前价格<\/td>\
-        <td>行业分类<\/td>\
-        <td>关注日期<\/td>\
-        <td>目标价格<\/td>\
-      <\/tr>");
-
-  tableLength = 68;
-  tableWidth = 8;  
-
-  for(var i=0;i<tableLength;i++) {
-    document.write("<tr>");
-    for(var j=0;j<tableWidth;j++) {
-      document.write("<td id=\"" + name + "L" + i +"R" + j +"\">"+ "初始化" + "</td>");
-    }
-    document.write("</tr>");
-  }
-
-  document.write("</table>");
-}
-
-
+//跟新表格中的行情数据
 function tableMake(arr, name) {
   var length = arr.length;
   var width = arr[0].length;
@@ -151,4 +136,24 @@ function tableMake(arr, name) {
       document.getElementById(id).innerHTML=arr[i][j];
     }
   }
+}
+
+
+//根据json格式的股票行情数据来更新表格，不完美版，若未获取远程数据成功，则script清理步骤无法运行。
+function doJsonp(url, callback) {
+  // 创建script标签，设置其属性
+  var script = document.createElement('script');
+  script.setAttribute('src', url);
+  // 把script标签加入head，此时调用开始
+  document.getElementsByTagName('head')[0].appendChild(script); 
+        
+  script.onload = script.onreadystatechange = function(){ 
+    if (!this.readyState || 
+      this.readyState === "loaded" || 
+      this.readyState === "complete" ) {
+        this.onload = this.onreadystatechange = null;
+        this.parentNode.removeChild(this);
+      }
+  }
+
 }

@@ -14,10 +14,6 @@ codefarm--编程练习
 C语言写的小游戏。
 
 
-###gdzqTest
-股票关注网页行情测试。
-
-
 ###hanoi_game
 汉诺塔游戏，包含了linux和windows平台版本。
 
@@ -66,5 +62,5 @@ SICP练习题代码。
 bash学习代码库。
 
 
-###stockQuotes
-股票网页行情测试。
+###jQueryTest
+jQuery学习代码。

@@ -64,3 +64,8 @@ bash学习代码库。
 
 ###jQueryTest
 jQuery学习代码。
+
+
+###nodejs
+nodejs学习代码。
+网址：[**Node入门**](http://www.nodebeginner.org/index-zh-cn.html)

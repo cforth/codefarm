@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script type="text/javascript" src="stockJson.json"></script>
+</head>
+
+<body>
+  <pre>
+    股票代码: <span id="code"></span><br />
+    行业分类: <span id="industry"></span><br />
+    关注日期: <span id="regdate"></span><br />
+    关注价格: <span id="regprice"></span><br />
+    目标价格: <span id="tarprice"></span><br />
+  </pre>
+
+  <script>
+    var obj = eval("(" + stockJson + ")");
+    document.getElementById("code").innerHTML = obj.stock[98].code;  
+    document.getElementById("industry").innerHTML = obj.stock[98].industry;  
+    document.getElementById("regdate").innerHTML = obj.stock[98].regdate;  
+    document.getElementById("regprice").innerHTML = obj.stock[98].regprice; 
+    document.getElementById("tarprice").innerHTML = obj.stock[98].tarprice;  
+  </script>
+
+</body>
+
+</html>

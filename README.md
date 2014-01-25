@@ -69,3 +69,7 @@ jQuery学习代码。
 ###nodejs
 nodejs学习代码。
 网址：[**Node入门**](http://www.nodebeginner.org/index-zh-cn.html)
+
+
+###vimrc
+windows下使用vim的配置

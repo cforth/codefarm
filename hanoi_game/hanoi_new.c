@@ -14,6 +14,7 @@
     |__|      \______/      \__/  \__/     |_______|| _| `._____|
 */
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <malloc.h>
 #include <assert.h>
@@ -234,7 +235,8 @@ int main()
         display_game(hanoi[0], hanoi[1], hanoi[2], level, catch, now, steps);
     
         while ((c = my_getch()) != '>') {
-    
+            
+            system("clear");
             moved = FALSE;
             catch = (c == 's') ? !catch : catch;
             next = next_s(now, c);

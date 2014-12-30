@@ -4,22 +4,16 @@ codefarm--编程练习
 ######作者:十八哥
 ######E-mail:cforth@163.com
 ---------------------
+主要是用C语言写的一些小游戏，以及《SICP》这本书中的练习代码。
+
 
 
 ###anagram
 字谜游戏，找出一本字典里所有的变位词。
 
 
-###game
-C语言写的小游戏。
-
-
 ###hanoi_game
 汉诺塔游戏，包含了linux和windows平台版本。
-
-
-###js
-javascript练习。
 
 
 ###k_r
@@ -28,10 +22,6 @@ K&R练习题代码。
 
 ###lottery
 彩票游戏，目前有刮刮乐和排列三彩票游戏。
-
-
-###lua
-学习lua的练习代码库。
 
 
 ###morse_code
@@ -56,20 +46,3 @@ Ruby练习。
 
 ###scheme
 SICP练习题代码。
-
-
-###sh
-bash学习代码库。
-
-
-###jQueryTest
-jQuery学习代码。
-
-
-###nodejs
-nodejs学习代码。
-网址：[**Node入门**](http://www.nodebeginner.org/index-zh-cn.html)
-
-
-###vimrc
-windows下使用vim的配置

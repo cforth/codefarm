@@ -140,14 +140,18 @@ int main( void )
 				matrix[Site.x][Site.y] = matrix[Site.x + 1][Site.y];
 				matrix[Site.x + 1][Site.y] = ' ';
 			} break;
-		case '>':
+		case 'Q':
 			printf("Used %lu steps.\n", step);
 			exit(0);
 		}		
+        system("clear");
 		printf_matrix( &matrix[0] );
+	    printf("Used %lu steps.\n", step);
 	}
 
 	/*打印出总共执行的步数step*/
+    system("clear");
+	printf_matrix( &matrix[0] );
 	printf("I win!\n");
 	printf("Used %lu steps.\n", step);
 	return 0;

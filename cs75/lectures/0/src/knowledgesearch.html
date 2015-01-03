@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>知识搜索</title>
+  
+  <style type="text/css">
+    body {
+      font-family: \5FAE\8F6F\96C5\9ED1;
+    }
+
+    div#header {
+      height:100px;
+      color:#0066CC;
+      padding:40px;
+      border-style:none;
+      text-align:center;
+      /*text-indent:10px;*/
+      margin-bottom:0px;
+    }
+
+    div#main {
+      text-align:center;  
+    }
+
+    input {
+      width:200px;
+    }
+    
+    input.push {
+      width:100px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="header">
+    <h1>知识搜索Beta</h1>
+  </div>  
+
+  <div id="main">
+    <form action="http://www.zhihu.com/search">
+      <input name="q" type="question" />
+      <input class="push" type="submit" value="知乎搜索" />
+    </form>
+    
+    <form action="http://www.guokr.com/search/all">
+      <input name="wd" type="question" />
+      <input class="push" type="submit" value="果壳搜索" />
+    </form>
+    
+    <form action="http://blog.jobbole.com">
+      <input name="s" type="question" />
+      <input class="push" type="submit" value="伯乐在线" />
+    </form>
+    
+    <form action="http://segmentfault.com/search">
+      <input name="q" type="question" />
+      <input class="push" type="submit" value="segmentfault" />
+    </form>
+  </div>
+</body>
+
+</html>

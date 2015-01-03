@@ -4,7 +4,7 @@ codefarm--编程练习
 ######作者:十八哥
 ######E-mail:cforth@163.com
 ---------------------
-主要是用C语言写的一些小游戏，以及《SICP》这本书中的练习代码。
+包含用C语言写的一些小游戏、哈佛大学构建动态网站CS75课程、《SICP》这本书中的练习题与其它一些代码。
 
 
 
@@ -17,7 +17,7 @@ codefarm--编程练习
 
 
 ###k_r
-K&R练习题代码。
+K&R《C程序设计语言》练习题代码。
 
 
 ###lottery
@@ -45,4 +45,8 @@ Ruby练习。
 
 
 ###scheme
-SICP练习题代码。
+[**《计算机程序的构造和解释》**](http://mitpress.mit.edu/sicp/full-text/book/book.html)练习题代码。
+
+
+###cs75
+[**哈佛大学公开课：构建动态网站**](http://v.163.com/special/opencourse/buildingdynamicwebsites.html)练习题代码。

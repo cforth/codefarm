@@ -1,3 +1,9 @@
+2015-02-21
+LotterySortThree.java
+Java版的排列三游戏，需要运行
+javac -encoding utf8 LotterySortThree.java
+java LotterySortThree
+
 2012-07-23
 上传了排列3彩票游戏，自己选5个0~9之间的数字，中奖号码为3个。
 

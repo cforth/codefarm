@@ -7,39 +7,18 @@ public class LotterySortThree {
         //读取控制台输入的三个数字，用空格分开
         System.out.print("Enter Three numbers: ");
         String numStr = in.nextLine();
-        numStr = numStr.replaceAll("\\s{1,}", " ");
-        String[] numArray = numStr.split(" ");
+        numStr = numStr.trim().replaceAll("\\s{1,}", " ");
         
-        //如果读取的数字数量不是三个，则报错
-        if(numArray.length != 3){
+        if (false == numStr.matches("^\\d\\s\\d\\s\\d$")) {
             System.out.println("Not 3 num!");
             System.exit(-1);
         }
         
-        //将读取的数字字符串转换为整型
+        String[] numArray = numStr.split(" ");
         int[] nums = new int[3];
-
-        for(int i=0; i<3; i++) {
-            int num = 0;
-            char[] arr = numArray[i].toCharArray();
-            
-            //检测每个字符是否为数字字符
-            for(char a: arr){
-                if(a >= '0' && a <= '9'){
-                    num = num * 10 + (a - '0');
-                }else{
-                    System.out.println("Not num!");
-                    System.exit(-1);
-                }
-            }
-
-            //检测数是否在0到9之间
-            if(num >= 10 || num < 0){
-                System.out.println("Must in 0 - 9!");
-                System.exit(-1);
-            }
-            nums[i] = num;
-        }
+        
+        for(int i=0; i<3; i++)
+            nums[i] = Integer.parseInt(numArray[i]);
         
         //随机生成三个数字
         int[] randomNums = new int[3];

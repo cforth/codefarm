@@ -10,11 +10,11 @@ public class LotterySortThree {
         for(int i: nums)
             System.out.print(i + " ");
         System.out.println();
-        
+    
         System.out.println("Lottery Numbers:");
         for(int i: randomNums)
             System.out.print(i + " ");
-        System.out.println();
+        System.out.println(); 
     }
 
 
@@ -54,5 +54,19 @@ public class LotterySortThree {
             nums[i] = Integer.parseInt(numArray[i]);
         
         return nums;
+    }
+
+
+    /*
+     * IsHave
+     * 判断数组中是否包含某个数
+     */
+    public static boolean IsHave(int[] nums, int n) {
+        for(int i: nums) {
+            if(Integer.valueOf(n) == Integer.valueOf(i)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

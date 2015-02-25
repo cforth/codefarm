@@ -15,8 +15,48 @@ public class LotterySortThree {
         for(int i: randomNums)
             System.out.print(i + " ");
         System.out.println(); 
+        
+        int award = LotterySortThree.Run(nums, randomNums);
+        System.out.printf("Your Win %d yuan!\n", award);
     }
 
+    
+    /*
+     * Run 静态方法
+     * 比较输入数组与中奖数组，返回中奖金额。
+     */
+    public static int Run(int[] nums, int[] winNums) {
+        Set<Integer> set = new HashSet<Integer>();
+        for(int n: winNums)
+            set.add(n);
+        
+        int award = 0;
+        
+        if(Arrays.equals(nums, winNums) && set.size() == 3) {
+            award = 1040;
+            return award;
+        }
+        
+        Arrays.sort(nums);
+        Arrays.sort(winNums);
+        
+        if(Arrays.equals(nums, winNums)) {
+            switch(set.size()) {
+            case 1:
+                award = 1040;
+                break;
+            case 2:
+                award = 346;
+                break;
+            case 3:
+                award = 173;
+                break;
+            }
+        }
+ 
+        return award;       
+    }
+    
 
     /*
      * MakeRandomNums 静态方法
@@ -54,19 +94,5 @@ public class LotterySortThree {
             nums[i] = Integer.parseInt(numArray[i]);
         
         return nums;
-    }
-
-
-    /*
-     * IsHave
-     * 判断数组中是否包含某个数
-     */
-    public static boolean IsHave(int[] nums, int n) {
-        for(int i: nums) {
-            if(Integer.valueOf(n) == Integer.valueOf(i)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

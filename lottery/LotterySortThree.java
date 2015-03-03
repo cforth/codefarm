@@ -1,10 +1,11 @@
 import java.util.*;
 
 public class LotterySortThree {
+    private static int[] randomNums = new RandomNumArray(3, 10).Make();
+  
     public static void main(String[] args) {
 
         int[] nums = LotterySortThree.EnterThreeNums();
-        int[] randomNums = LotterySortThree.MakeRandomNums(3);
 
         System.out.println("Your Numbers:");
         for(int i: nums)
@@ -25,7 +26,7 @@ public class LotterySortThree {
      * Run 静态方法
      * 比较输入数组与中奖数组，返回中奖金额。
      */
-    public static int Run(int[] nums, int[] winNums) {
+    private static int Run(int[] nums, int[] winNums) {
         Set<Integer> set = new HashSet<Integer>();
         for(int n: winNums)
             set.add(n);
@@ -56,26 +57,13 @@ public class LotterySortThree {
  
         return award;       
     }
-    
-
-    /*
-     * MakeRandomNums 静态方法
-     * 读取参数n，返回n个随机数字的数组
-     */
-    public static int[] MakeRandomNums(int n) {
-        int[] randomNums = new int[n];
-        for(int i=0; i<n; i++)
-            randomNums[i] = (int)(Math.random() * 10);
-
-        return randomNums;
-    }
 
 
     /*
      * EnterThreeNums 静态方法
      * 从控制台读取输入的三个数字，返回这个数组
      */
-    public static int[] EnterThreeNums() {
+    private static int[] EnterThreeNums() {
         Scanner in = new Scanner(System.in);
         
         System.out.print("Enter Three numbers: ");
@@ -94,5 +82,37 @@ public class LotterySortThree {
             nums[i] = Integer.parseInt(numArray[i]);
         
         return nums;
+    }
+}
+
+
+
+/*
+ * RandomNumArray对象返回一个长度为length，元素数值小于max的整型随机数组
+ */
+class RandomNumArray {
+    private int length;
+    private int max;
+    
+    /*
+     * 初始化RandomNumArray对象
+     * @param length是随机数组的元素数量，元素数组小于max
+    */
+    public RandomNumArray(int length, int max) {
+        this.length = length;
+        this.max = max;
+    }
+    
+    /*
+     * 生成随机数组
+     * @return int型随机数组
+    */
+    public int[] Make() {
+        int[] randomNumArray = new int[length];
+        
+        for(int i=0; i<length; i++)
+            randomNumArray[i] = (int)(Math.random() * max);
+
+        return randomNumArray;
     }
 }

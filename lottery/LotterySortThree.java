@@ -1,11 +1,12 @@
 import java.util.*;
 
 public class LotterySortThree {
-    private static int[] randomNums = new RandomNumArray(3, 10).Make();
-  
     public static void main(String[] args) {
-
+        
+        RandomNumArray aRandomNumsArray = new RandomNumArray(3, 10);
+        
         int[] nums = LotterySortThree.EnterThreeNums();
+        int[] randoms = aRandomNumsArray.getArray();
 
         System.out.println("Your Numbers:");
         for(int i: nums)
@@ -13,11 +14,11 @@ public class LotterySortThree {
         System.out.println();
     
         System.out.println("Lottery Numbers:");
-        for(int i: randomNums)
+        for(int i: randoms)
             System.out.print(i + " ");
         System.out.println(); 
         
-        int award = LotterySortThree.Run(nums, randomNums);
+        int award = LotterySortThree.Run(nums, randoms);
         System.out.printf("Your Win %d yuan!\n", award);
     }
 
@@ -88,31 +89,42 @@ public class LotterySortThree {
 
 
 /*
- * RandomNumArray对象返回一个长度为length，元素数值小于max的整型随机数组
+ * RandomNumArray对象
+ * 设置一个长度为length，元素数值小于max的整型随机数组
  */
 class RandomNumArray {
     private int length;
     private int max;
+    private int[] array;
     
     /*
      * 初始化RandomNumArray对象
-     * @param length是随机数组的元素数量，元素数组小于max
+     * @param length是随机数组的元素数量
+     * @param 元素数组小于max
     */
     public RandomNumArray(int length, int max) {
         this.length = length;
         this.max = max;
+        this.setArray();
     }
     
     /*
-     * 生成随机数组
-     * @return int型随机数组
+     * 设置随机数组
     */
-    public int[] Make() {
-        int[] randomNumArray = new int[length];
+    public void setArray() {
+        int[] array = new int[length];
         
         for(int i=0; i<length; i++)
-            randomNumArray[i] = (int)(Math.random() * max);
+            array[i] = (int)(Math.random() * max);
 
-        return randomNumArray;
+        this.array = array;
+    }
+    
+    /*
+     * 读取随机数组
+     * @return int型随机数组
+     */
+    public int[] getArray() {
+        return this.array;
     }
 }

@@ -1,6 +1,10 @@
 import java.util.*;
 
 public class LotterySortThree {
+    /*
+     * 运行“排列三”彩票游戏
+     * 从键盘读取3个自选数字，得出中奖结果与奖金
+     */
     public static void main(String[] args) {
         
         RandomNumArray aRandomNumsArray = new RandomNumArray(3, 10);

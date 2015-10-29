@@ -34,7 +34,7 @@ void list_destroy(List *list) {
 
 /* list_ins_next */
 int list_ins_next(List *list, ListElmt *element, const void *data) {
-    ListElmt *next_element;
+    ListElmt *new_element;
 
     /*Allocate storage for the element. */
     if ((new_element = (ListElmt*)malloc(sizeof(ListElmt))) == NULL)
@@ -69,7 +69,7 @@ int list_ins_next(List *list, ListElmt *element, const void *data) {
 
 /* list_rem_next */
 int list_rem_next(List *list, ListElmt *element, void **data) {
-    List Elmt *old_element;
+    ListElmt *old_element;
 
     /* Do not allow removal from an empty list. */
     if (list_size(list) == 0)
@@ -105,5 +105,3 @@ int list_rem_next(List *list, ListElmt *element, void **data) {
    list->size--;
    return 0;
 }
-
-

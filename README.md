@@ -4,14 +4,12 @@ codefarm--编程练习
 ######作者:Chai Fei
 ######E-mail:cforth@cfxyz.com
 ---------------------
-主要是用C语言写的一些代码。
+C语言和Java语言练习代码。
 
 
 ###algorithm
 《算法精解：C语言表述》中的练习。
 
-###algtest
-《编程之法》中的练习。
 
 ###anagram
 字谜游戏，找出一本字典里所有的变位词。
@@ -19,10 +17,6 @@ codefarm--编程练习
 
 ###hanoi_game
 汉诺塔游戏，包含了linux和windows平台版本。
-
-
-###k_r
-K&R《C程序设计语言》练习题代码。
 
 
 ###lottery
@@ -33,7 +27,7 @@ K&R《C程序设计语言》练习题代码。
 莫尔斯电码转换。
 
 
-###other
+###javademo
 学习Java时的一些代码模型。
 
 

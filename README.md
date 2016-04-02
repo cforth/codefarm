@@ -7,33 +7,33 @@ codefarm--编程练习
 C语言和Java语言练习代码。
 
 
-###algorithm
+###[algorithm](https://github.com/cforth/codefarm/tree/master/algorithm)
 《算法精解：C语言表述》中的练习。
 
 
-###anagram
+###[anagram](https://github.com/cforth/codefarm/tree/master/anagram)
 字谜游戏，找出一本字典里所有的变位词。
 
 
-###hanoi_game
+###[hanoi_game](https://github.com/cforth/codefarm/tree/master/hanoi_game)
 汉诺塔游戏，包含了linux和windows平台版本。
 
 
-###lottery
+###[lottery](https://github.com/cforth/codefarm/tree/master/lottery)
 彩票游戏，目前有刮刮乐和排列三彩票游戏。
 
 
-###morse_code
+###[morse_code](https://github.com/cforth/codefarm/tree/master/morse_code)
 莫尔斯电码转换。
 
 
-###javademo
+###[javademo](https://github.com/cforth/codefarm/tree/master/javademo)
 学习Java时的一些代码模型。
 
 
-###puzzle_game
+###[puzzle_game](https://github.com/cforth/codefarm/tree/master/puzzle_game)
 重排九宫系列游戏。
 
 
-###random_game
+###[random_game](https://github.com/cforth/codefarm/tree/master/random_game)
 随机游走系列游戏。

@@ -12,3 +12,5 @@ Java代码练习
 5. [生产者消费者问题](https://github.com/cforth/codefarm/blob/master/javademo/TestThread.java)
 
 6. [使用链表和接口实现宠物商店模型](https://github.com/cforth/codefarm/blob/master/javademo/LinkDemo.java)
+
+7. [使用InputStream和OutputStream实现的文件拷贝程序](https://github.com/cforth/codefarm/blob/master/javademo/CopyDemo.java)

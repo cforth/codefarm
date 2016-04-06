@@ -18,3 +18,5 @@ Java代码练习
 8. Scoket编程，[服务器端](https://github.com/cforth/codefarm/blob/master/javademo/HelloServer.java)，[客户端](https://github.com/cforth/codefarm/blob/master/javademo/HelloClient.java)
 
 9. 多线程版ECHO程序，[服务器端](https://github.com/cforth/codefarm/blob/master/javademo/EchoServer.java)，[客户端](https://github.com/cforth/codefarm/blob/master/javademo/EchoClient.java)
+
+10. [Set接口的子类](https://github.com/cforth/codefarm/blob/master/javademo/TestSet.java)

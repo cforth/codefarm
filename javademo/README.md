@@ -20,3 +20,5 @@ Java代码练习
 9. 多线程版ECHO程序，[服务器端](https://github.com/cforth/codefarm/blob/master/javademo/EchoServer.java)，[客户端](https://github.com/cforth/codefarm/blob/master/javademo/EchoClient.java)
 
 10. [Set接口的子类](https://github.com/cforth/codefarm/blob/master/javademo/TestSet.java)
+
+11. [JDK1.8中的MapReduce](https://github.com/cforth/codefarm/blob/master/javademo/TestMapReduce.java)

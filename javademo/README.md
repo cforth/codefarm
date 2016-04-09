@@ -22,3 +22,5 @@ Java代码练习
 10. [Set接口的子类](https://github.com/cforth/codefarm/blob/master/javademo/TestSet.java)
 
 11. [JDK1.8中的MapReduce](https://github.com/cforth/codefarm/blob/master/javademo/TestMapReduce.java)
+
+12. [数据库编程JDBC](https://github.com/cforth/codefarm/blob/master/javademo/TestJDBC.java)

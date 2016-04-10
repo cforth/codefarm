@@ -22,6 +22,12 @@ C语言和Java语言练习代码。
 ###[lottery](https://github.com/cforth/codefarm/tree/master/lottery)
 彩票游戏，目前有刮刮乐和排列三彩票游戏。
 
+###[puzzle_game](https://github.com/cforth/codefarm/tree/master/puzzle_game)
+重排九宫系列游戏。
+
+
+###[random_game](https://github.com/cforth/codefarm/tree/master/random_game)
+随机游走系列游戏。
 
 ###[morse_code](https://github.com/cforth/codefarm/tree/master/morse_code)
 莫尔斯电码转换。
@@ -30,10 +36,5 @@ C语言和Java语言练习代码。
 ###[javademo](https://github.com/cforth/codefarm/tree/master/javademo)
 学习Java时的一些代码模型。
 
-
-###[puzzle_game](https://github.com/cforth/codefarm/tree/master/puzzle_game)
-重排九宫系列游戏。
-
-
-###[random_game](https://github.com/cforth/codefarm/tree/master/random_game)
-随机游走系列游戏。
+###[testsql](https://github.com/cforth/codefarm/tree/master/testsql)
+学习Oracle数据库时的SQL语句。

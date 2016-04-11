@@ -180,3 +180,98 @@ FROM emp
 WHERE ename NOT LIKE '%A%'
 ORDER BY sal DESC, hiredate ASC, job;
 
+--13，单行函数
+--返回值 函数名称(参数)
+
+--字符串函数(dual为虚拟表)
+--字符串 UPPER(列|字符串)  转为大写字母
+SELECT UPPER('hello') FROM dual ;
+
+--输入变量的方法('SCOTT')
+SELECT * FROM emp WHERE ename = UPPER('&inputname') ;
+
+--字符串 L0WER(列|字符串)
+SELECT LOWER(ename) FROM emp ;
+
+--字符串 INITCAP(列|字符串)
+SELECT ename, INITCAP(ename) FROM emp ;
+
+--字符串 LENGTH(列|字符串)
+SELECT * FROM emp WHERE LENGTH(ename) = 5 ;
+
+--字符串 SUBSTR(列|字符串, 开始索引, [长度]) 字符串截取
+SELECT SUBSTR('helloworld', 6) FROM dual ;
+SELECT SUBSTR('helloworld', 1, 5) FROM dual ;
+SELECT ename, SUBSTR(ename, 1, 3) FROM emp ;
+SELECT ename, SUBSTR(ename, LENGTH(ename)-2) FROM emp ;
+SELECT ename, SUBSTR(ename, -3) FROM emp ;
+
+--数值函数
+--数字 ROUND(列|数字 [, 小数位]) 会四舍五入
+SELECT ROUND(789.5671234) FROM dual ;
+SELECT ROUND(789.5671234, 2) FROM dual ;
+SELECT ROUND(789.5671234, -2) FROM dual ;
+
+--数字 TRUNC(列|数字 [, 小数位])  不会进位
+SELECT TRUNC(789.5671234),
+        TRUNC(789.5671234, 2),
+        TRUNC(789.5671234, 3)
+ FROM dual ;
+
+--数字 MOD(列|数字， 列|数字)
+SELECT MOD(10, 3) FROM dual ;
+
+--日期时间函数
+--伪列SYSDATE, SYSTIMESTAMP
+SELECT SYSDATE FROM dual ;
+SELECT SYSTIMESTAMP FROM dual ;
+
+--进一步观察伪列
+SELECT ename, job, sal, SYSDATE FROM emp ;
+
+--日期加减
+SELECT SYSDATE-7, SYSDATE+280 FROM dual ;
+SELECT empno, ename, job, SYSDATE-hiredate FROM emp ;
+
+--准确的日期操作
+--日期 ADD_MONTHS(列|日期, 月数)
+SELECT ADD_MONTHS(SYSDATE, 4) FROM dual ;
+
+--日期 MONTHS_BETWEEN(列|日期, 列|日期)
+SELECT empno, ename, hiredate, MONTHS_BETWEEN(SYSDATE, hiredate) FROM emp ;
+
+--日期 LAST_DAY(列|日期)
+SELECT LAST_DAY(SYSDATE) FROM dual ;
+
+SELECT empno, ename, hiredate, LAST_DAY(hiredate) - 2 
+FROM emp 
+WHERE hiredate = LAST_DAY(hiredate) - 2;
+
+--日期 NEXT_DAY(列|日期, 星期X)
+SELECT NEXT_DAY(SYSDATE, '星期五') FROM dual ;
+
+--要求以年、月、日的方式计算出每个雇员到现在为止雇佣年限
+SELECT empno, ename, hiredate,
+        TRUNC(MONTHS_BETWEEN(SYSDATE, hiredate)/12) year,
+        TRUNC(MOD(MONTHS_BETWEEN(SYSDATE, hiredate), 12)) months,
+        TRUNC(SYSDATE - ADD_MONTHS(hiredate, MONTHS_BETWEEN(SYSDATE, hiredate))) days
+FROM emp ;
+
+--转换函数
+--字符串 TO_CHAR(列|日期|数字, 转换格式)
+SELECT TO_CHAR(SYSDATE, 'yyyy-mm-dd hh24:mi:ss') FROM dual ;
+
+--日期拆分
+SELECT TO_CHAR(SYSDATE, 'yyyy'), TO_CHAR(SYSDATE, 'mm'), TO_CHAR(SYSDATE, 'dd') FROM dual ;
+SELECT * FROM emp WHERE TO_CHAR(hiredate, 'mm') = '02' ;
+SELECT * FROM emp WHERE TO_CHAR(hiredate, 'mm') = 2 ;
+
+--数字拆分
+SELECT TO_CHAR(915645691312, 'L999,999,999,999') FROM dual ;
+
+--日期 TO_DATE(列|字符串, 转换格式)
+SELECT TO_DATE('1889-10-18', 'yyyy-mm-dd') FROM dual ;
+
+--数字 TO_NUMBER(列|字符串)
+SELECT TO_NUMBER('1') + TO_NUMBER('2') FROM dual ;
+SELECT '1' + '2' FROM dual ;

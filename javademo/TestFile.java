@@ -1,4 +1,6 @@
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,7 +9,9 @@ public class TestFile {
 
 	public static void main(String[] args) throws Exception{
 		//列出所有子目录中的文件
-		print(new File("F:" + File.separator), new File("F:" + File.separator + "demo" + File.separator + "test.txt"), 0);
+		getTime();
+		print(new File("d:" + File.separator), new File("F:" + File.separator + "demo" + File.separator + "test.txt"), 0);
+		getTime();
 	}
 	
 	public static void print(File readfile, File writefile, int level) throws Exception {
@@ -45,6 +49,12 @@ public class TestFile {
 		output.write(data);;
 		// 4、资源操作一定要进行关闭
 		output.close();
+	}
+	
+	public static void getTime() {
+		Date date = new Date();
+		SimpleDateFormat start = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		System.out.println(start.format(date));	
 	}
 
 }

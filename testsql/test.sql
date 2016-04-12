@@ -5,6 +5,7 @@ SET PAGESIZE 30;
 --2,切换用户
 CONN system/manager
 CONN sys/change_on_install AS SYSDBA
+CONN scott/tiger
 
 --3,调用本机命令
 HOST echo helloworld
@@ -275,3 +276,181 @@ SELECT TO_DATE('1889-10-18', 'yyyy-mm-dd') FROM dual ;
 --数字 TO_NUMBER(列|字符串)
 SELECT TO_NUMBER('1') + TO_NUMBER('2') FROM dual ;
 SELECT '1' + '2' FROM dual ;
+
+--14，通用函数
+--数学 NVL(列|NULL, 默认值)
+SELECT empno, ename, sal, comm, (sal + NVL(comm, 0))*12 FROM emp ;
+
+--数据类型 DECODE(列|数值, 比较内容1, 显示内容1, 比较内容2, 显示内容2, ...[, 默认显示内容])
+SELECT ename, job, DECODE(job, 'CLERK', '办事员', 'SALESMAN', '销售', 'MANAGER', '经理', '---') FROM emp ;
+
+--15，多表查询(优秀的设计不允许)
+--【③控制要显示的数据列】SELECT [DISTINCT] * | 列名称[别名], 列名称[别名],...
+--【①确定数据来源】FROM 表名称 [别名], 表名称 [别名]
+--【②确定满足条件的数据行】[WHERE 过滤条件(s)] 
+--【④针对查询结果进行排序】[ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],...];
+
+--笛卡尔积的问题
+SELECT * FROM emp, dept ;
+
+--消除了显示的笛卡尔积，多表查询很慢
+SELECT * 
+FROM emp e, dept d 
+WHERE e.deptno = d.deptno ;
+
+SELECT e.empno, e.ename, e.job, e.sal, d.dname, d.loc 
+FROM emp e, dept d 
+WHERE e.deptno = d.deptno ;
+
+SELECT e.empno, e.ename, e.job, e.sal, s.grade
+FROM emp e, salgrade s
+WHERE e.sal BETWEEN s.losal AND hisal ;
+
+SELECT e.empno, e.ename, e.job, e.sal, s.grade, d.dname
+FROM emp e, salgrade s, dept d
+WHERE e.sal BETWEEN s.losal AND s.hisal 
+        AND e.deptno = d.deptno ;
+
+--16，表的连接
+INSERT INTO emp(empno, ename, job) VALUES(8888, '张三', 'CLERK') ;
+
+--内连接 等值连接(不满足条件的行不显示)
+SELECT *
+FROM emp e, dept d
+WHERE e.deptno = d.deptno ;
+
+--外连接（左外连接）
+SELECT e.empno, e.ename, e.job, e.sal, d.dname, d.loc
+FROM emp e, dept d
+WHERE e.deptno = d.deptno(+) ;
+
+--外连接（右外连接）
+SELECT e.empno, e.ename, e.job, e.sal, d.dname, d.loc
+FROM emp e, dept d
+WHERE e.deptno(+) = d.deptno ;
+
+--查询雇员的领导信息
+SELECT e.ename, e.job, m.ename
+FROM emp e, emp m
+WHERE e.mgr = m.empno(+) ;
+
+--17，SQL1999语法实现多表查询，'(+)'标记只有Oralce才有
+-- SELECT [DISTINCT] * | 列名称[别名]
+-- FROM 表名称1 
+--      [CROSS JOIN 表名称2]
+--      [NATURAL JOIN 表名称2]
+--      [JOIN 表名称 ON(条件)|USING(字段)]
+--      [LEFT|RIGHT|FULL OUTER JOIN 表名称2] ;
+
+--CROSS JOIN 交叉连接，产生笛卡尔积
+SELECT * FROM emp CROSS JOIN dept ;
+
+--NATURAL JOIN 自然连接，使用关联字段消除笛卡尔积(使用相同的字段)
+SELECT * FROM emp NATURAL JOIN dept ;
+
+--JOIN USING 指定关联字段
+SELECT * FROM emp JOIN dept USING(deptno) ;
+
+--JOIN ON 如果没有关联字段，可使用ON子句设置条件
+SELECT * FROM emp e JOIN salgrade s ON (e.sal BETWEEN s.losal AND s.hisal) ;
+
+--外连接（左外连接）
+SELECT * FROM emp LEFT OUTER JOIN dept USING(deptno) ;
+
+--外连接（右外连接）
+SELECT * FROM emp RIGHT OUTER JOIN dept USING(deptno) ;
+
+--全外连接
+SELECT * FROM emp FULL OUTER JOIN dept USING(deptno) ;
+
+--18，数据集合操作
+--【③控制要显示的数据列】SELECT [DISTINCT] * | 列名称[别名], 列名称[别名],...
+--【①确定数据来源】FROM 表名称 [别名], 表名称 [别名]
+--[【②确定满足条件的数据行】[WHERE 过滤条件(s)] ]
+--[【④针对查询结果进行排序】[ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],...] ]
+--      UNION|UNION ALL|INSERT|MINUS
+--【③控制要显示的数据列】SELECT [DISTINCT] * | 列名称[别名], 列名称[别名],...
+--【①确定数据来源】FROM 表名称 [别名], 表名称 [别名]
+--[【②确定满足条件的数据行】[WHERE 过滤条件(s)] ]
+--[【④针对查询结果进行排序】[ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],...] ]
+--      UNION|UNION ALL|INSERT|MINUS
+--【③控制要显示的数据列】SELECT [DISTINCT] * | 列名称[别名], 列名称[别名],...
+--【①确定数据来源】FROM 表名称 [别名], 表名称 [别名]
+--[【②确定满足条件的数据行】[WHERE 过滤条件(s)] ]
+--[【④针对查询结果进行排序】[ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],...] ] ;
+
+--UNION操作 有重复的结果不显示
+SELECT empno, ename, job FROM emp WHERE deptno = 10 
+        UNION
+SELECT empno, ename, job FROM emp ;
+
+--UNION ALL操作 重复的结果全部显示
+SELECT empno, ename, job, deptno FROM emp WHERE deptno = 10 
+        UNION ALL
+SELECT empno, ename, job, deptno FROM emp ;
+
+--INTERSECT操作 取交集
+SELECT empno, ename, job, deptno FROM emp WHERE deptno = 10 
+        INTERSECT
+SELECT empno, ename, job, deptno FROM emp ;
+
+--MINUS操作 差集，由第一个查询减去第二个查询
+SELECT empno, ename, job, deptno FROM emp
+        MINUS
+SELECT empno, ename, job, deptno FROM emp WHERE deptno = 10 ;
+
+--19，分组统计
+--基础统计函数
+--COUNT(*|[DISTINCT]字段) 不统计为空的数据
+SELECT COUNT(*) FROM emp ;
+SELECT COUNT(comm) FROM emp ;
+SELECT COUNT(DISTINCT job) FROM emp ;
+
+
+--MAX(字段)
+--MIN(字段)
+ROLLBACK ;
+SELECT MAX(sal), MIN(sal) FROM emp ;
+SELECT MAX(hiredate), MIN(hiredate) FROM emp ;
+
+--SUM(数字字段)
+--AVG(数字字段)
+SELECT SUM(sal), AVG(sal) FROM emp ;
+SELECT TRUNC(AVG(MONTHS_BETWEEN(SYSDATE, hiredate)/12)) FROM emp ;
+
+--分组统计操作的实现
+--【⑤控制要显示的数据列】SELECT [DISTINCT] 分组字段[别名],... | 统计函数
+--【①确定数据来源】FROM 表名称 [别名], 表名称 [别名]
+--[【②确定满足条件的数据行】[WHERE 过滤条件(s)] ]
+--[【③针对于数据实现分组】GROUP BY 分组字段,分组字段,...]
+--[【④针对于分组后的数据进行筛选】HAVING 分组后的过滤条件]
+--[【⑥针对查询结果进行排序】[ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],...] ] ;
+
+--要求按照职位分组，统计出每个职位的名称，人数，平均工资
+SELECT job, COUNT(empno), AVG(sal)
+FROM emp
+GROUP BY job ;
+
+--要求查询每个部门编号，以及每个部门的人数、最高与最低工资
+SELECT deptno, COUNT(empno), MAX(sal), MIN(sal)
+FROM emp
+GROUP BY deptno ;
+
+--查询每个部门的名称、人数、平均工资
+SELECT d.dname, COUNT(e.empno), AVG(e.sal)
+FROM emp e, dept d
+WHERE e.deptno(+) = d.deptno
+GROUP BY d.dname ;
+
+--查询出每个部门的编号、名称、部门人数、平均服务年限
+SELECT d.deptno, d.dname, d.loc, COUNT(e.empno), 
+        AVG(MONTHS_BETWEEN(SYSDATE, e.hiredate)/12) year
+FROM emp e, dept d
+WHERE e.deptno(+) = d.deptno
+GROUP BY d.deptno, d.dname, d.loc ;
+
+--利用HAVING实现查询每个职位平均工资大于2000
+SELECT job, AVG(sal)
+FROM emp
+GROUP BY job
+HAVING AVG(sal) > 2000 ;

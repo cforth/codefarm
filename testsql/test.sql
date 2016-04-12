@@ -371,13 +371,13 @@ SELECT * FROM emp FULL OUTER JOIN dept USING(deptno) ;
 --      UNION|UNION ALL|INSERT|MINUS
 --【③控制要显示的数据列】SELECT [DISTINCT] * | 列名称[别名], 列名称[别名],...
 --【①确定数据来源】FROM 表名称 [别名], 表名称 [别名]
---[【②确定满足条件的数据行】[WHERE 过滤条件(s)] ]
---[【④针对查询结果进行排序】[ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],...] ]
+--[【②确定满足条件的数据行】WHERE 过滤条件(s) ]
+--[【④针对查询结果进行排序】ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],... ]
 --      UNION|UNION ALL|INSERT|MINUS
 --【③控制要显示的数据列】SELECT [DISTINCT] * | 列名称[别名], 列名称[别名],...
 --【①确定数据来源】FROM 表名称 [别名], 表名称 [别名]
---[【②确定满足条件的数据行】[WHERE 过滤条件(s)] ]
---[【④针对查询结果进行排序】[ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],...] ] ;
+--[【②确定满足条件的数据行】WHERE 过滤条件(s) ]
+--[【④针对查询结果进行排序】ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],... ] ;
 
 --UNION操作 有重复的结果不显示
 SELECT empno, ename, job FROM emp WHERE deptno = 10 
@@ -424,7 +424,7 @@ SELECT TRUNC(AVG(MONTHS_BETWEEN(SYSDATE, hiredate)/12)) FROM emp ;
 --[【②确定满足条件的数据行】[WHERE 过滤条件(s)] ]
 --[【③针对于数据实现分组】GROUP BY 分组字段,分组字段,...]
 --[【④针对于分组后的数据进行筛选】HAVING 分组后的过滤条件]
---[【⑥针对查询结果进行排序】[ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],...] ] ;
+--[【⑥针对查询结果进行排序】ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],...] ;
 
 --要求按照职位分组，统计出每个职位的名称，人数，平均工资
 SELECT job, COUNT(empno), AVG(sal)
@@ -454,3 +454,91 @@ SELECT job, AVG(sal)
 FROM emp
 GROUP BY job
 HAVING AVG(sal) > 2000 ;
+
+--显示非销售人员工作名称以及从事同一工作雇员的月工资总和，并且要满足从事同一工作雇员的月工资大于5000，输出结果按照月工资的合计升序排序
+SELECT job, SUM(sal) sum
+FROM emp
+WHERE job<>'SALESMAN'
+GROUP BY job
+HAVING SUM(sal) > 5000
+ORDER BY sum ASC ;
+
+--统计公司所有领取佣金与不领取佣金的雇员人数、平均工资
+SELECT '领取佣金' title, COUNT(empno), AVG(sal)
+FROM emp
+WHERE comm IS NOT NULL
+    UNION
+SELECT '不领取佣金' title, COUNT(empno), AVG(sal)
+FROM emp
+WHERE comm IS NULL ;
+
+/*20，子查询
+SELECT [DISTINCT] 分组字段[别名],... | 统计函数, (
+        SELECT [DISTINCT] 分组字段[别名],... | 统计函数
+        FROM 表名称 [别名], 表名称 [别名]
+        [[WHERE 过滤条件(s)] ]
+        [GROUP BY 分组字段,分组字段,...]
+        [HAVING 分组后的过滤条件]
+        [ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],... ] )
+FROM 表名称, (
+        SELECT [DISTINCT] 分组字段[别名],... | 统计函数
+        FROM 表名称 [别名], 表名称 [别名]
+        [[WHERE 过滤条件(s)] ]
+        [GROUP BY 分组字段,分组字段,...]
+        [HAVING 分组后的过滤条件]
+        [ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],... ] )
+[[WHERE 过滤条件(s)] (
+        SELECT [DISTINCT] 分组字段[别名],... | 统计函数
+        FROM 表名称 [别名], 表名称 [别名]
+        [[WHERE 过滤条件(s)] ]
+        [GROUP BY 分组字段,分组字段,...]
+        [HAVING 分组后的过滤条件]
+        [ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],...] )]
+[GROUP BY 分组字段,分组字段,...]
+[HAVING 分组后的过滤条件 (
+        SELECT [DISTINCT] 分组字段[别名],... | 统计函数
+        FROM 表名称 [别名], 表名称 [别名]
+        [[WHERE 过滤条件(s)] ]
+        [GROUP BY 分组字段,分组字段,...]
+        [HAVING 分组后的过滤条件]
+        [ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],...] )]
+[ORDER BY 字段 [ASC|DESC], 字段 [ASC|DESC],...] ;
+*/
+
+--WHERE子句
+--查询出低于公司平均工资的雇员信息
+SELECT *
+FROM emp
+WHERE sal < (
+        SELECT AVG(sal) 
+        FROM emp) ;
+
+--查询公司最早雇佣的雇员信息
+SELECT *
+FROM emp        
+WHERE hiredate = (
+        SELECT MIN(hiredate)
+        FROM emp) ;
+
+--与SCOTT从事同一工作，并且工资相同的雇员信息
+SELECT *
+FROM emp
+WHERE (job, sal) = (
+        SELECT job, sal 
+        FROM emp 
+        WHERE ename = 'SCOTT')
+    AND ename <> 'SCOTT';
+    
+--IN操作，指的是与查询返回的内容相同
+SELECT * FROM emp 
+WHERE sal IN (
+        SELECT sal 
+        FROM emp 
+        WHERE job = 'MANAGER' );
+
+--NOT IN，返回结果里不能包含null
+SELECT * FROM emp 
+WHERE sal  NOT IN (
+        SELECT sal 
+        FROM emp 
+        WHERE job = 'MANAGER' );

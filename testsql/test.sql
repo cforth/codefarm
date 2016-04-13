@@ -542,3 +542,76 @@ WHERE sal  NOT IN (
         SELECT sal 
         FROM emp 
         WHERE job = 'MANAGER' );
+        
+--=ANY操作，功能与IN一样
+SELECT * FROM emp
+WHERE sal = ANY (
+        SELECT sal FROM emp WHERE job = 'MANAGER') ;
+
+-->ANY操作，比子查询返回的最小值要大        
+SELECT * FROM emp
+WHERE sal > ANY (
+        SELECT sal FROM emp WHERE job = 'MANAGER') ;
+
+--<ANY操作，比子查询返回的最大值要小        
+SELECT * FROM emp
+WHERE sal < ANY (
+        SELECT sal FROM emp WHERE job = 'MANAGER') ;
+
+-->ALL操作，比子查询返回的最大值要大
+SELECT * FROM emp
+WHERE sal > ALL (
+        SELECT sal FROM emp WHERE job = 'MANAGER') ;
+
+--<ALL操作，比子查询返回的最小值要小
+SELECT * FROM emp
+WHERE sal < ALL (
+        SELECT sal FROM emp WHERE job = 'MANAGER') ;
+        
+--HAVING子句里面使用子查询
+--查询出高于公司平均工资的职位名称、职位人数、平均工资
+SELECT job, COUNT(empno), AVG(sal) 
+FROM emp
+GROUP BY job
+HAVING AVG(sal) > (SELECT AVG(sal) FROM emp) ;
+
+--SELECT子句中使用（一般不用）
+--查询每个雇员的编号、姓名、职位、部门名称
+SELECT e.empno, e.ename, e.job,
+        (SELECT d.dname FROM dept d WHERE d.deptno = e.deptno)
+FROM emp e ;
+
+--FROM子句中使用子查询
+--查询出每个部门的名称、位置、部门人数
+SELECT d.dname, d.loc, temp.count
+FROM dept d, (SELECT deptno, COUNT(empno) count FROM emp GROUP BY deptno) temp
+WHERE d.deptno = temp.deptno(+);
+
+--21，复杂查询练习
+--列出薪金高于部门30工作的所有员工的薪金的员工姓名、部门名称、部门人数。
+SELECT e.ename, e.sal, d.dname, temp.count
+FROM emp e, dept d,
+    (SELECT deptno, COUNT(deptno) count FROM emp GROUP BY deptno) temp
+WHERE e.deptno = d.deptno 
+    AND e.deptno = temp.deptno
+    AND e.sal > ALL(SELECT sal FROM emp WHERE deptno=30) ;
+    
+--列出与“SCOTT”从事相同工作的所有员工及部门名称、部门人数，领导姓名。
+SELECT e.ename, d.dname, e.mgr, temp.count, m.ename
+FROM emp e, dept d, emp m,
+    (SELECT deptno, COUNT(deptno) count FROM emp GROUP BY deptno) temp
+WHERE e.job = (SELECT job FROM emp WHERE ename = 'SCOTT')
+    AND e.deptno = d.deptno
+    AND e.deptno = temp.deptno
+    AND e.mgr = m.empno 
+    AND e.ename <> 'SCOTT';
+    
+--列出薪金比“SMITH”或“ALLEN”多的所有员工的编号、姓名、部门名称、其领导姓名，部门人数，平均工资、最高与最低工资。
+SELECT e.empno, e.ename, d.dname, e.sal, m.ename mgr, temp.count, temp.avg, temp.max, temp.min
+FROM emp e, dept d, emp m,
+    (SELECT deptno dno, COUNT(empno) count, AVG(sal) avg, MAX(sal) max, MIN(sal) min FROM emp GROUP BY deptno) temp
+WHERE e.sal > ANY(SELECT sal FROM emp WHERE ename IN ('SMITH' ,'ALLEN'))
+    AND e.ename NOT IN ('SMITH' ,'ALLEN')
+    AND d.deptno = e.deptno
+    AND e.mgr = m.empno(+) 
+    AND e.deptno = temp.dno ;

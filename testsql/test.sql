@@ -679,3 +679,64 @@ DELETE FROM myemp WHERE sal > (SELECT AVG(sal) FROM myemp) ;
 
 --删除全部记录
 DELETE FROM myemp ;
+
+--23，事务处理,事务是针对于数据更新使用的
+--Session(回话,表示唯一的一个登陆用户)
+--commit 事务提交
+--rollback 事务回滚操作
+--认识死锁 只要是不同的Session进行同一条记录跟新时，会互相等待
+DELETE FROM myemp WHERE empno=7369 ;
+rollback ;
+commit ;
+
+--24，数据伪列
+--ROWNUM 行号
+SELECT ROWNUM, empno, ename, job
+FROM emp ;
+
+--取出第一行记录(只能是第一行)
+SELECT *
+FROM emp 
+WHERE ROWNUM = 1;
+
+--取出前N行记录(只能是前N行)
+SELECT ROWNUM, empno, ename, job
+FROM emp 
+WHERE ROWNUM <= 5;
+
+/*Oralce中实现数据分页的核心结构语法,开发中100%要用到
+SELECT *
+FROM (
+    SELECT 列, ..., ROWNUM rn
+    FROM 表名称, 表名称, ...
+    WHERE ROWNUM <= (currentPage * lineSize)
+    ORDER BY 字段...) temp
+WHERE temp.rn > ((currentPage -1) * lineSize);
+*/
+
+--取出第6-10行数据的方法
+SELECT *
+FROM (SELECT ROWNUM rn , empno, ename, job
+    FROM emp 
+    WHERE ROWNUM <= 10) temp
+WHERE temp.rn > 5;
+
+--ROWID 行ID
+SELECT ROWID, deptno, dname, loc FROM dept ;
+SELECT * FROM dept WHERE ROWID = 'AAAR3qAAEAAAACHAAA' ;
+
+--利用ROWID删除表中的重复行
+CREATE TABLE mydept AS SELECT * FROM dept ;
+INSERT INTO mydept(deptno, dname, loc) VALUES (10, 'ACCOUNTING', 'NEW YORK') ;
+INSERT INTO mydept(deptno, dname, loc) VALUES (10, 'ACCOUNTING', 'NEW YORK') ;
+INSERT INTO mydept(deptno, dname, loc) VALUES (10, 'ACCOUNTING', 'NEW YORK') ;
+INSERT INTO mydept(deptno, dname, loc) VALUES (30, 'SALES', 'CHICAGO') ;
+INSERT INTO mydept(deptno, dname, loc) VALUES (30, 'SALES', 'CHICAGO') ;
+
+DELETE FROM mydept WHERE ROWID NOT IN (
+    SELECT MIN(ROWID)
+    FROM mydept
+    GROUP BY deptno, dname, loc) ;
+
+select * from mydept ;
+

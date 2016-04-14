@@ -615,3 +615,67 @@ WHERE e.sal > ANY(SELECT sal FROM emp WHERE ename IN ('SMITH' ,'ALLEN'))
     AND d.deptno = e.deptno
     AND e.mgr = m.empno(+) 
     AND e.deptno = temp.dno ;
+    
+--列出受雇日期早于其直接上级的所有员工的编号、姓名、部门名称、部门位置、部门人数
+ SELECT e.empno, e.ename, d.dname, d.loc, temp.count
+ FROM emp e, emp m, dept d, (
+        SELECT deptno dno, COUNT(empno) count
+        FROM emp
+        GROUP BY deptno) temp
+ WHERE e.mgr = m.empno(+)
+        AND e.hiredate<m.hiredate
+        AND e.deptno = d.deptno
+        AND d.deptno = temp.dno ;
+        
+--列出所有“CLERK”（办事员）的姓名及其部门名称，部门的人数，工资等级。
+SELECT e.ename, e.job, e.sal, d.dname, temp.count, g.grade
+FROM emp e, dept d, salgrade g, (
+        SELECT deptno dno, COUNT(empno) count
+        FROM emp
+        GROUP BY deptno) temp
+WHERE e.job = 'CLERK'
+        AND e.deptno = d.deptno 
+        AND d.deptno = temp.dno 
+        AND e.sal BETWEEN g.losal AND g.hisal ;
+        
+--22，数据更新
+--将emp表复制为myemp表(只有Oracle有这个操作)
+CREATE TABLE myemp AS SELECT * FROM emp ;
+
+--数据增加
+-- INSERT INTO 表名称 [(列名称1，列名称2，...)] VALUES (值1，值2，...) ;
+INSERT INTO myemp (empno, sal, job, comm, ename, mgr, hiredate, deptno)
+VALUES (8888, 9000.0, '清洁工', 10.0, '张三', 7369, TO_DATE('1970-10-10', 'yyyy-mm-dd'), 40) ;
+
+INSERT INTO myemp 
+VALUES (9999, '李四', '清洁工', 7369, TO_DATE('1970-10-10', 'yyyy-mm-dd'), 9000.0, 10.0, 40) ;
+
+--数据修改
+-- UPDATE 表名称 SET 字段1 = 值1，字段2 = 值2，...[WHERE 更新条件(s)] ;
+--将SMITH的工资修改为8000，佣金修改为9000
+UPDATE myemp SET sal = 8000, comm = 9000 WHERE ename = 'SMITH' ;
+
+--将ALLEN的工资修改为SCOTT的工资
+UPDATE myemp SET sal = (
+    SELECT sal FROM emp WHERE ename = 'SCOTT') WHERE ename = 'ALLEN' ;
+    
+--将低于公司平均工资的雇员工资上涨20%
+UPDATE myemp SET sal =  sal * 1.2 
+WHERE sal < (SELECT AVG(sal) FROM emp) ;
+
+--将所有雇员的雇用日期修改为今天(只要是更新，必须要写WHERE子句)
+UPDATE myemp SET hiredate = SYSDATE ; 
+
+--数据删除
+-- DELETE FROM 表名称 [WHERE 删除条件(s)] ;
+--删除雇员编号是7566的雇员信息
+DELETE FROM myemp WHERE empno = 7566 ;
+
+--删除雇员编号是7782, 7902的雇员信息
+DELETE FROM myemp WHERE empno IN (7782, 7902) ;
+
+--删除高于公司平均工资的雇员信息
+DELETE FROM myemp WHERE sal > (SELECT AVG(sal) FROM myemp) ;
+
+--删除全部记录
+DELETE FROM myemp ;

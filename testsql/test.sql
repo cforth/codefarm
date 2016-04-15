@@ -740,3 +740,151 @@ DELETE FROM mydept WHERE ROWID NOT IN (
 
 select * from mydept ;
 
+--25，表的创建与管理
+/*常见的数据类型 VARCHAR2(n)  NUMBER(n,m)  DATE  CLOB  BLOB
+CREATE TABLE 表名称 (
+    列名称 类型 [DEFAULT 默认值],
+    列名称 类型 [DEFAULT 默认值],
+    列名称 类型 [DEFAULT 默认值],
+    ...
+    列名称 类型 [DEFAULT 默认值]
+);
+*/
+CREATE TABLE member(
+    mid         NUMBER,
+    name        VARCHAR2(50) DEFAULT '无名氏',
+    age         NUMBER(3),
+    birthday    DATE         DEFAULT SYSDATE,
+    note        CLOB
+);
+
+INSERT INTO member (mid, name, age, birthday, note)
+VALUES (10, '张三', 30, TO_DATE('1985-11-11', 'yyyy-mm-dd'), '是个人');
+
+INSERT INTO member (mid, age, note)
+VALUES (20, 20, '是个人') ;
+
+--数据表的重命名（只有Oracle才有的命令）
+--查询一个用户数据字典中所有的数据表(user_tables)
+SELECT * FROM user_tables ;
+SELECT table_name, tablespace_name FROM user_tables ;
+
+--Oracle命令修改表名称
+--RENAME 旧的表名称 TO 新的表名称 ;
+--回退是不行的，一旦发了DDL操作，所有未提交的事务都会被提交
+RENAME member TO person ;
+
+--26，截断表，彻底清空表中的全部数据，无法回退（只有Oracle才有的命令）
+--TRUNCATE TABLE 表名称 ;
+TRUNCATE TABLE person ;
+
+--27，复制表
+--CREATE TABLE 表名称 AS 子查询 ;
+--创建一张只包含10部门雇员信息的数据表
+CREATE TABLE emp10 AS SELECT * FROM emp WHERE deptno = 10 ;
+
+--根据子查询的结构创建新的表，并且将子查询的数据保存在新表中
+CREATE TABLE emp20 AS SELECT empno, ename, sal FROM emp WHERE deptno = 20 ;
+
+CREATE TABLE deptstat AS
+SELECT d.deptno, d.dname, d.loc, temp.count, temp.avg
+FROM dept d, (SELECT deptno dno, COUNT(empno) count, AVG(sal) avg FROM emp GROUP BY deptno) temp
+WHERE d.deptno = temp.dno(+);
+
+--复制emp的表结构，但是不复制里面的数据(不属于标准SQL)
+CREATE TABLE empnull AS
+SELECT * FROM emp WHERE 1=2 ;
+
+--28，表的删除
+-- DROP TABLE 表名称 ;
+DROP TABLE deptstat ;
+DROP TABLE emp10 ;
+DROP TABLE emp20 ;
+DROP TABLE empnull ;
+DROP TABLE person ;
+DROP TABLE mydept ;
+DROP TABLE myemp ;
+
+select * from tab ;
+
+--29，闪回技术(Oracle的技术)
+--类似windows的回收站，删除数据表后先保存在回收站中'BIN*'开头的表
+--查看回收站
+COL original_name FOR  A30;
+COL object_name FOR A30;
+COL droptime FOR A30;
+SELECT original_name, object_name, droptime FROM user_recyclebin ;
+
+--恢复删除的表
+FLASHBACK TABLE deptstat TO BEFORE DROP;
+
+--强制删除数据表
+DROP TABLE deptstat PURGE ;
+
+--删除回收站里的表
+PURGE TABLE emp20 ;
+
+--清空回收站
+PURGE RECYCLEBIN;
+
+--30，修改表结构
+/*编写数据库脚本的要求：
+脚本文件的后缀是"*.sql；
+要编写删除数据表的语法；
+创建数据表的语法；
+测试数据；
+执行事务提交。
+*/
+
+--删除数据表
+DROP TABLE member PURGE ;
+--创建数据表
+CREATE TABLE member (
+    mid     NUMBER ,
+    name    VARCHAR2(50)
+) ;
+--测试数据
+INSERT INTO member (mid, name) VALUES (10, '张三') ;
+INSERT INTO member (mid, name) VALUES (20, '李四') ;
+--事务提交
+COMMIT ;
+
+/*增加表中的数据列
+ALTER TABLE 表名称 ADD(
+    列名称  类型  [DEFAULT 默认值],
+    列名称  类型  [DEFAULT 默认值],...
+) ;
+*/
+--添加一列，不设置默认值
+ALTER TABLE member ADD (email VARCHAR2(20)) ;
+
+--添加一列，设置默认值
+ALTER TABLE member ADD (sex VARCHAR2(5) DEFAULT '男') ;
+
+/*修改表中的数据列
+ALTER TABLE 表名称 MODIFY(
+    列名称  类型  [DEFAULT 默认值],
+    列名称  类型  [DEFAULT 默认值],...
+) ;
+*/
+ALTER TABLE member MODIFY(name VARCHAR2(20) DEFAULT '无名氏') ;
+
+/*删除列
+ALTER TABLE 表名称 DROP COLUMN 列
+*/
+ALTER TABLE member DROP COLUMN sex ;
+
+--31，约束的创建与管理
+--非空约束(NOT NULL , NK)
+
+--删除数据表
+DROP TABLE member PURGE ;
+--创建数据表
+CREATE TABLE member (
+    mid     NUMBER ,
+    name    VARCHAR2(20) NOT NULL
+) ;
+--增加正确的数据
+INSERT INTO member (mid, name) VALUES (10, '张三') ;
+--增加错误的数据
+INSERT INTO member (mid, name) VALUES (20, null) ;

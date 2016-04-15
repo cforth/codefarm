@@ -876,7 +876,7 @@ ALTER TABLE member DROP COLUMN sex ;
 
 --31，约束的创建与管理
 --非空约束(NOT NULL , NK)
-
+--脚本如下
 --删除数据表
 DROP TABLE member PURGE ;
 --创建数据表
@@ -888,3 +888,53 @@ CREATE TABLE member (
 INSERT INTO member (mid, name) VALUES (10, '张三') ;
 --增加错误的数据
 INSERT INTO member (mid, name) VALUES (20, null) ;
+
+--唯一约束（UNIQUE, UK)
+--脚本如下
+--删除数据表
+DROP TABLE member PURGE ;
+--创建数据表
+CREATE TABLE member (
+    mid     NUMBER ,
+    name    VARCHAR2(20) NOT NULL ,
+    email   VARCHAR2(30) UNIQUE
+) ;
+--增加正确的数据
+INSERT INTO member (mid, name) VALUES (10, '张三') ;
+INSERT INTO member (mid, name, email) VALUES (20, '李四', 'xxxx@163.com') ;
+--空值不受唯一约束的限制
+INSERT INTO member (mid, name) VALUES (60, '张三') ;
+--增加错误的数据
+INSERT INTO member (mid, name, email) VALUES (90, '王五', 'xxxx@163.com') ;
+
+--查看数据表在数据字典中的约束
+COL owner FOR A10 ;
+COL constraint_name FOR A20 ;
+COL table_name FOR A20 ;
+SELECT owner, constraint_name, table_name FROM user_constraints;
+
+--继续查看约束对象
+COL owner FOR A10 ;
+COL constraint_name FOR A20 ;
+COL table_name FOR A20 ;
+COL column_name FOR A20 ;
+SELECT * FROM user_cons_columns;
+
+--设置约束名称
+--脚本如下
+--删除数据表
+DROP TABLE member PURGE ;
+--创建数据表
+CREATE TABLE member (
+    mid     NUMBER ,
+    name    VARCHAR2(20) NOT NULL ,
+    email   VARCHAR2(30) ,
+    CONSTRAINT uk_email UNIQUE(email)
+) ;
+--增加正确的数据
+INSERT INTO member (mid, name) VALUES (10, '张三') ;
+INSERT INTO member (mid, name, email) VALUES (20, '李四', 'xxxx@163.com') ;
+--空值不受唯一约束的限制
+INSERT INTO member (mid, name) VALUES (60, '张三') ;
+--增加错误的数据
+INSERT INTO member (mid, name, email) VALUES (90, '王五', 'xxxx@163.com') ;

@@ -938,3 +938,204 @@ INSERT INTO member (mid, name, email) VALUES (20, '李四', 'xxxx@163.com') ;
 INSERT INTO member (mid, name) VALUES (60, '张三') ;
 --增加错误的数据
 INSERT INTO member (mid, name, email) VALUES (90, '王五', 'xxxx@163.com') ;
+
+--主键约束(PRIMARY KEY, PK)
+-- 唯一约束 + 非空约束
+--脚本如下
+--删除数据表
+DROP TABLE member PURGE ;
+--创建数据表
+CREATE TABLE member (
+    mid     NUMBER ,
+    name    VARCHAR2(20) NOT NULL ,
+    CONSTRAINT pk_mid PRIMARY KEY(mid)
+) ;
+--增加正确的数据
+INSERT INTO member (mid, name) VALUES (10, '张三') ;
+--增加错误的数据
+INSERT INTO member (mid, name) VALUES (10, '李四') ;
+INSERT INTO member (mid, name) VALUES (null, '王五') ;
+
+--复合主键（基本不用）
+--脚本如下
+--删除数据表
+DROP TABLE member PURGE ;
+--创建数据表
+CREATE TABLE member (
+    mid     NUMBER ,
+    name    VARCHAR2(20) NOT NULL ,
+    CONSTRAINT pk_mid_name PRIMARY KEY(mid, name)
+) ;
+--增加正确的数据
+INSERT INTO member (mid, name) VALUES (10, '张三') ;
+INSERT INTO member (mid, name) VALUES (10, '李四') ;
+INSERT INTO member (mid, name) VALUES (20, '张三') ;
+--增加错误的数据
+INSERT INTO member (mid, name) VALUES (20, '张三') ;
+
+--检查约束（最好所有的检查都由程序来完成）
+--脚本如下
+--删除数据表
+DROP TABLE member PURGE ;
+--创建数据表
+CREATE TABLE member (
+    mid     NUMBER ,
+    name    VARCHAR2(20) ,
+    age     NUMBER(3) ,
+    CONSTRAINT ck_age CHECK (age BETWEEN 0 AND 250)
+) ;
+--增加正确的数据
+INSERT INTO member (mid, name) VALUES (10, '张三') ;
+INSERT INTO member (mid, name, age) VALUES (20, '李四', 20) ;
+--增加错误的数据
+INSERT INTO member (mid, name, age) VALUES (20, '李四', 998) ;
+
+--外键约束
+--脚本如下
+--删除数据表
+DROP TABLE member PURGE ;
+DROP TABLE book PURGE ;
+--创建数据表
+CREATE TABLE member (
+    mid     NUMBER ,
+    name    VARCHAR2(20) NOT NULL ,
+    CONSTRAINT pk_mid PRIMARY KEY(mid)
+) ;
+CREATE TABLE book (
+    bid     NUMBER ,
+    title   VARCHAR2(20),
+    mid     NUMBER ,
+    CONSTRAINT pk_bid PRIMARY KEY(bid) ,
+    CONSTRAINT fk_mid FOREIGN KEY(mid) REFERENCES member(mid)
+);
+--增加正确数据
+INSERT INTO member(mid, name) VALUES (10, '张三') ;
+INSERT INTO member(mid, name) VALUES (20, '李四') ;
+INSERT INTO member(mid, name) VALUES (30, '王五') ;
+INSERT INTO book(bid, title, mid) VALUES (10001, 'Java', 10) ;
+INSERT INTO book(bid, title, mid) VALUES (10002, 'JSP', 10) ;
+INSERT INTO book(bid, title, mid) VALUES (10003, 'MVC', 10) ;
+INSERT INTO book(bid, title, mid) VALUES (20001, 'Oracle', 20) ;
+INSERT INTO book(bid, title, mid) VALUES (20002, 'DB2', 20) ;
+INSERT INTO book(bid, title, mid) VALUES (20003, 'Mongo', 20) ;
+INSERT INTO book(bid, title, mid) VALUES (30001, 'jQuery', 30) ;
+INSERT INTO book(bid, title, mid) VALUES (30002, 'AngularJS', 30) ;
+--增加错误的数据
+INSERT INTO book(bid, title, mid) VALUES (88888, '幽灵', 90) ;
+--限制一：删除表时，如果有外键，必须先删除子表，再删除父表
+--如果两张表有循环外键，需要强制删除
+DROP TABLE member CASCADE CONSTRAINT ;
+DROP TABLE book PURGE ;
+PURGE RECYCLEBIN ;
+--限制二：父表中作为子表关联的外键字段，必须设置为主键约束或者是唯一约束
+CREATE TABLE member (
+    mid     NUMBER ,
+    name    VARCHAR2(20) NOT NULL 
+) ;
+CREATE TABLE book (
+    bid     NUMBER ,
+    title   VARCHAR2(20),
+    mid     NUMBER ,
+    CONSTRAINT pk_bid PRIMARY KEY(bid) ,
+    CONSTRAINT fk_mid FOREIGN KEY(mid) REFERENCES member(mid)
+);
+--限制三：默认情况下，如果父表记录中有对应的子表记录，那么父表记录无法被删除
+--删除数据表
+DROP TABLE member PURGE ;
+DROP TABLE book PURGE ;
+--创建数据表
+CREATE TABLE member (
+    mid     NUMBER ,
+    name    VARCHAR2(20) NOT NULL ,
+    CONSTRAINT pk_mid PRIMARY KEY(mid)
+) ;
+CREATE TABLE book (
+    bid     NUMBER ,
+    title   VARCHAR2(20),
+    mid     NUMBER ,
+    CONSTRAINT pk_bid PRIMARY KEY(bid) ,
+    CONSTRAINT fk_mid FOREIGN KEY(mid) REFERENCES member(mid)
+);
+--增加正确数据
+INSERT INTO member(mid, name) VALUES (10, '张三') ;
+INSERT INTO member(mid, name) VALUES (20, '李四') ;
+INSERT INTO member(mid, name) VALUES (30, '王五') ;
+INSERT INTO book(bid, title, mid) VALUES (10001, 'Java', 10) ;
+INSERT INTO book(bid, title, mid) VALUES (10002, 'JSP', 10) ;
+INSERT INTO book(bid, title, mid) VALUES (10003, 'MVC', 10) ;
+INSERT INTO book(bid, title, mid) VALUES (20001, 'Oracle', 20) ;
+INSERT INTO book(bid, title, mid) VALUES (20002, 'DB2', 20) ;
+INSERT INTO book(bid, title, mid) VALUES (20003, 'Mongo', 20) ;
+INSERT INTO book(bid, title, mid) VALUES (30001, 'jQuery', 30) ;
+INSERT INTO book(bid, title, mid) VALUES (30002, 'AngularJS', 30) ;
+--删除member表中的数据
+DELETE FROM member WHERE mid = 10 ;
+--无法被删除，如果要删除，需要先删除子表数据后再删除
+DELETE FROM book WHERE mid = 10 ;
+DELETE FROM member WHERE mid = 10 ;
+
+--级联删除，父表数据一删除自动删除对应的子表里的数据
+--删除数据表
+DROP TABLE book PURGE ;
+DROP TABLE member PURGE ;
+--创建数据表
+CREATE TABLE member (
+    mid     NUMBER ,
+    name    VARCHAR2(20) NOT NULL ,
+    CONSTRAINT pk_mid PRIMARY KEY(mid)
+) ;
+CREATE TABLE book (
+    bid     NUMBER ,
+    title   VARCHAR2(20),
+    mid     NUMBER ,
+    CONSTRAINT pk_bid PRIMARY KEY(bid) ,
+    CONSTRAINT fk_mid FOREIGN KEY(mid) REFERENCES member(mid) ON DELETE CASCADE
+);
+--增加正确数据
+INSERT INTO member(mid, name) VALUES (10, '张三') ;
+INSERT INTO member(mid, name) VALUES (20, '李四') ;
+INSERT INTO member(mid, name) VALUES (30, '王五') ;
+INSERT INTO book(bid, title, mid) VALUES (10001, 'Java', 10) ;
+INSERT INTO book(bid, title, mid) VALUES (10002, 'JSP', 10) ;
+INSERT INTO book(bid, title, mid) VALUES (10003, 'MVC', 10) ;
+INSERT INTO book(bid, title, mid) VALUES (20001, 'Oracle', 20) ;
+INSERT INTO book(bid, title, mid) VALUES (20002, 'DB2', 20) ;
+INSERT INTO book(bid, title, mid) VALUES (20003, 'Mongo', 20) ;
+INSERT INTO book(bid, title, mid) VALUES (30001, 'jQuery', 30) ;
+INSERT INTO book(bid, title, mid) VALUES (30002, 'AngularJS', 30) ;
+--删除父表数据的同时自动删除对应的子表数据
+DELETE FROM member WHERE mid = 10 ;
+
+--级联更新，当父表数据被删除之后，子表对应的数据被设置为空
+--删除数据表
+DROP TABLE book PURGE ;
+DROP TABLE member PURGE ;
+--创建数据表
+CREATE TABLE member (
+    mid     NUMBER ,
+    name    VARCHAR2(20) NOT NULL ,
+    CONSTRAINT pk_mid PRIMARY KEY(mid)
+) ;
+CREATE TABLE book (
+    bid     NUMBER ,
+    title   VARCHAR2(20),
+    mid     NUMBER ,
+    CONSTRAINT pk_bid PRIMARY KEY(bid) ,
+    CONSTRAINT fk_mid FOREIGN KEY(mid) REFERENCES member(mid) ON DELETE SET NULL
+);
+--增加正确数据
+INSERT INTO member(mid, name) VALUES (10, '张三') ;
+INSERT INTO member(mid, name) VALUES (20, '李四') ;
+INSERT INTO member(mid, name) VALUES (30, '王五') ;
+INSERT INTO book(bid, title, mid) VALUES (10001, 'Java', 10) ;
+INSERT INTO book(bid, title, mid) VALUES (10002, 'JSP', 10) ;
+INSERT INTO book(bid, title, mid) VALUES (10003, 'MVC', 10) ;
+INSERT INTO book(bid, title, mid) VALUES (20001, 'Oracle', 20) ;
+INSERT INTO book(bid, title, mid) VALUES (20002, 'DB2', 20) ;
+INSERT INTO book(bid, title, mid) VALUES (20003, 'Mongo', 20) ;
+INSERT INTO book(bid, title, mid) VALUES (30001, 'jQuery', 30) ;
+INSERT INTO book(bid, title, mid) VALUES (30002, 'AngularJS', 30) ;
+--删除父表数据的同时自动删除对应的子表数据
+DELETE FROM member WHERE mid = 10 ;
+
+--约束修改

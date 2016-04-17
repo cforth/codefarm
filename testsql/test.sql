@@ -1138,4 +1138,38 @@ INSERT INTO book(bid, title, mid) VALUES (30002, 'AngularJS', 30) ;
 --删除父表数据的同时自动删除对应的子表数据
 DELETE FROM member WHERE mid = 10 ;
 
---约束修改
+--约束修改(不建议使用)
+--可以用在检查、唯一、主键、外键约束上，不能用在非空约束上
+--删除数据表
+DROP TABLE book PURGE ;
+DROP TABLE member PURGE ;
+--创建数据表
+CREATE TABLE member (
+    mid     NUMBER ,
+    name    VARCHAR2(20)
+) ;
+--增加数据
+INSERT INTO member(mid, name) VALUES (10, null) ;
+INSERT INTO member(mid, name) VALUES (10, '张三') ;
+INSERT INTO member(mid, name) VALUES (10, '李四') ;
+--为表中增加约束
+--ALTER TABLE 表名称 ADD CONSTRAINT 约束名称 约束类型(字段)[选项] ;
+DELETE FROM member WHERE name IN ('张三', '李四') ;
+ALTER TABLE member ADD CONSTRAINT pk_mid PRIMARY KEY(mid) ;
+--增加错误的数据
+INSERT INTO member(mid, name) VALUES (10, '张三') ;
+--增加非空约束(错误)
+ALTER TABLE member ADD CONSTRAINT nk_name NOT NULL(name) ;
+--如果要修改，只能通过修改表结构
+DELETE FROM member ;
+ALTER TABLE member MODIFY (name VARCHAR2(20) NOT NULL) ;
+--为表删除约束
+--ALTER TABLE 表名称 DROP CONSTRAINT 约束名称 ;
+ALTER TABLE member DROP CONSTRAINT pk_mid ;
+--删除非空约束
+ALTER TABLE member MODIFY (name VARCHAR2(20)) ;
+COL owner FOR A10 ;
+COL constraint_name FOR A20 ;
+COL table_name FOR A20 ;
+SELECT owner, constraint_name, table_name FROM user_constraints;
+ALTER TABLE member DROP CONSTRAINT SYS_C0011150;

@@ -1296,18 +1296,18 @@ SET AUTOTRACE ON
 SELECT * FROM scott.emp WHERE sal > 2000 ;
 
 --36、用户管理
---1、首先需要管理员操作
+--① 首先需要管理员操作
 CONN sys/change_on_install AS SYSDBA
---2、创建一个新的用户 dog / wangwang 
+--② 创建一个新的用户 dog / wangwang 
 CREATE USER dog IDENTIFIED BY wangwang ;
---3、为dog用户分配“CREATE SESSION” 权限；
+--③ 为dog用户分配“CREATE SESSION” 权限；
 GRANT CREATE SESSION TO dog ;
---4，继续为dog用户分配权限
+--④ 继续为dog用户分配权限
 GRANT CREATE TABLE TO dog ;
---5、为dog用户分配角色
+--⑤ 为dog用户分配角色
 GRANT CONNECT, RESOURCE TO dog ;
 --一个用户的权限或角色发生变化后，要重新登录
---6、用户管理
+--⑥ 用户管理
 --修改用户密码
 ALTER USER dog IDENTIFIED BY miaomiao ;
 --让密码失效，即登录之后立即需要修改密码
@@ -1316,10 +1316,47 @@ ALTER USER dog PASSWORD EXPIRE  ;
 ALTER USER dog ACCOUNT LOCK ;
 --解锁dog用户
 ALTER USER dog ACCOUNT UNLOCK ;
---7、将scott用户的操作对象权限授予其他用户
+--⑦ 将scott用户的操作对象权限授予其他用户
 GRANT SELECT, INSERT ON scott.emp TO dog ;
---8、回收dog的权限
+--⑧ 回收dog的权限
 REVOKE CONNECT, RESOURCE FROM dog ;
 REVOKE CREATE SESSION, CREATE TABLE FROM dog ;
---9、删除dog用户
+--⑨ 删除dog用户
 DROP USER dog CASCADE ;
+
+--37、数据库的备份
+--此类的导入和导出只适合于小数据的情况，只适合于你项目更换数据库的情况。
+--① 数据的导出
+--在磁盘上建立一个文件夹 e:\backup
+--通过命令行方式进入到此目录
+--输入exp命令，此命令是导出数据的操作
+--默认的导出文件名称为“EXPDAT.DMP”
+--② 数据的导入
+--通过命令行方式进入备份文件所在的文件夹之中
+--输入imp指令
+
+
+--数据库冷备份
+/*需要备份以下的内容：
+    控制文件：可以通过“v$controlfile”数据字典找到；
+    重做日志文件：可以通过“v$logfile”数据字典找到；
+    数据文件（表空间）：通过“v$datafile”数据字典找到；
+    核心配置文件（pfile）：SHOW PARAMETER pfile 找到；
+*/
+--如果是一些要求不严格的系统，可以采用此类方式完成
+--① 使用sys登陆
+CONN sys/change_on_install AS SYSDBA ;
+--② 找到控制文件
+SELECT * FROM v$controlfile ;
+--③ 找到重做日志文件
+SELECT * FROM v$logfile ;
+--④ 找到数据文件
+SELECT * FROM v$datafile ;
+--⑤ 找到核心配置文件
+SHOW PARAMETER pfile ;
+--⑥ 记录号以上所有文件的路径
+--⑦ 关闭数据库服务
+SHUTDOWN IMMEDIATE ;
+--⑧ 拷贝以上的文件到指定的备份文件目录
+--⑨ 重新启动数据库服务
+STARTUP

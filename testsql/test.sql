@@ -1173,3 +1173,153 @@ COL constraint_name FOR A20 ;
 COL table_name FOR A20 ;
 SELECT owner, constraint_name, table_name FROM user_constraints;
 ALTER TABLE member DROP CONSTRAINT SYS_C0011150;
+
+/*32，序列创建
+CREATE SEQUENCE 序列名称
+[INCREMENT BY 步长] [START WITH 开始值]
+[MAXVALUE 最大值 | NOMAXVALUE]
+[MINVALUE 最小值 | NOMINVALUE]
+[CYCLE | NOCYCLE]
+[CACHE 缓存数据 | NOCACHE] ;
+*/
+--创建序列
+CREATE SEQUENCE myseq ;
+--查询序列
+SELECT * FROM user_sequences ;
+--使用序列
+--序列对象.nextval
+SELECT myseq.nextval FROM dual ;
+--序列对象.currval
+SELECT myseq.currval FROM dual ;
+SELECT * FROM user_sequences ;
+--为表中某个字段进行自动编号，不能写在创建脚本里
+DROP TABLE mytab;
+CREATE TABLE mytab (
+    id      NUMBER,
+    name    VARCHAR2(20),
+    CONSTRAINT pk_id PRIMARY KEY (id)
+);
+INSERT INTO mytab(id,name) VALUES (myseq.nextval, 'xxx') ;
+INSERT INTO mytab(id,name) VALUES (myseq.nextval, 'xxx') ;
+INSERT INTO mytab(id,name) VALUES (myseq.nextval, 'xxx') ;
+SELECT * FROM mytab ;
+--修改序列步长为2
+DROP SEQUENCE myseq ;
+CREATE SEQUENCE myseq 
+INCREMENT BY 2 ;
+--修改序列的开始值
+DROP SEQUENCE myseq ;
+CREATE SEQUENCE myseq 
+INCREMENT BY 2 
+START WITH 10000000000000 ;
+SELECT TO_CHAR(myseq.nextval, 99999999999999999999) FROM dual ;
+--设置循环序列
+DROP SEQUENCE myseq ;
+CREATE SEQUENCE myseq 
+INCREMENT BY 2 
+START WITH 1
+MINVALUE 1
+MAXVALUE 9
+CYCLE 
+CACHE 3;
+
+--33、同义词(Oracle独有)
+--dual表是sys.dual表的一个别名
+--创建同义词
+--CREATE [PUBLIC] SYNONYM 同义词的名称 FOR 用户名.表名称 ;
+CONN sys/change_on_install AS SYSDBA
+CREATE SYNONYM myemp FOR scott.emp ;
+SELECT * FROM myemp ;
+--切换用户后，无法使用这个同义词
+CONN system/manager
+SELECT * FROM myemp ;
+--如果想给其他用户使用，需创建公共同义词
+CONN sys/change_on_install AS SYSDBA
+DROP SYNONYM myemp ;
+CREATE PUBLIC SYNONYM myemp FOR scott.emp ;
+CONN system/manager
+SELECT * FROM myemp ;
+
+--34、视图(建议创建只读视图)
+--视图就是包装了复杂查询的SQL语句对象
+--为scott用户授予创建视图的权限
+CONN sys/change_on_install AS SYSDBA
+GRANT CREATE VIEW TO scott ;
+CONN scott/tiger
+--创建视图
+--CREATE [OR REPLACE] VIEW 视图名称 AS 子查询 ;
+CREATE VIEW myview AS
+SELECT d.deptno, d.dname, d.loc, temp.count, temp.avg
+FROM dept d, (
+    SELECT deptno dno, COUNT(empno) count, AVG(sal) avg
+    FROM emp
+    GROUP BY deptno) temp
+WHERE d.deptno = temp.dno(+) ;
+--查看视图
+SELECT view_name, text_length, text  FROM user_views ;
+--使用视图
+SELECT * FROM myview ;
+--替换视图数据
+CREATE OR REPLACE VIEW myview AS
+SELECT * FROM emp WHERE deptno = 20 ;
+--更新视图的创建条件,影响到了emp表
+UPDATE myview SET deptno = 40 WHERE empno = 7369;
+--为了保护视图的创建条件不被更新，使用WITH CHECK OPTION
+ROLLBACK ;
+CREATE OR REPLACE VIEW myview AS
+SELECT * FROM emp WHERE deptno = 20 
+WITH CHECK OPTION ;
+UPDATE myview SET deptno = 40 WHERE empno = 7369;
+--更新视图的非创建条件,也影响到了emp表
+UPDATE myview SET sal = 99999 WHERE empno = 7369;
+--为了保护视图不被更新，使用WITH READ ONLY
+ROLLBACK ;
+CREATE OR REPLACE VIEW myview AS
+SELECT * FROM emp WHERE deptno = 20 
+WITH READ ONLY ;
+UPDATE myview SET sal = 99999 WHERE empno = 7369;
+--删除视图
+DROP VIEW myview ;
+
+--35、索引的基本概念
+--打开跟踪器
+CONN sys/change_on_install AS SYSDBA
+SET AUTOTRACE ON
+--发出查询指令
+SELECT * FROM scott.emp WHERE sal > 2000 ;
+CONN scott/tiger
+--创建索引
+CREATE INDEX emp_sal_ind ON scott.emp(sal) ;
+--加入索引后，不再执行全表扫描
+CONN sys/change_on_install AS SYSDBA
+SET AUTOTRACE ON
+SELECT * FROM scott.emp WHERE sal > 2000 ;
+
+--36、用户管理
+--1、首先需要管理员操作
+CONN sys/change_on_install AS SYSDBA
+--2、创建一个新的用户 dog / wangwang 
+CREATE USER dog IDENTIFIED BY wangwang ;
+--3、为dog用户分配“CREATE SESSION” 权限；
+GRANT CREATE SESSION TO dog ;
+--4，继续为dog用户分配权限
+GRANT CREATE TABLE TO dog ;
+--5、为dog用户分配角色
+GRANT CONNECT, RESOURCE TO dog ;
+--一个用户的权限或角色发生变化后，要重新登录
+--6、用户管理
+--修改用户密码
+ALTER USER dog IDENTIFIED BY miaomiao ;
+--让密码失效，即登录之后立即需要修改密码
+ALTER USER dog PASSWORD EXPIRE  ;
+--锁定dog用户
+ALTER USER dog ACCOUNT LOCK ;
+--解锁dog用户
+ALTER USER dog ACCOUNT UNLOCK ;
+--7、将scott用户的操作对象权限授予其他用户
+GRANT SELECT, INSERT ON scott.emp TO dog ;
+--8、回收dog的权限
+REVOKE CONNECT, RESOURCE FROM dog ;
+REVOKE CREATE SESSION, CREATE TABLE FROM dog ;
+--9、删除dog用户
+DROP USER dog CASCADE ;

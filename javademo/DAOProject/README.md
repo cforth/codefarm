@@ -90,3 +90,16 @@
 
 [定义IEmpDAO接口](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/IEmpDAO.java)
 
+##2、数据层实现类
+
+数据层需要被业务层调用，数据层需要进行数据库的执行（PreparedStatement），由于在开发之中一个业务层操作需要执行多个数据层的调用，所以数据库的打开与关闭操作应该由业务层控制比较合理。
+
+所有的数据层实现类要求保存在dao.impl子包下。
+
+[EmpDAOImpl子类](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/EmpDAOImpl.java)
+
+子类里面唯一需要注意的就是构造方法一定要接收一个Connection的接口对象。
+
+目前整个代码结构如下图
+
+![数据层代码结构](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/EmpDAO.jpg)

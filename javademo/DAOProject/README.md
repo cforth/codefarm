@@ -66,3 +66,27 @@
 [简单Java类 Emp](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/Emp.java)
 
 不管有多少张表，只要是实体表，那么一定要写简单Java类，而且不要试图想着一次性将所有的表都转换到位。
+
+#三、开发数据层
+
+数据层最终是交给业务层进行调用的，所以业务层必须知道数据层的执行标准，即：业务层需要明确的知道数据层的操作方法， 但是不需要知道它的具体实现。
+
+##1、开发数据层操作标准
+
+不同层之间要进行访问，必须提供有接口，以定义操作标准，那么对于数据层也是一样的。因为数据层最终是要交给业务层执行，所以需要先定义数据层的接口。
+
+对于数据层的接口，给出如下的开发要求：
+
+1. 数据层既然是进行数据操作的，就将其保存在dao包下；  
+
+2. 既然不同的数据表操作有可能使用不同的数据层开发，那么就针对于数据表进行命名；  
+	* emp表，那么数据层的接口就应该定义为IEmpDAO；  
+
+3. 对于整个数据层的开发严格来讲就只有两类功能；  
+	* 数据更新：建议它的操作方法以doXxx()的形式命名，例如：doCreate()、doUpdata()、doRemove()；  
+	* 数据查询：对于查询分为两种形式：  
+		* 查询表中数以findXxx()形式命名，例如：findById()、findByName()、findAll();  
+		* 统计表中的数据以getXxx()形式命名，例如getAllCount()；  
+
+[定义IEmpDAO接口](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/IEmpDAO.java)
+

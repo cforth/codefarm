@@ -24,3 +24,5 @@ Java代码练习
 11. [JDK1.8中的MapReduce](https://github.com/cforth/codefarm/blob/master/javademo/TestMapReduce.java)
 
 12. [数据库编程JDBC: Statement(不安全)、](https://github.com/cforth/codefarm/blob/master/javademo/TestJDBC.java)[PreparedStatement](https://github.com/cforth/codefarm/blob/master/javademo/TestPreparedStatement.java)、[批处理](https://github.com/cforth/codefarm/blob/master/javademo/TestBatch.java)
+
+13. [DAO设计模式](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/README.md)

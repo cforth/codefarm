@@ -35,7 +35,7 @@
 
 本次操作己任要进行数据库的开发，那么必须进行数据库的连接操作与关闭才能正常操作，几乎所有的数据库连接操作都固定的步骤，那么可以单独定义一个DatabaseConnection类，这个类主要负责数据库连接对象的取得以及数据库的关闭操作。
 
-[数据库连接类 DatabaseConnection]()
+[数据库连接类 DatabaseConnection](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/DatabaseConnection.java)
 
 整个的操作过程之中，DatabaseConnection只是无条件的提供数据库连接，而有多少个线程需要找到此类连接对象，它都不关心。
 

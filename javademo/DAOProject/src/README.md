@@ -202,3 +202,14 @@
 [定义IDeptDAO子接口](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/dao/IDeptDAO.java)
 
 3、定义[DeptDAOImpl子类](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/dao/impl/DeptDAOImpl.java)
+
+4、修改DAOFactory类，增加新的接口对象取得方法;
+
+5、开发[IDeptService](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/service/IDeptService.java)接口；
+
+6、实现[DeptServiceImpl子类](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/service/impl/DeptServiceImpl.java);
+
+7、修改服务层工厂类
+
+在使用之前还是进行[一些测试](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/test/junit/IDeptServiceTest.java)。
+

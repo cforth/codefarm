@@ -87,6 +87,7 @@ public class DeptDAOImpl implements IDeptDAO {
 			vo.setDeptno(rs.getInt(1));
 			vo.setDname(rs.getString(2));
 			vo.setLoc(rs.getString(3));
+			all.add(vo);
 		}
 		return all;
 	}

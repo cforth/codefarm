@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import org.junit.Test;
@@ -15,20 +14,16 @@ import com.cfxyz.vo.Emp;
 import junit.framework.TestCase;
 
 public class IEmpServiceTest {
-	private static int empno ;
-	static {
-		empno = new Random().nextInt(10000); //动态生成一个empno的数据
-	}
 
 	@Test
 	public void testInsert() {
 		Emp vo = new Emp();
-		vo.setEmpno(empno);
-		vo.setEname("名字");
-		vo.setJob("职位");
+		vo.setEmpno(8889);
+		vo.setEname("CF");
+		vo.setJob("科学家");
 		vo.setHiredate(new Date());
-		vo.setSal(1000.0);
-		vo.setComm(500.0);
+		vo.setSal(9000.0);
+		vo.setComm(5000.0);
 		try {
 			TestCase.assertTrue(ServiceFactory.getIEmpServiceInstance().insert(vo));
 		} catch (Exception e) {

@@ -165,3 +165,40 @@
 首先要选择测试的类或接口，现在选择好IEmpService接口进行测试。
 
 [测试代码](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/test/junit/IEmpServiceTest.java)
+
+此时测试就正常通过了。
+
+#六、实现部门操作
+
+要求使用部门表（dept）实现如下的功能：
+
+1. 【业务层】进行部门数据的添加；  
+	* 【数据层】判断要增加的部门编号是否存在，如果不存在则可以添加；   
+	* 【数据层】实现部门数据的保存；  
+
+2. 【业务层】进行部门数据的修改；  
+	* 【数据层】进行部门数据的修改；  
+
+3. 【业务层】进行部门数据的删除；  
+	* 【数据层】进行部门数据的删除；  
+	
+4. 【业务层】进行部门数据的全部查询；  
+	* 【数据层】查询全部；  
+
+5. 【业务层】可以根据部门编号查询一个部门完整信息；  
+	* 【数据层】根据编号查询。  
+	
+	
+1、依然要定义[Dept.java类](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/vo/Dept.java)
+
+2、定义IDeptDAO接口
+
+几乎所有的数据表都应该具备有基础CRUD功能（增加、修改全部、删除数据、根据编号查询、查询全部、分页显示、数据统计），那么这些功能的方法每个接口都要重复定义。
+
+在整个DAO接口定义的过程之中，不同的表区在于：VO类、主键类型。为了消除重复，使用泛型接口的继承操作。
+
+[IDAO泛型接口](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/dao/IDAO.java)
+
+[定义IDeptDAO子接口](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/dao/IDeptDAO.java)
+
+3、定义[DeptDAOImpl子类](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/dao/impl/DeptDAOImpl.java)

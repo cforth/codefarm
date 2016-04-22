@@ -131,3 +131,37 @@
 [定义EmpServiceImpl子类](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/service/impl/EmpServiceImpl.java)
 
 不同层之间的访问依靠的是工厂类和接口进行操作。
+
+##3、定义业务层工厂类 -- ServiceFactory
+
+业务层最终依然需要被其它的层所使用，所以需要为其定义工厂类，该类也放在factory子包下。如果从实际的开发来讲，业务层应该分为两种：
+
+1. 前台业务逻辑：可以保存在service.front包中，工厂类：ServiceFrontFactory;
+
+2. 后台业务逻辑：可以保存在service.back包中，工厂类：ServiceBackFactory。
+
+[定义ServiceFactory](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/factory/ServiceFactory.java)
+
+在实际的编写之中，子类永远都是不可见的，同时在整个操作里面，控制层完全看不见数据库的任何操作（没有任何JDBC代码）。
+
+#五、代码测试
+
+因为最终的业务层是需要用户去调用，所以测试分为两种。
+
+##1、调用测试
+
+安装传统方式产生对象，而后调用里面的方法进行操作。保存在test子包内。
+
+1. [测试增加操作](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/test/TestEmpInsert.java)
+
+2. [测试分页查询功能](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/test/TestEmpSplit.java)
+
+整个的操作流程客户端的调用非常容易，不需要涉及到具体的数据存储细节。
+
+##2、利用junit进行测试
+
+对于这种业务的测试，使用junit是最好的选择。
+
+首先要选择测试的类或接口，现在选择好IEmpService接口进行测试。
+
+[测试代码](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/test/junit/IEmpServiceTest.java)

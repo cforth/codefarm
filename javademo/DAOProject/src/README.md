@@ -35,7 +35,7 @@
 
 本次操作己任要进行数据库的开发，那么必须进行数据库的连接操作与关闭才能正常操作，几乎所有的数据库连接操作都固定的步骤，那么可以单独定义一个DatabaseConnection类，这个类主要负责数据库连接对象的取得以及数据库的关闭操作。
 
-[数据库连接类 DatabaseConnection](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/DatabaseConnection.java)
+[数据库连接类 DatabaseConnection](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/dbc/DatabaseConnection.java)
 
 整个的操作过程之中，DatabaseConnection只是无条件的提供数据库连接，而有多少个线程需要找到此类连接对象，它都不关心。
 
@@ -63,7 +63,7 @@
 
 将所有的简单Java类保存在vo包中。
 
-[简单Java类 Emp](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/Emp.java)
+[简单Java类 Emp](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/vo/Emp.java)
 
 不管有多少张表，只要是实体表，那么一定要写简单Java类，而且不要试图想着一次性将所有的表都转换到位。
 
@@ -88,7 +88,7 @@
 		* 查询表中数以findXxx()形式命名，例如：findById()、findByName()、findAll();  
 		* 统计表中的数据以getXxx()形式命名，例如getAllCount()；  
 
-[定义IEmpDAO接口](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/IEmpDAO.java)
+[定义IEmpDAO接口](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/dao/IEmpDAO.java)
 
 ##2、数据层实现类
 
@@ -96,19 +96,15 @@
 
 所有的数据层实现类要求保存在dao.impl子包下。
 
-[EmpDAOImpl子类](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/EmpDAOImpl.java)
+[EmpDAOImpl子类](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/dao/impl/EmpDAOImpl.java)
 
 子类里面唯一需要注意的就是构造方法一定要接收一个Connection的接口对象。
-
-目前整个代码结构如下图
-
-![数据层代码结构](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/EmpDAO.jpg)
 
 ##3、定义数据层工厂类 -- DAOFactory
 
 业务层要想进行数据层的调用，那么必须要取得IEmpDAO接口对象，但是不同层之间如果要想取得接口对象实例，需要使用工厂设计模式，这个工厂类保存在factory子包下。
 
-[定义工厂类](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/DAOFactory.java)
+[定义工厂类](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/factory/DAOFactory.java)
 
 #四、开发业务层
 
@@ -118,7 +114,7 @@
 
 业务层也称为Service层，既然描述的是emp表的操作，所以名称为IEmpService，保存在service子包下，但是对于业务层的方法定义并没有明确要求，建议还是使用统一名称：
 
-[定义IEmpService操作标准](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/IEmpService.java)
+[定义IEmpService操作标准](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/service/IEmpService.java)
 
 本接口中方法的设计完全符合之前的分析过程
 
@@ -132,6 +128,6 @@
 
 业务层的实现类保存在dao.impl子包中。
 
-[定义EmpServiceImpl子类](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/EmpServiceImpl.java)
+[定义EmpServiceImpl子类](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src/com/cfxyz/service/impl/EmpServiceImpl.java)
 
 不同层之间的访问依靠的是工厂类和接口进行操作。

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/my.css">
+    <script type="text/javascript">
+        function validateEmail() {
+            var emailElement = document.getElementById("email") ;
+            var msgElement = document.getElementById("emailMsg") ;
+            // /^正则$/.text(要检测的数据)
+            if(/^\w+@\w+\.\w+$/.test(emailElement.value)){
+                emailElement.className = "right";
+                msgElement.innerHTML = "email输入正确！";
+                return true;
+            } else {
+                emailElement.className = "wrong";
+                msgElement.innerHTML = "email输入错误！";
+                return false;
+            }
+        }
+
+        function validate() {
+            return validateEmail();
+        }
+    </script>
+</head>
+<body>
+    <form action="show.html" method="post" onsubmit="return validate()">
+        请输入Email地址：<input type="text" name="email" id="email" class="init" onblur="validateEmail()"><span id="emailMsg"></span></input><br/>
+        <button type="submit">显示内容</button>
+    </form>
+</body>
+</html> 

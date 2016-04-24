@@ -38,3 +38,6 @@ C语言和Java语言练习代码。
 
 ###[testsql](https://github.com/cforth/codefarm/tree/master/testsql)
 学习Oracle数据库时的SQL语句。
+
+###[jsdemo](https://github.com/cforth/codefarm/tree/master/jsdemo)
+学习JavaScript时的一些代码模型。

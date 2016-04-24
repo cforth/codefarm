@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/my.css">
+    <script type="text/javascript">
+        function validateNote() {
+            var note = document.getElementById("note");
+            var msg = document.getElementById("noteMsg");
+            //msg.innerHTML = "输入数据长度：" + note.value.length;
+            var len = note.value.length; //取得输入长度
+            if(len <= 20) {
+                msg.innerHTML = "还可以输入" + (20-len) + "个长度的数据。";
+                document.getElementById("sub").disabled = false;
+            } else {
+                msg.innerHTML = "<font color='red'>输入的数据内容过大！</font>";
+                document.getElementById("sub").disabled = true;
+            }
+        }
+    </script>
+</head>
+<body>
+    <form action = "show.html" method="post">
+        描述：<textarea id="note" name="note" cols="50" rows="10" onkeydown="validateNote()">hello</textarea><br>
+        <span id="noteMsg"></span><br>
+        <button type="submit" id="sub" name="sub">保存</button>
+    </form>
+</body>
+</html>

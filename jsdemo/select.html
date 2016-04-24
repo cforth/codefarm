@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/my.css">
+    <script type="text/javascript">
+        function showCity(city) {
+            alert("家乡是：" + city) ;
+        }
+    </script>
+</head>
+<body>
+    你的家乡：  <select name="city" id="city" onchange="showCity(this.value)">
+                    <option value="北京-BJ">北京</option>
+                    <option value="上海-SH">上海</option>
+                    <option value="南京-NJ">南京</option>
+                    <option value="天津-TJ">天津</option>
+                </select><br>
+</body>
+</html> 

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>雇员管理操作</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/cfxyz.css">
+    <script type="text/javascript" src="js/cfxyz.js"></script>
+    <script type="text/javascript" src="js/emp.js"></script>
+</head>
+<body>
+    <form action="show.html" method="post" onsubmit="return validate()">
+    	<table border="1px solid" cellpadding="5" cellspacing="0" width="100%">
+            <tr>
+                <th colspan="3">雇员管理操作</td>
+            </tr>
+    		<tr>
+    			<td width="20%">雇员编号：</td>
+        		<td width="40%"><input type="text" name="empno" id="empno" class="init" onblur="validateEmpno()"></input></td>
+        		<td width="40%"><span id="empnoMsg"></span></td>
+        	</tr>
+        	<tr>
+        		<td width="20%">雇员姓名：</td>
+        		<td width="40%"><input type="text" name="ename" id="ename" class="init" onblur="validateEname()"></input></td>
+        		<td width="40%"><span id="enameMsg"></span></td>
+        	</tr>
+        	<tr>
+        		<td width="20%">雇员职位：</td>
+        		<td width="40%"><input type="text" name="job" id="job" class="init" onblur="validateJob()"></input></td>
+        		<td width="40%"><span id="jobMsg"></span></td>
+        	</tr>
+        	<tr>
+        		<td width="20%">雇员日期：</td>
+        		<td width="40%"><input type="text" name="hiredate" id="hiredate" class="init" onblur="validateHiredate()"></input></td>
+        		<td width="40%"><span id="hiredateMsg"></span></td>
+        	</tr>
+        	<tr>
+        		<td width="20%">雇员工资：</td>
+        		<td width="40%"><input type="text" name="sal" id="sal" class="init" onblur="validateSal()"></input></td>
+        		<td width="40%" width="40%"><span id="salMsg"></span></td>
+        	</tr>
+        	<tr>
+        		<td width="20%">佣金：</td>
+        		<td width="40%"><input type="text" name="comm" id="comm" class="init" onblur="validateComm()"></input></td>
+        		<td width="40%"><span id="commMsg"></span></td>
+        	</tr>
+        </table>
+        <button type="submit">提交内容</button>
+    </form>
+</body>
+</html>

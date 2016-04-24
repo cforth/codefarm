@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/my.css">
+    <script type="text/javascript">
+        function showInst() {
+            var inst = document.all("inst"); //多个元素对象
+            var str = "选择的是：" ;
+            for(var x = 0; x < inst.length; x++ ) {
+                if(inst[x].checked) {
+                    str += inst[x].value + "、";
+                }
+            }
+            alert(str);
+        }
+
+        function selectAll() {
+            var sela = document.getElementById("sela");
+            var inst = document.all("inst");
+            for(var x = 0; x < inst.length; x++ ) {
+                inst[x].checked = sela.checked;
+            }
+        }
+    </script>
+</head>
+<body>
+    请选择：<br/>
+     <input type="checkbox" name="inst" id="inst" value="知乎"/>知乎<br/>
+    <input type="checkbox" name="inst" id="inst" value="果壳"/>果壳<br/>
+    <input type="checkbox" name="inst" id="inst" value="伯乐在线"/>伯乐在线<br/>
+    <input type="checkbox" name="inst" id="inst" value="维基百科"/>维基百科<br/>
+    <input type="checkbox" name="inst" id="inst" value="SegmentFault"/>SegmentFault<br/>
+    <input type="checkbox" name="inst" id="inst" value="21世纪网" />21世纪网<br/><br/><br/><br/>
+    <input type="checkbox" name="sela" id="sela" onclick="selectAll()" />全选
+    <button onclick="showInst()">显示</button>
+</body>
+</html> 

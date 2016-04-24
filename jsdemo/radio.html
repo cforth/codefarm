@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/my.css">
+    <script type="text/javascript">
+        function showSex() {
+            var sex = document.all("sex"); //多个元素对象
+            if(sex[0].checked) {
+                alert("性别是：" + sex[0].value);
+            }
+            if(sex[1].checked) {
+                alert("性别是：" + sex[1].value);
+            }
+        }
+    </script>
+</head>
+<body>
+    请选择性别：
+    <input type="radio" name="sex" id="sex" value="男" checked>男</input>
+    &nbsp;
+    <input type="radio" name="sex" id="sex" value="女">女</input>
+    <br/>
+    <button onclick="showSex()">显示性别</button>
+</body>
+</html> 

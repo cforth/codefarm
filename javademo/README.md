@@ -26,3 +26,5 @@ Java代码练习
 12. [数据库编程JDBC: Statement(不安全)、](https://github.com/cforth/codefarm/blob/master/javademo/TestJDBC.java)[PreparedStatement](https://github.com/cforth/codefarm/blob/master/javademo/TestPreparedStatement.java)、[批处理](https://github.com/cforth/codefarm/blob/master/javademo/TestBatch.java)
 
 13. [DAO设计模式](https://github.com/cforth/codefarm/blob/master/javademo/DAOProject/src)
+
+14. [在eclipse上的练习](https://github.com/cforth/codefarm/blob/master/javademo/MyProject)

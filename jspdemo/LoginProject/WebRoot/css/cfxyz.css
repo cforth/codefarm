@@ -1,0 +1,19 @@
+.init {
+    background:#F5F5F5;
+    font-weight:bold;
+    color:#000000;
+}
+
+.wrong {
+    background: #F5F5F5;
+    font-weight: bold;
+    border: 1px #FF0000 solid ;
+    color:#000000;
+}
+
+.right {
+    background: #F5F5F5;
+    font-weight: bold;
+    border: 1px #00FF00 solid ;
+    color:#000000;
+}

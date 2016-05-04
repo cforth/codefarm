@@ -41,3 +41,6 @@ C语言和Java语言练习代码。
 
 ###[jsdemo](https://github.com/cforth/codefarm/tree/master/jsdemo)
 学习JavaScript时的一些代码模型。
+
+###[jspdemo](https://github.com/cforth/codefarm/tree/master/jspdemo)
+学习JSP时的练习项目。

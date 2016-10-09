@@ -3,21 +3,30 @@
 #include <map>
 #include <string>
 using namespace std;
-
-ostream& print(ostream &out, map<string, vector<int>> &hanoi) {
-	out << "\n" << endl;
-	for(auto h : hanoi) {
-		cout << h.first << ": "; 
-		for(auto v : h.second) {
-			out << v << " ";
+ 
+ostream& print(ostream &out, map<string, vector<int>> &hanoi, int depth) {
+	for(int i = depth - 1; i >= 0; --i) {
+		for(auto h : hanoi) {
+			if((int)(h.second.size()) > i) {
+				out << h.second[i] ; 
+			} else {
+				out << " ";
+			}
+			out << "\t"; 
 		}
-		out << "\n";
+		out << endl;
 	}
+	
+	for(auto h : hanoi) {
+		out << h.first << "\t"; 
+	}
+	out << endl;
+
 	return out;
 }
 
 istream& read_cmd(istream &in, string &from, string &to) {
-	cout << "Your move:" << endl;
+	cout << "Your move:";
 	in >> from >> to ;
 	return in;
 }
@@ -41,14 +50,15 @@ bool check(vector<int> &c, int num) {
 
 int main() {	
 	map<string, vector<int>> hanoi = {{"a", {3,2,1}}, {"b", {}}, {"c", {}}};
-	print(cout, hanoi) << endl;
+	int depth = 3;
+	print(cout, hanoi, depth) << endl;
 	
 	int win_num = hanoi["a"][0];
 	string from, to;
 	while(read_cmd(cin, from, to)) {
 		if(hanoi.count(from) != 0 && hanoi.count(to) != 0) {
 			move(hanoi[from], hanoi[to]);
-			print(cout, hanoi) << endl;
+			print(cout, hanoi, depth) << endl;
 			if (check(hanoi["c"], win_num)) return 0;
 		} else {
 			cout << "Wrong move!!!" << endl;

@@ -44,3 +44,6 @@ C语言和Java语言练习代码。
 
 ###[jspdemo](https://github.com/cforth/codefarm/tree/master/jspdemo)
 学习JSP时的练习项目。
+
+###[idea-365](https://github.com/cforth/codefarm/tree/master/idea-365)
+idea-365

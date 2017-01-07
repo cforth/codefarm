@@ -5,7 +5,7 @@ using std::cin;
 using std::endl;
 using std::min;
 
-#define MAX_STRING_LEN 5
+#define MAX_STRING_LEN 10
 
 int EditDistance(char *src, char *dest)
 {

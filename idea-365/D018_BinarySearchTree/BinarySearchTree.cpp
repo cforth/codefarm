@@ -12,7 +12,11 @@ int main() {
 	for(int x = 0; x < 7; ++x) {
 		int_tree.insert(num[x]);
 	}
-	int_tree.inorderTraverse([](int x){cout << x << " ";});
+	int_tree.inorderWalk([](int x){cout << x << " ";});
+	cout << endl;
+	int_tree.remove(6);
+	int_tree.remove(3);
+	int_tree.inorderWalk([](int x){cout << x << " ";});
 	cout << endl;
 	
 	BinaryTree<float> float_tree;
@@ -20,7 +24,7 @@ int main() {
 	for(int x = 0; x < 7; ++x) {
 		float_tree.insert(num2[x]);
 	}
-	float_tree.inorderTraverse([](double x){cout << x << " | ";});
+	float_tree.inorderWalk([](double x){cout << x << " | ";});
 	cout << endl;
 	
 	BinaryTree<string> str_tree;
@@ -28,6 +32,13 @@ int main() {
 	for(int x = 0; x < 5; ++x) {
 		str_tree.insert(num3[x]);
 	}
-	str_tree.inorderTraverse([](string x){cout << x << " ";});
+	str_tree.inorderWalk([](string x){cout << x << " ";});
 	cout << endl;
+	
+	string s = "bca";
+	auto res = str_tree.search(s);
+	if(res)
+		cout << res->key << endl;
+	else
+		cout << "no key!!" << endl;
 }

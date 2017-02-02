@@ -15,9 +15,20 @@ int main() {
 		Node *z = new Node{RED,num[x],rbt->nil,rbt->nil,rbt->nil};
 		rb_insert(rbt, z);
 	}
-	
 	cout << "root->key: " << rbt->root->key << endl;
 	inorder_traverse(rbt, rbt->root);
+	
+	cout << "delete test:" << endl;
+	for(int x = 1; x <= 9; ++x) {
+		cout << "delete: " << x << endl;
+		Node *n = rb_search(rbt, x);
+		if(n != rbt->nil) {
+			rb_delete(rbt, n);
+			cout << "root->key: " << rbt->root->key << endl;
+			inorder_traverse(rbt, rbt->root);
+		}
+		cout << endl;
+	}
 
 	return 0;
 }

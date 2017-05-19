@@ -1,5 +1,6 @@
 import os
 import struct
+import hashlib
 from Crypto.Cipher import DES
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
@@ -71,6 +72,68 @@ class DESCrypto(object):
                 count -= 1
                 with open(output_file_path, 'ab') as out:
                     out.write(des_bytes)
+
+
+# AES加密解密类
+class AESCrypto(object):
+    # 初始化时设置好密码
+    def __init__(self, key):
+        md5 = hashlib.md5()
+        md5.update(key.encode('utf-8'))
+        self.key = md5.digest()
+
+    # 加密文件，默认每次读取block_size
+    def encrypt(self, file_path, output_file_path, block_size=32768):
+        if os.path.exists(output_file_path):
+            print('output_file exits!')
+            return
+        aes = AES.new(self.key, AES.MODE_ECB)
+        # 如果文件长度不是16字节的整数倍则需要在尾部填充
+        file_len = os.path.getsize(file_path)
+        pad_num = 0
+        if file_len % 16 != 0:
+            pad_num = 16 - file_len % 16
+        # 填充数转为二进制
+        pad = struct.pack('B', pad_num)
+        with open(output_file_path, 'wb') as out:
+            # 二进制方式写入第一个字节，这个数字用来标识尾部填充的个数
+            out.write(pad)
+        with open(file_path, 'rb') as f:
+            while True:
+                data = f.read(block_size)
+                data_len = len(data)
+                if not data:
+                    break
+                while data_len % 16 != 0:
+                    data += b'0'
+                    data_len = len(data)
+                with open(output_file_path, 'ab') as out:
+                    out.write(aes.encrypt(data))
+
+    # 解密文件，默认每次读取block_size
+    def decrypt(self, file_path, output_file_path, block_size=32768):
+        if os.path.exists(output_file_path):
+            print('output_file exits!')
+            return
+        aes = AES.new(self.key, AES.MODE_ECB)
+        with open(file_path, 'rb') as f:
+            pad_byte = f.read(1)
+            pad_num, = struct.unpack('B', pad_byte)
+            file_len = os.path.getsize(file_path)
+            count = (file_len - 1) // block_size
+            left = (file_len - 1) % block_size
+            while True:
+                data = f.read(block_size)
+                aes_bytes = aes.decrypt(data)
+                if count == 1 and left == 0 and pad_num != 0:
+                    aes_bytes = aes_bytes[:-pad_num]
+                elif count == 0 and left != 0 and pad_num != 0:
+                    aes_bytes = aes_bytes[:-pad_num]
+                elif count < 0:
+                    break
+                count -= 1
+                with open(output_file_path, 'ab') as out:
+                    out.write(aes_bytes)
 
 
 # RSA加密解密类

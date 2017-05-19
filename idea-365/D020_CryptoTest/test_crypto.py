@@ -11,6 +11,15 @@ if True:
         print("same files!")
 
 if True:
+    # 使用AES加密解密的演示
+    my_aes = AESCrypto('thisisverylongpasswordtotestaescrypto')
+    my_aes.encrypt('f:/test.jpg', 'f:/test.jpg.aes')
+    my_aes.decrypt('f:/test.jpg.aes', 'f:/test2.jpg')
+
+    if filecmp.cmp('f:/test.jpg', 'f:/test2.jpg'):
+        print("same files!")
+
+if True:
     # 使用RSA加密解密的演示
     my_rsa = RSACrypto()
 

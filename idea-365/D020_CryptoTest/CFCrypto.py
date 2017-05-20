@@ -13,127 +13,127 @@ from Crypto.Cipher import AES, PKCS1_OAEP
 class DESCrypto(object):
     # 初始化时设置好密码
     def __init__(self, key):
-        if len(key) == 0 or len(key) > 8:
+        if len(key) > 8:
             raise ValueError('Password\'s length more than 8!')
         # 密码不足8个字节将密码补足为8个字节
         while len(key) < 8:
             key += ' '
         self.key = key.encode('utf-8')
 
-    # 加密文件，默认每次读取block_size
-    def encrypt(self, file_path, output_file_path, block_size=32768):
-        if os.path.exists(output_file_path):
-            print('output_file exits!')
-            return
+    # 加密文件，分块加密文件，每次加密buffer_size*8个字节
+    def encrypt(self, file_path, output_file_path, buffer_size=4096):
+        # 对大文件进行分块加密，每次加密block_size个字节
+        block_size = buffer_size * 8
+        # 使用ECB模式进行加密
         des = DES.new(self.key, DES.MODE_ECB)
-        # 如果文件长度不是8字节的整数倍则需要在尾部填充
-        file_len = os.path.getsize(file_path)
-        pad_num = 0
-        if file_len % 8 != 0:
-            pad_num = 8 - file_len % 8
-        # 填充数转为二进制
-        pad = struct.pack('B', pad_num)
         with open(output_file_path, 'wb') as out:
-            # 二进制方式写入第一个字节，这个数字用来标识尾部填充的个数
-            out.write(pad)
+            # 如果文件长度不是8字节的整数倍则需要在尾部填充
+            file_len = os.path.getsize(file_path)
+            pad_num = 0 if file_len % 8 == 0 else 8 - file_len % 8
+            # 填充数转为二进制
+            pad_byte = struct.pack('B', pad_num)
+            # 二进制方式写入第一个字节，这个数字用来标识尾部填充字节的个数
+            out.write(pad_byte)
         with open(file_path, 'rb') as f:
             while True:
                 data = f.read(block_size)
-                data_len = len(data)
                 if not data:
                     break
-                while data_len % 8 != 0:
+                # 读取最后一个文件块时，对尾部填充使之为8字节的整数倍
+                while len(data) % 8 != 0:
                     data += b'0'
-                    data_len = len(data)
                 with open(output_file_path, 'ab') as out:
                     out.write(des.encrypt(data))
 
-    # 解密文件，默认每次读取block_size
-    def decrypt(self, file_path, output_file_path, block_size=32768):
-        if os.path.exists(output_file_path):
-            print('output_file exits!')
-            return
+    # 解密文件，分块解密文件，每次加密buffer_size*8个字节
+    def decrypt(self, file_path, output_file_path, buffer_size=4096):
+        # 对大文件进行分块解密，每次解密block_size个字节
+        block_size = buffer_size * 8
+        # 使用ECB模式进行解密
         des = DES.new(self.key, DES.MODE_ECB)
         with open(file_path, 'rb') as f:
             pad_byte = f.read(1)
             pad_num, = struct.unpack('B', pad_byte)
-            file_len = os.path.getsize(file_path)
-            count = (file_len - 1) // block_size
-            left = (file_len - 1) % block_size
+            # 文件长度要减掉第一个标识字节
+            file_len = os.path.getsize(file_path) - 1
+            # 计算需处理的文件块数count，最后一个文件块的大小left
+            count = file_len // block_size
+            left = file_len % block_size
             while True:
                 data = f.read(block_size)
-                des_bytes = des.decrypt(data)
+                # 对最后一个文件块进行分情况处理，删除尾部填充的字节
+                file_bytes = des.decrypt(data)
                 if count == 1 and left == 0 and pad_num != 0:
-                    des_bytes = des_bytes[:-pad_num]
+                    file_bytes = file_bytes[:-pad_num]
                 elif count == 0 and left != 0 and pad_num != 0:
-                    des_bytes = des_bytes[:-pad_num]
+                    file_bytes = file_bytes[:-pad_num]
                 elif count < 0:
                     break
                 count -= 1
                 with open(output_file_path, 'ab') as out:
-                    out.write(des_bytes)
+                    out.write(file_bytes)
 
 
 # AES加密解密类
 class AESCrypto(object):
     # 初始化时设置好密码
     def __init__(self, key):
+        # 将密码转为md5值作为密钥
         md5 = hashlib.md5()
         md5.update(key.encode('utf-8'))
         self.key = md5.digest()
 
-    # 加密文件，默认每次读取block_size
-    def encrypt(self, file_path, output_file_path, block_size=32768):
-        if os.path.exists(output_file_path):
-            print('output_file exits!')
-            return
+    # 加密文件，分块加密文件，每次加密buffer_size*16个字节
+    def encrypt(self, file_path, output_file_path, buffer_size=2048):
+        # 对大文件进行分块加密，每次加密block_size个字节
+        block_size = buffer_size * 16
+        # 使用ECB模式进行加密
         aes = AES.new(self.key, AES.MODE_ECB)
         # 如果文件长度不是16字节的整数倍则需要在尾部填充
         file_len = os.path.getsize(file_path)
-        pad_num = 0
-        if file_len % 16 != 0:
-            pad_num = 16 - file_len % 16
+        pad_num = 0 if file_len % 16 == 0 else 16 - file_len % 16
         # 填充数转为二进制
-        pad = struct.pack('B', pad_num)
+        pad_byte = struct.pack('B', pad_num)
         with open(output_file_path, 'wb') as out:
             # 二进制方式写入第一个字节，这个数字用来标识尾部填充的个数
-            out.write(pad)
+            out.write(pad_byte)
         with open(file_path, 'rb') as f:
             while True:
                 data = f.read(block_size)
-                data_len = len(data)
                 if not data:
                     break
-                while data_len % 16 != 0:
+                while len(data) % 16 != 0:
                     data += b'0'
-                    data_len = len(data)
                 with open(output_file_path, 'ab') as out:
                     out.write(aes.encrypt(data))
 
-    # 解密文件，默认每次读取block_size
-    def decrypt(self, file_path, output_file_path, block_size=32768):
-        if os.path.exists(output_file_path):
-            print('output_file exits!')
-            return
+    # 解密文件，分块解密文件，每次加密buffer_size*16个字节
+    def decrypt(self, file_path, output_file_path, buffer_size=2048):
+        # 对大文件进行分块解密，每次解密block_size个字节
+        block_size = buffer_size * 16
+        # 使用ECB模式进行解密
         aes = AES.new(self.key, AES.MODE_ECB)
         with open(file_path, 'rb') as f:
             pad_byte = f.read(1)
             pad_num, = struct.unpack('B', pad_byte)
-            file_len = os.path.getsize(file_path)
-            count = (file_len - 1) // block_size
-            left = (file_len - 1) % block_size
+            # 文件长度要减掉第一个标识字节
+            file_len = os.path.getsize(file_path) - 1
+            # 计算需处理的文件块数count，最后一个文件块的大小left
+            count = file_len // block_size
+            left = file_len % block_size
             while True:
                 data = f.read(block_size)
-                aes_bytes = aes.decrypt(data)
+                # 对最后一个文件块进行分情况处理，删除尾部填充的字节
+                file_bytes = aes.decrypt(data)
                 if count == 1 and left == 0 and pad_num != 0:
-                    aes_bytes = aes_bytes[:-pad_num]
+                    file_bytes = file_bytes[:-pad_num]
                 elif count == 0 and left != 0 and pad_num != 0:
-                    aes_bytes = aes_bytes[:-pad_num]
+                    file_bytes = file_bytes[:-pad_num]
                 elif count < 0:
                     break
                 count -= 1
                 with open(output_file_path, 'ab') as out:
-                    out.write(aes_bytes)
+                    out.write(file_bytes)
 
 
 # RSA加密解密类
@@ -178,12 +178,14 @@ class RSACrypto(object):
             print('Please set public_key_path!')
         else:
             with open(output_file_path, 'wb') as out_file:
+                public_file = open(self.public_key_path)
                 recipient_key = RSA.import_key(
-                    open(self.public_key_path).read())
+                    public_file.read())
                 session_key = get_random_bytes(16)
                 cipher_rsa = PKCS1_OAEP.new(recipient_key)
                 out_file.write(cipher_rsa.encrypt(session_key))
                 cipher_aes = AES.new(session_key, AES.MODE_EAX)
+                public_file.close()
                 with open(file_path, 'rb') as f:
                     data = f.read()
                 cipher_text, tag = cipher_aes.encrypt_and_digest(data)
@@ -199,8 +201,9 @@ class RSACrypto(object):
             print('Please set private_key_path!')
         else:
             with open(file_path, 'rb') as file:
+                private_file = open(self.private_key_path)
                 private_key = RSA.import_key(
-                    open(self.private_key_path).read(),
+                    private_file.read(),
                     passphrase=self.code)
                 enc_session_key, nonce, tag, cipher_text = [file.read(x)
                                                             for x in (private_key.size_in_bytes(), 16, 16, -1)]
@@ -208,5 +211,6 @@ class RSACrypto(object):
                 session_key = cipher_rsa.decrypt(enc_session_key)
                 cipher_aes = AES.new(session_key, AES.MODE_EAX, nonce)
                 data = cipher_aes.decrypt_and_verify(cipher_text, tag)
+                private_file.close()
             with open(output_file_path, 'wb') as f:
                 f.write(data)

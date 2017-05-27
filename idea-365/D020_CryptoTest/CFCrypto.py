@@ -83,8 +83,8 @@ class AESCrypto(object):
         md5.update(key.encode('utf-8'))
         self.key = md5.digest()
 
-    # 加密文件，分块加密文件，每次加密buffer_size*16个字节
-    def encrypt(self, file_path, output_file_path, buffer_size=2048):
+    # 加密文件，分块加密文件，每次加密buffer_size*16个字节, 分割保存的文件每一个大小为buffer_size*separates*16字节
+    def encrypt(self, file_path, output_file_path, buffer_size=2048, separates=1000):
         # 对大文件进行分块加密，每次加密block_size个字节
         block_size = buffer_size * 16
         # 使用ECB模式进行加密
@@ -94,46 +94,65 @@ class AESCrypto(object):
         pad_num = 0 if file_len % 16 == 0 else 16 - file_len % 16
         # 填充数转为二进制
         pad_byte = struct.pack('B', pad_num)
-        with open(output_file_path, 'wb') as out:
+        with open(output_file_path+'.1', 'wb') as out:
             # 二进制方式写入第一个字节，这个数字用来标识尾部填充的个数
             out.write(pad_byte)
         with open(file_path, 'rb') as f:
+            suffix = 1
+            count = 0
             while True:
                 data = f.read(block_size)
                 if not data:
                     break
                 while len(data) % 16 != 0:
                     data += b'0'
-                with open(output_file_path, 'ab') as out:
+                if count == separates:
+                    suffix += 1
+                    count = 0
+                else:
+                    count += 1
+                with open(output_file_path+'.'+str(suffix), 'ab') as out:
                     out.write(aes.encrypt(data))
 
-    # 解密文件，分块解密文件，每次加密buffer_size*16个字节
-    def decrypt(self, file_path, output_file_path, buffer_size=2048):
+    # 解密文件，separate_count为分割文件的数量，分块解密文件，每次解密buffer_size*16个字节
+    def decrypt(self, file_path, output_file_path, separate_count, buffer_size=2048):
         # 对大文件进行分块解密，每次解密block_size个字节
         block_size = buffer_size * 16
         # 使用ECB模式进行解密
         aes = AES.new(self.key, AES.MODE_ECB)
-        with open(file_path, 'rb') as f:
+        pad_num = None
+        with open(file_path + '.1', 'rb') as f:
             pad_byte = f.read(1)
             pad_num, = struct.unpack('B', pad_byte)
-            # 文件长度要减掉第一个标识字节
-            file_len = os.path.getsize(file_path) - 1
-            # 计算需处理的文件块数count，最后一个文件块的大小left
-            count = file_len // block_size
-            left = file_len % block_size
-            while True:
-                data = f.read(block_size)
-                # 对最后一个文件块进行分情况处理，删除尾部填充的字节
-                file_bytes = aes.decrypt(data)
-                if count == 1 and left == 0 and pad_num != 0:
-                    file_bytes = file_bytes[:-pad_num]
-                elif count == 0 and left != 0 and pad_num != 0:
-                    file_bytes = file_bytes[:-pad_num]
-                elif count < 0:
-                    break
-                count -= 1
-                with open(output_file_path, 'ab') as out:
-                    out.write(file_bytes)
+
+        # 文件长度要减掉第一个标识字节
+        file_len = -1
+        for x in range(0, separate_count):
+            file_len += os.path.getsize(file_path+'.'+str(x+1))
+        # 计算需处理的文件块数count，最后一个文件块的大小left
+        count = file_len // block_size
+        left = file_len % block_size
+
+        for x in range(0, separate_count):
+            with open(file_path+'.'+str(x+1), 'rb') as f:
+                # 略过文件的第一个字节
+                if x == 0:
+                    f.read(1)
+                while True:
+                    data = f.read(block_size)
+                    if not data:
+                        break
+                    # 对最后一个文件块进行分情况处理，删除尾部填充的字节
+                    file_bytes = aes.decrypt(data)
+                    if count == 1 and left == 0 and pad_num != 0:
+                        file_bytes = file_bytes[:-pad_num]
+                    elif count == 0 and left != 0 and pad_num != 0:
+                        file_bytes = file_bytes[:-pad_num]
+                    elif count < 0:
+                        break
+                    count -= 1
+                    with open(output_file_path, 'ab') as out:
+                        out.write(file_bytes)
 
 
 # RSA加密解密类

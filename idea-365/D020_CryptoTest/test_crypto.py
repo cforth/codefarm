@@ -18,10 +18,18 @@ class TestCFCryto(unittest.TestCase):
         # 使用AES加密解密的演示
         my_aes = AESCrypto('thisisverylongpasswordtotestaescrypto')
         my_aes.encrypt('./test.jpg', './test.jpg.aes')
-        my_aes.decrypt('./test.jpg.aes', './aestest.jpg')
+        my_aes.decrypt('./test.jpg.aes', './aestest.jpg', 1)
         self.assertTrue(filecmp.cmp('./test.jpg', './aestest.jpg'))
         os.remove('./aestest.jpg')
-        os.remove('./test.jpg.aes')
+        os.remove('./test.jpg.aes.1')
+
+        # my_aes.encrypt('./test.mp3', './test.mp3.aes')
+        # my_aes.decrypt('./test.mp3.aes', './aestest.mp3', 3)
+        # self.assertTrue(filecmp.cmp('./test.mp3', './aestest.mp3'))
+        # os.remove('./aestest.mp3')
+        # os.remove('./test.mp3.aes.1')
+        # os.remove('./test.mp3.aes.2')
+        # os.remove('./test.mp3.aes.3')
 
     def test_rsa(self):
         # 使用RSA加密解密的演示

@@ -83,10 +83,10 @@ class AESCrypto(object):
         md5.update(key.encode('utf-8'))
         self.key = md5.digest()
 
-    # 加密文件，分块加密文件，每次加密buffer_size*16个字节, 分割保存的文件每一个大小为buffer_size*separates*16字节
-    def encrypt(self, file_path, output_file_path, buffer_size=2048, separates=1000):
-        # 对大文件进行分块加密，每次加密block_size个字节
-        block_size = buffer_size * 16
+    # 加密文件，分块加密文件，可以选择分割为小文件保存加密后的数据
+    # 分块加密文件，每次加密read_block_size KB
+    # 分割保存的文件每一个大小为file_split_size KB，file_split_size须为read_block_size的整数倍
+    def encrypt(self, file_path, output_file_path, read_block_size=10240, file_split_size=30720):
         # 使用ECB模式进行加密
         aes = AES.new(self.key, AES.MODE_ECB)
         # 如果文件长度不是16字节的整数倍则需要在尾部填充
@@ -94,25 +94,26 @@ class AESCrypto(object):
         pad_num = 0 if file_len % 16 == 0 else 16 - file_len % 16
         # 填充数转为二进制
         pad_byte = struct.pack('B', pad_num)
-        with open(output_file_path+'.1', 'wb') as out:
-            # 二进制方式写入第一个字节，这个数字用来标识尾部填充的个数
-            out.write(pad_byte)
         with open(file_path, 'rb') as f:
             suffix = 1
-            count = 0
+            write_size = 0
+            out = open(output_file_path+'.'+str(suffix), 'wb')
+            # 二进制方式写入第一个字节，这个数字用来标识尾部填充的个数
+            out.write(pad_byte)
             while True:
-                data = f.read(block_size)
+                data = f.read(read_block_size*1024)
+                write_size += read_block_size
                 if not data:
                     break
                 while len(data) % 16 != 0:
                     data += b'0'
-                if count == separates:
+                if write_size > file_split_size:
                     suffix += 1
-                    count = 0
-                else:
-                    count += 1
-                with open(output_file_path+'.'+str(suffix), 'ab') as out:
-                    out.write(aes.encrypt(data))
+                    out.close()
+                    out = open(output_file_path+'.'+str(suffix), 'ab')
+                    write_size = read_block_size
+                out.write(aes.encrypt(data))
+            out.close()
 
     # 解密文件，separate_count为分割文件的数量，分块解密文件，每次解密buffer_size*16个字节
     def decrypt(self, file_path, output_file_path, separate_count, buffer_size=2048):

@@ -1,157 +1,148 @@
 import os
 import struct
 import hashlib
-from Crypto.Cipher import DES
+from Crypto.Cipher import AES, DES
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
-from Crypto.Cipher import AES, PKCS1_OAEP
-
-"""封装好的文件加密解密类"""
+from Crypto.Cipher import PKCS1_OAEP
 
 
-# DES加密解密类
-class DESCrypto(object):
-    # 初始化时设置好密码
-    def __init__(self, key):
-        if len(key) > 8:
-            raise ValueError('Password\'s length more than 8!')
-        # 密码不足8个字节将密码补足为8个字节
-        while len(key) < 8:
-            key += ' '
-        self.key = key.encode('utf-8')
+# 大文件加密解密类
+class CoolFileCrypto(object):
+    def __init__(self, password, mode='AES'):
+        if mode == 'AES':
+            # 将密码转为md5值作为密钥
+            md5 = hashlib.md5()
+            md5.update(password.encode('utf-8'))
+            self.key = md5.digest()
+            # AES的ECB模式，数据的长度必须为16节的倍数
+            self.multiple_of_byte = 16
+            # 使用ECB模式进行加密解密
+            self.chipher = AES.new(self.key, AES.MODE_ECB)
 
-    # 加密文件，分块加密文件，每次加密buffer_size*8个字节
-    def encrypt(self, file_path, output_file_path, buffer_size=4096):
-        # 对大文件进行分块加密，每次加密block_size个字节
-        block_size = buffer_size * 8
-        # 使用ECB模式进行加密
-        des = DES.new(self.key, DES.MODE_ECB)
-        with open(output_file_path, 'wb') as out:
-            # 如果文件长度不是8字节的整数倍则需要在尾部填充
-            file_len = os.path.getsize(file_path)
-            pad_num = 0 if file_len % 8 == 0 else 8 - file_len % 8
-            # 填充数转为二进制
-            pad_byte = struct.pack('B', pad_num)
-            # 二进制方式写入第一个字节，这个数字用来标识尾部填充字节的个数
-            out.write(pad_byte)
+        elif mode == 'DES':
+            if len(password) > 8:
+                raise ValueError('Password\'s length more than 8!')
+                # 密码不足8个字节将密码补足为8个字节
+            while len(password) < 8:
+                password += ' '
+            self.key = password.encode('utf-8')
+            # DES的ECB模式，数据的长度必须为8节的倍数
+            self.multiple_of_byte = 8
+            # 使用ECB模式进行加密解密
+            self.chipher = DES.new(self.key, DES.MODE_ECB)
+
+        else:
+            raise ValueError("CoolFileCrypto init error! Mode must be 'AES' or 'DES'!")
+
+        # 设置加密解密时分块读取10240KB
+        self.read_kb = 10240
+
+    # PKCS5填充方式，将数据填充为self.multiple_of_byte的整数倍
+    def pad(self, bin_str):
+        length = len(bin_str)
+        fill_num = self.multiple_of_byte if length % self.multiple_of_byte == 0 \
+            else self.multiple_of_byte - length % self.multiple_of_byte
+        # 填充数转为二进制
+        fill_byte = struct.pack('B', fill_num)
+        if length % self.multiple_of_byte != 0:
+            while len(bin_str) % self.multiple_of_byte != 0:
+                bin_str += fill_byte
+        else:
+            for x in range(0, 16):
+                bin_str += fill_byte
+        return bin_str
+
+    # PKCS5填充方式，将填充过的数据恢复
+    def unpad(self, bin_str):
+        return bin_str[:-bin_str[-1]]
+
+    # 加密文件，分块加密文件，可以选择分割为小文件保存加密后的数据
+    # 分块加密文件，每次加密block_size
+    def encrypt(self, file_path, output_file_path):
+        block_size = self.read_kb * 1024
+        file_len = os.path.getsize(file_path)
         with open(file_path, 'rb') as f:
+            read = 0
             while True:
                 data = f.read(block_size)
                 if not data:
                     break
-                # 读取最后一个文件块时，对尾部填充使之为8字节的整数倍
-                while len(data) % 8 != 0:
-                    data += b'0'
+                read += len(data)
+                # 如果文件长度不是self.multiple_of_byte的整数倍则需要在尾部填充
+                if read == file_len:
+                    data = self.pad(data)
                 with open(output_file_path, 'ab') as out:
-                    out.write(des.encrypt(data))
+                    out.write(self.chipher.encrypt(data))
 
-    # 解密文件，分块解密文件，每次加密buffer_size*8个字节
-    def decrypt(self, file_path, output_file_path, buffer_size=4096):
-        # 对大文件进行分块解密，每次解密block_size个字节
-        block_size = buffer_size * 8
-        # 使用ECB模式进行解密
-        des = DES.new(self.key, DES.MODE_ECB)
+    # 解密文件
+    # 分块解密文件，每次解密block_size
+    def decrypt(self, file_path, output_file_path):
+        block_size = self.read_kb * 1024
+        file_len = os.path.getsize(file_path)
         with open(file_path, 'rb') as f:
-            pad_byte = f.read(1)
-            pad_num, = struct.unpack('B', pad_byte)
-            # 文件长度要减掉第一个标识字节
-            file_len = os.path.getsize(file_path) - 1
-            # 计算需处理的文件块数count，最后一个文件块的大小left
-            count = file_len // block_size
-            left = file_len % block_size
+            read = 0
             while True:
                 data = f.read(block_size)
-                # 对最后一个文件块进行分情况处理，删除尾部填充的字节
-                file_bytes = des.decrypt(data)
-                if count == 1 and left == 0 and pad_num != 0:
-                    file_bytes = file_bytes[:-pad_num]
-                elif count == 0 and left != 0 and pad_num != 0:
-                    file_bytes = file_bytes[:-pad_num]
-                elif count < 0:
+                if not data:
                     break
-                count -= 1
+                read += len(data)
+                # 对最后一个文件块删除尾部填充的字节
+                file_bytes = self.chipher.decrypt(data)
+                if read == file_len:
+                    file_bytes = self.unpad(file_bytes)
                 with open(output_file_path, 'ab') as out:
                     out.write(file_bytes)
 
-
-# AES加密解密类
-class AESCrypto(object):
-    # 初始化时设置好密码
-    def __init__(self, key):
-        # 将密码转为md5值作为密钥
-        md5 = hashlib.md5()
-        md5.update(key.encode('utf-8'))
-        self.key = md5.digest()
-
     # 加密文件，分块加密文件，可以选择分割为小文件保存加密后的数据
-    # 分块加密文件，每次加密read_block_size KB
-    # 分割保存的文件每一个大小为file_split_size KB，file_split_size须为read_block_size的整数倍
-    def encrypt(self, file_path, output_file_path, read_block_size=10240, file_split_size=30720):
-        # 使用ECB模式进行加密
-        aes = AES.new(self.key, AES.MODE_ECB)
-        # 如果文件长度不是16字节的整数倍则需要在尾部填充
+    # 分块加密文件，每次加密block_size
+    # 分割保存的文件每一个大小为file_split_size KB，file_split_size须为block_size的整数倍
+    def encrypt_split(self, file_path, output_file_path, file_split_kb=30720):
+        block_size = self.read_kb * 1024
         file_len = os.path.getsize(file_path)
-        pad_num = 0 if file_len % 16 == 0 else 16 - file_len % 16
-        # 填充数转为二进制
-        pad_byte = struct.pack('B', pad_num)
         with open(file_path, 'rb') as f:
             suffix = 1
-            write_size = 0
-            out = open(output_file_path+'.'+str(suffix), 'wb')
-            # 二进制方式写入第一个字节，这个数字用来标识尾部填充的个数
-            out.write(pad_byte)
+            write_kb = 0
+            out = open(output_file_path + '.' + str(suffix), 'wb')
+            read = 0
             while True:
-                data = f.read(read_block_size*1024)
-                write_size += read_block_size
+                data = f.read(block_size)
                 if not data:
                     break
-                while len(data) % 16 != 0:
-                    data += b'0'
-                if write_size > file_split_size:
+                read += len(data)
+                # 如果文件长度不是self.multiple_of_byte的整数倍则需要在尾部填充
+                if read == file_len:
+                    data = self.pad(data)
+                if write_kb >= file_split_kb:
                     suffix += 1
                     out.close()
-                    out = open(output_file_path+'.'+str(suffix), 'ab')
-                    write_size = read_block_size
-                out.write(aes.encrypt(data))
+                    out = open(output_file_path + '.' + str(suffix), 'ab')
+                    write_kb = self.read_kb
+                else:
+                    write_kb += self.read_kb
+                out.write(self.chipher.encrypt(data))
             out.close()
 
-    # 解密文件，separate_count为分割文件的数量，分块解密文件，每次解密buffer_size*16个字节
-    def decrypt(self, file_path, output_file_path, separate_count, buffer_size=2048):
-        # 对大文件进行分块解密，每次解密block_size个字节
-        block_size = buffer_size * 16
-        # 使用ECB模式进行解密
-        aes = AES.new(self.key, AES.MODE_ECB)
-        pad_num = None
-        with open(file_path + '.1', 'rb') as f:
-            pad_byte = f.read(1)
-            pad_num, = struct.unpack('B', pad_byte)
-
-        # 文件长度要减掉第一个标识字节
-        file_len = -1
+    # 解密文件
+    # separate_count为分割文件的数量
+    # 分块解密文件，每次解密block_size
+    def decrypt_split(self, file_path, output_file_path, separate_count):
+        block_size = self.read_kb * 1024
+        file_len = 0
         for x in range(0, separate_count):
-            file_len += os.path.getsize(file_path+'.'+str(x+1))
-        # 计算需处理的文件块数count，最后一个文件块的大小left
-        count = file_len // block_size
-        left = file_len % block_size
-
+            file_len += os.path.getsize(file_path + '.' + str(x + 1))
+        read = 0
         for x in range(0, separate_count):
-            with open(file_path+'.'+str(x+1), 'rb') as f:
-                # 略过文件的第一个字节
-                if x == 0:
-                    f.read(1)
+            with open(file_path + '.' + str(x + 1), 'rb') as f:
                 while True:
                     data = f.read(block_size)
                     if not data:
                         break
-                    # 对最后一个文件块进行分情况处理，删除尾部填充的字节
-                    file_bytes = aes.decrypt(data)
-                    if count == 1 and left == 0 and pad_num != 0:
-                        file_bytes = file_bytes[:-pad_num]
-                    elif count == 0 and left != 0 and pad_num != 0:
-                        file_bytes = file_bytes[:-pad_num]
-                    elif count < 0:
-                        break
-                    count -= 1
+                    read += len(data)
+                    # 对最后一个文件块删除尾部填充的字节
+                    file_bytes = self.chipher.decrypt(data)
+                    if read == file_len:
+                        file_bytes = self.unpad(file_bytes)
                     with open(output_file_path, 'ab') as out:
                         out.write(file_bytes)
 

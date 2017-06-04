@@ -1,5 +1,6 @@
 import os
 import struct
+import base64
 import hashlib
 from Crypto.Cipher import AES, DES
 from Crypto.PublicKey import RSA
@@ -57,9 +58,21 @@ class CoolFileCrypto(object):
     def unpad(self, bin_str):
         return bin_str[:-bin_str[-1]]
 
+    # 加密字符串
+    # 将字符串转为字节串进行AES加密，
+    # 再将加密后的字节串转为16进制字符串，
+    # 再通过base64模块编码
+    def encrypt_string(self, file_name):
+        return base64.urlsafe_b64encode(self.chipher.encrypt(self.pad(file_name.encode('utf-8')))).decode('ascii')
+
+    # 解密字符串
+    # 步骤与加密相反
+    def decrypt_string(self, file_name):
+        return self.unpad(self.chipher.decrypt(base64.urlsafe_b64decode(bytes(map(ord, file_name))))).decode('utf-8')
+
     # 加密文件，分块加密文件，可以选择分割为小文件保存加密后的数据
     # 分块加密文件，每次加密block_size
-    def encrypt(self, file_path, output_file_path):
+    def encrypt_file(self, file_path, output_file_path):
         block_size = self.read_kb * 1024
         file_len = os.path.getsize(file_path)
         with open(file_path, 'rb') as f:
@@ -77,7 +90,7 @@ class CoolFileCrypto(object):
 
     # 解密文件
     # 分块解密文件，每次解密block_size
-    def decrypt(self, file_path, output_file_path):
+    def decrypt_file(self, file_path, output_file_path):
         block_size = self.read_kb * 1024
         file_len = os.path.getsize(file_path)
         with open(file_path, 'rb') as f:

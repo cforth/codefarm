@@ -5,20 +5,31 @@ import unittest
 
 
 class TestCoolFileCrypto(unittest.TestCase):
+    def test_change_name(self):
+        my_aes = CoolFileCrypto('thisisverylongpasswordtotestaescrypto')
+        name = 'testverylongstrand世界你好.jpg'
+        encrypt_name = my_aes.encrypt_string(name)
+        decrypt_name = my_aes.decrypt_string(encrypt_name)
+        # print(encrypt_name)
+        # print(decrypt_name)
+        self.assertTrue(name == decrypt_name)
+
     def test_aes(self):
         # 使用AES加密解密的演示
         # 请自行准备jpg、MP3文件测试
         my_aes = CoolFileCrypto('thisisverylongpasswordtotestaescrypto')
-        my_aes.encrypt('./test.jpg', './test.jpg.aes')
-        my_aes.decrypt('./test.jpg.aes', './aestest.jpg')
+        en_name = './' + str(my_aes.encrypt_string('test.jpg')) + '.aes'
+        my_aes.encrypt_file('./test.jpg', en_name)
+        my_aes.decrypt_file(en_name, './aestest.jpg')
         self.assertTrue(filecmp.cmp('./test.jpg', './aestest.jpg'))
         os.remove('./aestest.jpg')
-        os.remove('./test.jpg.aes')
-        my_aes.encrypt('./test.mp3', './test.mp3.aes')
-        my_aes.decrypt('./test.mp3.aes', './aestest.mp3')
+        os.remove(en_name)
+        en_name = './' + str(my_aes.encrypt_string('test.mp3')) + '.aes'
+        my_aes.encrypt_file('./test.mp3', en_name)
+        my_aes.decrypt_file(en_name, './aestest.mp3')
         self.assertTrue(filecmp.cmp('./test.mp3', './aestest.mp3'))
         os.remove('./aestest.mp3')
-        os.remove('./test.mp3.aes')
+        os.remove(en_name)
 
     def test_aes_split(self):
         # 使用AES加密解密的演示
@@ -39,13 +50,13 @@ class TestCoolFileCrypto(unittest.TestCase):
     def test_des(self):
         # 使用DES加密解密的演示
         my_des = CoolFileCrypto('hello', 'DES')
-        my_des.encrypt('./test.jpg', './test.jpg.des')
-        my_des.decrypt('./test.jpg.des', './destest.jpg')
+        my_des.encrypt_file('./test.jpg', './test.jpg.des')
+        my_des.decrypt_file('./test.jpg.des', './destest.jpg')
         self.assertTrue(filecmp.cmp('./test.jpg', './destest.jpg'))
         os.remove('./destest.jpg')
         os.remove('./test.jpg.des')
-        my_des.encrypt('./test.mp3', './test.mp3.des')
-        my_des.decrypt('./test.mp3.des', './destest.mp3')
+        my_des.encrypt_file('./test.mp3', './test.mp3.des')
+        my_des.decrypt_file('./test.mp3.des', './destest.mp3')
         self.assertTrue(filecmp.cmp('./test.mp3', './destest.mp3'))
         os.remove('./destest.mp3')
         os.remove('./test.mp3.des')

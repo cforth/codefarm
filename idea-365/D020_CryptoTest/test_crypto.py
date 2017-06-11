@@ -2,103 +2,43 @@ from CFCrypto import *
 import os
 import filecmp
 import unittest
+import shutil
 
 
-class TestCoolFileCrypto(unittest.TestCase):
-    def test_change_name(self):
-        my_aes = CoolFileCrypto('thisisverylongpasswordtotestaescrypto')
-        name = 'testverylongstrand世界你好.jpg'
-        encrypt_name = my_aes.encrypt_string(name)
-        decrypt_name = my_aes.decrypt_string(encrypt_name)
-        # print(encrypt_name)
-        # print(decrypt_name)
-        self.assertTrue(name == decrypt_name)
+class TestCrypto(unittest.TestCase):
+    def test_StringCrypto(self):
+        my_cipher = StringCrypto('this is password')
+        string = 'this is a secret!!! 这是一个秘密！！！'
+        encrypt_str = my_cipher.encrypt(string)
+        decrypt_str = my_cipher.decrypt(encrypt_str)
+        self.assertEqual(string, decrypt_str)
 
-    def test_aes(self):
+    def test_FileCrypto(self):
         # 使用AES加密解密的演示
-        # 请自行准备jpg、MP3文件测试
-        my_aes = CoolFileCrypto('thisisverylongpasswordtotestaescrypto')
-        en_name = './' + str(my_aes.encrypt_string('test.jpg')) + '.aes'
-        my_aes.encrypt_file('./test.jpg', en_name)
-        my_aes.decrypt_file(en_name, './aestest.jpg')
-        self.assertTrue(filecmp.cmp('./test.jpg', './aestest.jpg'))
-        os.remove('./aestest.jpg')
-        os.remove(en_name)
-        en_name = './' + str(my_aes.encrypt_string('test.mp3')) + '.aes'
-        my_aes.encrypt_file('./test.mp3', en_name)
-        my_aes.decrypt_file(en_name, './aestest.mp3')
-        self.assertTrue(filecmp.cmp('./test.mp3', './aestest.mp3'))
-        os.remove('./aestest.mp3')
-        os.remove(en_name)
+        my_aes = FileCrypto('this is very long password to test file crypto')
+        my_aes.encrypt('./testdata/test.jpg', './testdata/test.jpg.aes')
+        my_aes.decrypt('./testdata/test.jpg.aes', './testdata/aes_test.jpg')
+        self.assertTrue(filecmp.cmp('./testdata/test.jpg', './testdata/aes_test.jpg'))
+        os.remove('./testdata/aes_test.jpg')
+        os.remove('./testdata/test.jpg.aes')
+        my_aes.encrypt('./testdata/test.mp3', './testdata/test.mp3.aes')
+        my_aes.decrypt('./testdata/test.mp3.aes', './testdata/aes_test.mp3')
+        self.assertTrue(filecmp.cmp('./testdata/test.mp3', './testdata/aes_test.mp3'))
+        os.remove('./testdata/aes_test.mp3')
+        os.remove('./testdata/test.mp3.aes')
 
-    def test_aes_split(self):
-        # 使用AES加密解密的演示
-        my_aes = CoolFileCrypto('thisisverylongpasswordtotestaescrypto')
-        my_aes.encrypt_split('./test.jpg', './test.jpg.aes')
-        my_aes.decrypt_split('./test.jpg.aes', './aestest.jpg', 1)
-        self.assertTrue(filecmp.cmp('./test.jpg', './aestest.jpg'))
-        os.remove('./aestest.jpg')
-        os.remove('./test.jpg.aes.1')
-        my_aes.encrypt_split('./test.mp3', './test.mp3.aes')
-        my_aes.decrypt_split('./test.mp3.aes', './aestest.mp3', 3)
-        self.assertTrue(filecmp.cmp('./test.mp3', './aestest.mp3'))
-        os.remove('./aestest.mp3')
-        os.remove('./test.mp3.aes.1')
-        os.remove('./test.mp3.aes.2')
-        os.remove('./test.mp3.aes.3')
-
-    def test_des(self):
-        # 使用DES加密解密的演示
-        my_des = CoolFileCrypto('hello', 'DES')
-        my_des.encrypt_file('./test.jpg', './test.jpg.des')
-        my_des.decrypt_file('./test.jpg.des', './destest.jpg')
-        self.assertTrue(filecmp.cmp('./test.jpg', './destest.jpg'))
-        os.remove('./destest.jpg')
-        os.remove('./test.jpg.des')
-        my_des.encrypt_file('./test.mp3', './test.mp3.des')
-        my_des.decrypt_file('./test.mp3.des', './destest.mp3')
-        self.assertTrue(filecmp.cmp('./test.mp3', './destest.mp3'))
-        os.remove('./destest.mp3')
-        os.remove('./test.mp3.des')
-
-    def test_des_split(self):
-        # 使用DES加密解密的演示
-        my_des = CoolFileCrypto('hello', 'DES')
-        my_des.encrypt_split('./test.jpg', './test.jpg.des')
-        my_des.decrypt_split('./test.jpg.des', './destest.jpg', 1)
-        self.assertTrue(filecmp.cmp('./test.jpg', './destest.jpg'))
-        os.remove('./destest.jpg')
-        os.remove('./test.jpg.des.1')
-        my_des.encrypt_split('./test.mp3', './test.mp3.des')
-        my_des.decrypt_split('./test.mp3.des', './destest.mp3', 3)
-        self.assertTrue(filecmp.cmp('./test.mp3', './destest.mp3'))
-        os.remove('./destest.mp3')
-        os.remove('./test.mp3.des.1')
-        os.remove('./test.mp3.des.2')
-        os.remove('./test.mp3.des.3')
-
-
-class TestRSACrypto(unittest.TestCase):
-    def test_rsa(self):
-        # 使用RSA加密解密的演示
-        my_rsa = RSACrypto()
-        # 如果首次加密，本地没有私钥文件和公钥文件，则需要生成
-        my_rsa.set_password('helloRSA')
-        my_rsa.set_public_key_path('./my_rsa.pub')
-        my_rsa.set_private_key_path('./my_rsa')
-        my_rsa.generate_key()
-        # 使用RSA加密需要用到公钥文件
-        my_rsa.set_public_key_path('./my_rsa.pub')
-        my_rsa.encrypt('./test.jpg', './test.bin')
-        # 使用RSA解密需要用到私钥密码和私钥文件
-        my_rsa.set_password('helloRSA')
-        my_rsa.set_private_key_path('./my_rsa')
-        my_rsa.decrypt('./test.bin', './output.jpg')
-        self.assertTrue(filecmp.cmp('./test.jpg', './output.jpg'))
-        os.remove('./output.jpg')
-        os.remove('./test.bin')
-        os.remove('./my_rsa.pub')
-        os.remove('./my_rsa')
+    def test_DirCrypto(self):
+        my_cipher = DirCrypto('crypto dir')
+        my_cipher.encrypt('./testdata/', './en_data/')
+        my_cipher.decrypt('./en_data/testdata/', './de_data/')
+        self.assertTrue(filecmp.cmp('./de_data/testdata/test.mp3', './testdata/test.mp3'))
+        self.assertTrue(filecmp.cmp('./de_data/testdata/测试中文目录名/test.txt', './testdata/测试中文目录名/test.txt'))
+        dir_cipher = DirNameCrypto('crypto dir')
+        dir_cipher.encrypt('./en_data/testdata')
+        dir_cipher.decrypt('./en_data/testdata')
+        self.assertTrue(os.path.exists('./en_data/testdata/测试中文目录名/empytdir'))
+        shutil.rmtree('./en_data')
+        shutil.rmtree('./de_data')
 
 
 if __name__ == '__main__':

@@ -1,4 +1,3 @@
-from CFCrypto import *
 import os
 import filecmp
 import unittest
@@ -39,6 +38,27 @@ class TestCrypto(unittest.TestCase):
         self.assertTrue(os.path.exists('./en_data/testdata/测试中文目录名/empytdir'))
         shutil.rmtree('./en_data')
         shutil.rmtree('./de_data')
+
+    def test_RSACrypto(self):
+        # 使用RSA加密解密的演示
+        my_rsa = RSACrypto()
+        # 如果首次加密，本地没有私钥文件和公钥文件，则需要生成
+        my_rsa.set_password('helloRSA')
+        my_rsa.set_public_key_path('./testdata/my_rsa.pub')
+        my_rsa.set_private_key_path('./testdata/my_rsa')
+        my_rsa.generate_key()
+        # 使用RSA加密需要用到公钥文件
+        my_rsa.set_public_key_path('./testdata/my_rsa.pub')
+        my_rsa.encrypt('./testdata/test.jpg', './testdata/test.bin')
+        # 使用RSA解密需要用到私钥密码和私钥文件
+        my_rsa.set_password('helloRSA')
+        my_rsa.set_private_key_path('./testdata/my_rsa')
+        my_rsa.decrypt('./testdata/test.bin', './testdata/output.jpg')
+        self.assertTrue(filecmp.cmp('./testdata/test.jpg', './testdata/output.jpg'))
+        os.remove('./testdata/output.jpg')
+        os.remove('./testdata/test.bin')
+        os.remove('./testdata/my_rsa.pub')
+        os.remove('./testdata/my_rsa')
 
 
 if __name__ == '__main__':

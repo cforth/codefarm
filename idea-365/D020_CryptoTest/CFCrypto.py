@@ -138,6 +138,7 @@ class DirCrypto(object):
         real_output_dir = os.path.abspath(output_dir)
         if not os.path.exists(real_input_dir):
             print('Input Dir not exists!')
+            return
 
         if not os.path.exists(real_output_dir):
             os.mkdir(real_output_dir)

@@ -1,3 +1,4 @@
+from CFCrypto import *
 import os
 import filecmp
 import unittest

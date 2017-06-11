@@ -81,6 +81,13 @@ class FileCrypto(object):
     # 写入处理后的数据到output_file_path
     @staticmethod
     def handle(file_path, output_file_path, block_size, data_handle_func, data_end_handle_func):
+        if not os.path.exists(file_path):
+            print('Input file not exists!')
+            return
+        elif os.path.exists(output_file_path):
+            print('Output file exists!')
+            return
+
         file_len = os.path.getsize(file_path)
         with open(file_path, 'rb') as f:
             read = 0
@@ -131,7 +138,6 @@ class DirCrypto(object):
         real_output_dir = os.path.abspath(output_dir)
         if not os.path.exists(real_input_dir):
             print('Input Dir not exists!')
-            return
 
         if not os.path.exists(real_output_dir):
             os.mkdir(real_output_dir)

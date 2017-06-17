@@ -121,7 +121,7 @@ class FileCrypto(object):
 
 
 # 文件夹加密解密类
-class DirCrypto(object):
+class DirFileCrypto(object):
     def __init__(self, password):
         # 将用password加密文件名和文件
         self.file_crypto = FileCrypto(password)
@@ -164,11 +164,11 @@ class DirCrypto(object):
 
     # 加密input_dir文件夹内的所有文件到output_dir
     def encrypt(self, input_dir, output_dir):
-        DirCrypto.handle(input_dir, output_dir, self.string_crypto.encrypt, self.file_crypto.encrypt)
+        DirFileCrypto.handle(input_dir, output_dir, self.string_crypto.encrypt, self.file_crypto.encrypt)
 
     # 解密input_dir文件夹内的所有文件到output_dir
     def decrypt(self, input_dir, output_dir):
-        DirCrypto.handle(input_dir, output_dir, self.string_crypto.decrypt, self.file_crypto.decrypt)
+        DirFileCrypto.handle(input_dir, output_dir, self.string_crypto.decrypt, self.file_crypto.decrypt)
 
 
 # 文件夹名称加密解密类

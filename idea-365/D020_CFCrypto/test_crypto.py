@@ -28,7 +28,7 @@ class TestCrypto(unittest.TestCase):
         os.remove('./testdata/test.mp3.aes')
 
     def test_DirCrypto(self):
-        my_cipher = DirCrypto('crypto dir')
+        my_cipher = DirFileCrypto('crypto dir')
         my_cipher.encrypt('./testdata/', './en_data/')
         my_cipher.decrypt('./en_data/testdata/', './de_data/')
         self.assertTrue(filecmp.cmp('./de_data/testdata/test.mp3', './testdata/test.mp3'))

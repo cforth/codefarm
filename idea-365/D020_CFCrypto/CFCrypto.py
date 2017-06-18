@@ -144,7 +144,7 @@ class DirFileCrypto(object):
             os.mkdir(real_output_dir)
 
         root_dir_index = real_input_dir.rindex('\\', 0, len(real_input_dir) - 1) + 1
-        real_output_subdir = real_output_dir + '\\' + os.path.abspath(real_input_dir)[root_dir_index:]
+        real_output_subdir = os.path.join(real_output_dir, os.path.abspath(real_input_dir)[root_dir_index:])
 
         if not os.path.exists(real_output_subdir):
             os.mkdir(real_output_subdir)
@@ -152,14 +152,14 @@ class DirFileCrypto(object):
         for path, subdir, files in os.walk(input_dir):
 
             for d in subdir:
-                real_output_subdir = real_output_dir + '\\' + os.path.abspath(path)[root_dir_index:] + '\\' + d
+                real_output_subdir = os.path.join(real_output_dir, os.path.abspath(path)[root_dir_index:], d)
                 if not os.path.exists(real_output_subdir):
                     os.mkdir(real_output_subdir)
 
             for f in files:
-                input_file_path = os.path.abspath(path) + '\\' + f
-                output_file_path = real_output_dir + '\\' + os.path.abspath(path)[root_dir_index:] + '\\' \
-                                   + name_handle_func(f)
+                input_file_path = os.path.join(os.path.abspath(path), f)
+                output_file_path = os.path.join(real_output_dir, os.path.abspath(path)[root_dir_index:],
+                                                name_handle_func(f))
                 file_handle_func(input_file_path, output_file_path)
 
     # 加密input_dir文件夹内的所有文件到output_dir
@@ -183,7 +183,7 @@ class DirNameCrypto(object):
         os.chdir(path)
         for dir_or_file in os.listdir(path):
             if os.path.isdir(dir_or_file):
-                DirNameCrypto.handle(os.getcwd() + '\\' + dir_or_file, handle_func)
+                DirNameCrypto.handle(os.path.join(os.getcwd(), dir_or_file), handle_func)
                 os.chdir('..')
                 dir_name = handle_func(dir_or_file)
                 if dir_name is not None:

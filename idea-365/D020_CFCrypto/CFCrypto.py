@@ -134,8 +134,8 @@ class DirFileCrypto(object):
     # 将处理后的文件存放到output_dir中
     @staticmethod
     def handle(input_dir, output_dir, name_handle_func, file_handle_func):
-        real_input_dir = os.path.abspath(input_dir)
-        real_output_dir = os.path.abspath(output_dir)
+        real_input_dir = os.path.abspath(input_dir).replace('\\', '/')
+        real_output_dir = os.path.abspath(output_dir).replace('\\', '/')
         if not os.path.exists(real_input_dir):
             print('Input Dir not exists!')
             return
@@ -143,8 +143,10 @@ class DirFileCrypto(object):
         if not os.path.exists(real_output_dir):
             os.mkdir(real_output_dir)
 
-        root_dir_index = real_input_dir.rindex('\\', 0, len(real_input_dir) - 1) + 1
-        real_output_subdir = os.path.join(real_output_dir, os.path.abspath(real_input_dir)[root_dir_index:])
+        root_dir = os.path.split(real_input_dir)[0]
+        # 如果在磁盘根目录下，要把根目录后的‘/’计入长度
+        root_dir_index = len(root_dir) if root_dir.endswith('/') else len(root_dir) + 1
+        real_output_subdir = os.path.join(real_output_dir, real_input_dir[root_dir_index:])
 
         if not os.path.exists(real_output_subdir):
             os.mkdir(real_output_subdir)

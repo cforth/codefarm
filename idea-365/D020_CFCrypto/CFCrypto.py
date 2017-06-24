@@ -1,32 +1,11 @@
 import hashlib
 import os
-import struct
 import base64
 from Crypto.Cipher import AES
 from Crypto.PublicKey import RSA
 from Crypto.Random import get_random_bytes
 from Crypto.Cipher import PKCS1_OAEP
-
-
-# PKCS5填充方式，将数据填充为multiple_of_byte的整数倍
-def pad(bin_str, multiple_of_byte):
-    length = len(bin_str)
-    fill_num = multiple_of_byte if length % multiple_of_byte == 0 \
-        else multiple_of_byte - length % multiple_of_byte
-    # 填充数转为二进制
-    fill_byte = struct.pack('B', fill_num)
-    if length % multiple_of_byte != 0:
-        while len(bin_str) % multiple_of_byte != 0:
-            bin_str += fill_byte
-    else:
-        for x in range(0, multiple_of_byte):
-            bin_str += fill_byte
-    return bin_str
-
-
-# PKCS5填充方式，将填充过的数据恢复
-def un_pad(bin_str):
-    return bin_str[:-bin_str[-1]]
+from Crypto.Util.Padding import pad, unpad
 
 
 # 字符串加密解密类
@@ -56,7 +35,7 @@ class StringCrypto(object):
     def decrypt(self, encrypt_string):
         encrypt_byte_string = base64.urlsafe_b64decode(bytes(map(ord, encrypt_string)))
         pad_byte_string = self.cipher.decrypt(encrypt_byte_string)
-        string = un_pad(pad_byte_string).decode('utf-8')
+        string = unpad(pad_byte_string, self.multiple_of_byte).decode('utf-8')
         return string
 
 
@@ -116,7 +95,7 @@ class FileCrypto(object):
         block_size = self.read_kb * 1024
         data_handle_func = self.cipher.decrypt
         # 读取到文件尾部时，执行解密后尾部去除补位
-        data_end_handle_func = lambda d: un_pad(self.cipher.decrypt(d))
+        data_end_handle_func = lambda d: unpad(self.cipher.decrypt(d), self.multiple_of_byte)
         FileCrypto.handle(file_path, output_file_path, block_size, data_handle_func, data_end_handle_func)
 
 

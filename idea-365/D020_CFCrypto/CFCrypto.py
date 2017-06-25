@@ -61,11 +61,9 @@ class FileCrypto(object):
     @staticmethod
     def handle(file_path, output_file_path, block_size, data_handle_func, data_end_handle_func):
         if not os.path.exists(file_path):
-            print('Input file not exists!')
-            return
+            raise ValueError('Input file path not exists: %s ', file_path)
         elif os.path.exists(output_file_path):
-            print('Output file exists!')
-            return
+            raise ValueError('Output file exists: %s', output_file_path)
 
         file_len = os.path.getsize(file_path)
         with open(file_path, 'rb') as f:
@@ -116,8 +114,7 @@ class DirFileCrypto(object):
         real_input_dir = os.path.abspath(input_dir).replace('\\', '/')
         real_output_dir = os.path.abspath(output_dir).replace('\\', '/')
         if not os.path.exists(real_input_dir):
-            print('Input Dir not exists!')
-            return
+            raise ValueError('Input Dir not exists: %s', real_input_dir)
 
         if not os.path.exists(real_output_dir):
             os.mkdir(real_output_dir)
@@ -173,8 +170,7 @@ class DirNameCrypto(object):
     # 加密文件夹名称
     def encrypt(self, dir_path):
         if not os.path.exists(dir_path):
-            print('Dir not exists!')
-            return
+            raise ValueError('Dir not exists: %s', dir_path)
         root_path = os.path.abspath('.')
         dir_path = os.path.abspath(dir_path)
         DirNameCrypto.handle(dir_path, self.string_crypto.encrypt)
@@ -183,8 +179,7 @@ class DirNameCrypto(object):
     # 解密文件夹名称
     def decrypt(self, dir_path):
         if not os.path.exists(dir_path):
-            print('Dir not exists!')
-            return
+            raise ValueError('Dir not exists: %s', dir_path)
         root_path = os.path.abspath('.')
         dir_path = os.path.abspath(dir_path)
         DirNameCrypto.handle(dir_path, self.string_crypto.decrypt)

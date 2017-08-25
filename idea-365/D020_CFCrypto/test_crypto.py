@@ -35,7 +35,7 @@ class TestCrypto(unittest.TestCase):
         self.assertTrue(filecmp.cmp('./de_data/testdata/测试中文目录名/test.txt', './testdata/测试中文目录名/test.txt'))
         dir_cipher = DirNameCrypto('crypto dir')
         dir_cipher.encrypt('./en_data/testdata')
-        dir_cipher.decrypt('./en_data/testdata')
+        dir_cipher.decrypt('./en_data/q0DCRBliIZ-Z8KuC4xSG2Q==')
         self.assertTrue(os.path.exists('./en_data/testdata/测试中文目录名/empytdir'))
         shutil.rmtree('./en_data')
         shutil.rmtree('./de_data')

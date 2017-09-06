@@ -29,15 +29,13 @@ class TestCrypto(unittest.TestCase):
 
     def test_DirCrypto(self):
         my_cipher = DirFileCrypto('crypto dir')
-        my_cipher.encrypt('./testdata/', './en_data/')
-        my_cipher.decrypt('./en_data/testdata/', './de_data/')
+        my_cipher.encrypt('./testdata/', './')
+        my_cipher.decrypt('./q0DCRBliIZ-Z8KuC4xSG2Q==/', './de_data/')
         self.assertTrue(filecmp.cmp('./de_data/testdata/test.mp3', './testdata/test.mp3'))
+        self.assertTrue(filecmp.cmp('./de_data/testdata/test.jpg', './testdata/test.jpg'))
         self.assertTrue(filecmp.cmp('./de_data/testdata/测试中文目录名/test.txt', './testdata/测试中文目录名/test.txt'))
-        dir_cipher = DirNameCrypto('crypto dir')
-        dir_cipher.encrypt('./en_data/testdata')
-        dir_cipher.decrypt('./en_data/q0DCRBliIZ-Z8KuC4xSG2Q==')
-        self.assertTrue(os.path.exists('./en_data/testdata/测试中文目录名/empytdir'))
-        shutil.rmtree('./en_data')
+        self.assertTrue(filecmp.cmp('./de_data/testdata/测试中文目录名/test/test.jpg', './testdata/测试中文目录名/test/test.jpg'))
+        shutil.rmtree('./q0DCRBliIZ-Z8KuC4xSG2Q==')
         shutil.rmtree('./de_data')
 
     def test_RSACrypto(self):

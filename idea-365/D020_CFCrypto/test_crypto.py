@@ -31,12 +31,17 @@ class TestCrypto(unittest.TestCase):
         my_cipher = DirFileCrypto('crypto dir')
         my_cipher.encrypt('./testdata/', './')
         my_cipher.decrypt('./q0DCRBliIZ-Z8KuC4xSG2Q==/', './de_data/')
+        my_cipher.encrypt('./testdata/', './en_data/', False)  # 测试不加密文件和文件夹名称
+        my_cipher.decrypt('./en_data/testdata/', './de_data2/', False)
         self.assertTrue(filecmp.cmp('./de_data/testdata/test.mp3', './testdata/test.mp3'))
         self.assertTrue(filecmp.cmp('./de_data/testdata/test.jpg', './testdata/test.jpg'))
         self.assertTrue(filecmp.cmp('./de_data/testdata/测试中文目录名/test.txt', './testdata/测试中文目录名/test.txt'))
         self.assertTrue(filecmp.cmp('./de_data/testdata/测试中文目录名/test/test.jpg', './testdata/测试中文目录名/test/test.jpg'))
+        self.assertTrue(filecmp.cmp('./testdata/测试中文目录名/test/test.jpg', './de_data2/testdata/测试中文目录名/test/test.jpg'))
         shutil.rmtree('./q0DCRBliIZ-Z8KuC4xSG2Q==')
         shutil.rmtree('./de_data')
+        shutil.rmtree('./de_data2')
+        shutil.rmtree('./en_data')
 
     def test_RSACrypto(self):
         # 使用RSA加密解密的演示

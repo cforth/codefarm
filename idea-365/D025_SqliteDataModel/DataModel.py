@@ -7,6 +7,7 @@ class DataModel(object):
     def __init__(self, db_name, data_class):
         self._db_name = db_name
         self._file_name = self._db_name + '.db'
+        self.data_class = data_class
         self._db_field_list = [x for x in dir(data_class()) if '__' not in x]
         self._db_field_count = len(self._db_field_list)
 
@@ -35,20 +36,22 @@ class DataModel(object):
     def has_table(self):
         execute_str = "select count(*) from sqlite_master where type=? and name=?"
         row_size, result = self._db_operate(execute_str, ("table", self._db_name))
-        return result[0][0]
+        return True if result[0][0] else False
 
     # 新建一个数据表
     def new_table(self):
-        execute_str = 'create table %s (id INTEGER primary key autoincrement, ' % self._db_name
+        execute_str = 'create table %s (' % self._db_name
         for i in range(0, self._db_field_count - 1):
             execute_str += (' %s text, ' % self._db_field_list[i])
         execute_str += (' %s text )' % self._db_field_list[-1])
-        self._db_operate(execute_str)
+        row_size, result = self._db_operate(execute_str)
+        return True if row_size else False
 
     # 删除一个数据表
     def del_table(self):
         execute_str = 'drop table %s' % self._db_name
-        self._db_operate(execute_str)
+        row_size, result = self._db_operate(execute_str)
+        return True if row_size else False
 
     # 增加一行数据
     def create(self, obj):
@@ -97,15 +100,23 @@ class DataModel(object):
 
     # 根据键值检索一行数据
     def retrieve(self, key, value):
+        row_size, col_list = self._db_operate("PRAGMA table_info(%s)" % self._db_name)
+        col_name_list = [col[1] for col in col_list]
         execute_str = 'select * from %s where %s = ?' % (self._db_name, key)
         row_size, result = self._db_operate(execute_str, (value,))
-        return result
+        if result:
+            res_dict = dict(zip(col_name_list, result[0]))
+            res_obj = self.data_class(**res_dict)
+            return res_obj
+        else:
+            return None
 
     # 根据id检索多行数据
     def retrieve_limit(self, start_id, end_id):
         execute_str = 'select * from %s limit ?, ?' % self._db_name
         row_size, result = self._db_operate(execute_str, (start_id, end_id))
-        return result
+        res_obj_list = [self.data_class(*args) for args in result]
+        return res_obj_list
 
     # 更新一行数据
     def update(self, column_key, column_value, key, value):

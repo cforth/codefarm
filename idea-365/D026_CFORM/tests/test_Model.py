@@ -21,3 +21,10 @@ if not User.find("username", u.username):
 u = User(id=2, username='xxx', email='xxx@cfxyzom', password='world')
 if not User.find("username", u.username):
     u.save()
+
+u = User(id=3, username='yyy', email='yyy@cfxyzom', password='sdgfdg')
+if not User.find("username", u.username):
+    u.save()
+
+# 删除数据
+User.remove('id', 2)

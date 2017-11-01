@@ -36,20 +36,20 @@ class ModelMetaclass(type):
             return type.__new__(cls, name, bases, attrs)
         logging.info('Found model: %s' % name)
         mappings = dict()
-        attrs['__primary__'] = None
+        primary = None
         for k, v in attrs.items():
             if isinstance(v, Field):
                 # 判断是否为主键
                 if v.primary_key:
-                    attrs['__primary__'] = v  # 保存主键
+                    primary = v
                     logging.info('Found primary key: %s ==> %s' % (k, v))
-                else:
-                    mappings[k] = v
-                    logging.info('Found mapping: %s ==> %s' % (k, v))
+                mappings[k] = v
+                logging.info('Found mapping: %s ==> %s' % (k, v))
         for k in mappings.keys():
             attrs.pop(k)
         attrs['__mappings__'] = mappings  # 保存属性和列的映射关系
         attrs['__table__'] = name  # 假设表名和类名一致
+        attrs['__primary__'] = primary   # 保存主键
         return type.__new__(cls, name, bases, attrs)
 
 
@@ -95,10 +95,13 @@ class Model(dict, metaclass=ModelMetaclass):
         sql = 'create table %s (' % cls.__table__
         if primary is not None:
             sql += '%s %s primary key,' % (primary.name, primary.column_type)
+            # 需要在参数列表中去掉此主键的键值
+            fields.remove(primary.name)
+            column_types.remove(primary.column_type)
         for i in range(0, len(fields)-1):
             sql += ' %s %s, ' % (fields[i], column_types[i])
         sql += ' %s %s)' % (fields[-1], column_types[-1])
-        logging.info('SQL: %s' % sql)
+        logging.info('SQL CREATE: %s' % sql)
         row_size, result = db.operate(cls.__table__, sql)
         logging.info('ROW_SIZE: %s' % row_size)
         logging.info('RESULT: %s' % result)
@@ -108,12 +111,23 @@ class Model(dict, metaclass=ModelMetaclass):
     @classmethod
     def find(cls, column_key, column_value):
         sql = 'select * from %s where %s = ?' % (cls.__table__, column_key)
-        logging.info('SQL: %s' % sql)
+        logging.info('SQL SELECT: %s' % sql)
         logging.info('ARGS: %s' % str(column_value))
         row_size, result = db.operate(cls.__table__, sql, (column_value,))
         logging.info('ROW_SIZE: %s' % row_size)
         logging.info('RESULT: %s' % result)
         return True if result else False
+
+    # 根据列名和值删除数据表中的一行数据
+    @classmethod
+    def remove(cls, column_key, column_value):
+        sql = "delete from %s WHERE %s = ?" % (cls.__table__, column_key)
+        logging.info('SQL DELETE: %s' % sql)
+        logging.info('ARGS: %s' % str(column_value))
+        row_size, result = db.operate(cls.__table__, sql, (column_value,))
+        logging.info('ROW_SIZE: %s' % row_size)
+        logging.info('RESULT: %s' % result)
+        return row_size
 
     # 插入一行数据到数据表
     def save(self):
@@ -124,7 +138,7 @@ class Model(dict, metaclass=ModelMetaclass):
             args.append(getattr(self, k, None))
         # 插入一行数据
         sql = 'insert into %s (%s) values (%s)' % (self.__table__, ','.join(fields), ','.join(['?' for i in args]))
-        logging.info('SQL: %s' % sql)
+        logging.info('SQL INSERT: %s' % sql)
         logging.info('ARGS: %s' % str(args))
         row_size, result = db.operate(self.__table__, sql, tuple(args))
         logging.info('ROW_SIZE: %s' % row_size)

@@ -1,4 +1,6 @@
-from tkinter import *
+import tkinter as tk
+import tkinter.ttk as ttk
+import tkinter.filedialog as filedialog
 import base64
 import hashlib
 import os
@@ -6,6 +8,7 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 
 
+# 将文件加密后解密后返回二进制数据
 class ByteCrypto:
     def __init__(self, password):
         # 将密码转为md5值作为密钥
@@ -18,7 +21,7 @@ class ByteCrypto:
         self.cipher = AES.new(self.key, AES.MODE_ECB)
         # 设置加密解密时分块读取10240KB
         self.read_kb = 10240
-        
+
     @staticmethod
     def handle(file_path, block_size, data_handle_func, data_end_handle_func):
         if not os.path.exists(file_path):
@@ -39,7 +42,7 @@ class ByteCrypto:
                     data = data_handle_func(data)
                 res_data = res_data + data
         return res_data
-                    
+
     # 加密文件
     def encrypt(self, file_path):
         block_size = self.read_kb * 1024
@@ -88,20 +91,61 @@ class StringCrypto(object):
         return string
 
 
+# 将加密后的PNG图片在内存中解密后显示出来
+# 注意本演示窗口类对于高分辨率图片会显示不全，是因为Tkinter的PhotoImage部件的缺陷
+class Window(ttk.Frame):
+    def __init__(self, master=None):
+        super().__init__(master, padding=2)
+        self.master = master
+        self.img = None
+        self.passwordEntry = ttk.Entry(self, width=100, show="*")
+        self.passwordShowButton = ttk.Button(self, text="密码", width=10, command=self.password_show)
+        self.textFromEntry = ttk.Entry(self, width=100)
+        self.fileFromChooseButton = ttk.Button(self, text="来源", width=10, command=self.file_from_choose)
+        self.showButton = ttk.Button(self, text="Go", width=10, command=self.show_img)
+        self.label = ttk.Label(self)
+
+        pad_w_e = dict(sticky=(tk.W, tk.E), padx="0.5m", pady="0.5m")
+        self.passwordEntry.grid(row=0, column=0, **pad_w_e)
+        self.passwordShowButton.grid(row=0, column=1, **pad_w_e)
+        self.textFromEntry.grid(row=1, column=0, **pad_w_e)
+        self.fileFromChooseButton.grid(row=1, column=1, **pad_w_e)
+        self.showButton.grid(row=1, column=2, **pad_w_e)
+        self.label.grid(row=2, column=0, columnspan=3, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+
+    def file_from_choose(self):
+        file_path = filedialog.askopenfilename()
+        # 选择输入文件路径后，在文件浏览器中选中的文件
+        self.textFromEntry.delete(0, len(self.textFromEntry.get()))
+        self.textFromEntry.insert(0, file_path)
+
+    def password_show(self):
+        if self.passwordEntry["show"] == "*":
+            self.passwordEntry["show"] = ""
+        else:
+            self.passwordEntry["show"] = "*"
+
+    def show_img(self):
+        password = self.passwordEntry.get()
+        img_path = self.textFromEntry.get()
+        img_name = os.path.split(img_path)[1]
+        # 解密文件名后设置窗口标题
+        titlestr = StringCrypto(password).decrypt(img_name)
+        self.master.title(titlestr)
+        # 在内存中解密PNG文件后显示出来
+        encodestr = base64.b64encode(ByteCrypto(password).decrypt(img_path))
+        # 注意使用base64字符串时，需要指定为data参数
+        self.img = tk.PhotoImage(data=encodestr)
+        self.label.config(image=self.img)
+
+
 def main():
-    password = '25555225'
-    filename = 'gkIEIa8buFYYlIpTGDDOzw=='
-    filepath = 'f:/temp/gkIEIa8buFYYlIpTGDDOzw=='
-    
-    titlestr = StringCrypto(password).decrypt(filename)
-    encodestr = base64.b64encode(ByteCrypto(password).decrypt(filepath))
-    
-    root = Tk()
-    root.title(titlestr)
-    # 注意使用base64字符串时，需要指定为data参数
-    img = PhotoImage(data=encodestr)
-    label = Label(root, image=img)
-    label.pack()
+    root = tk.Tk()
+    Window(master=root)
+    root.title("加密PNG图片显示器")
     root.mainloop()
 
-main()
+
+if __name__ == '__main__':
+    main()

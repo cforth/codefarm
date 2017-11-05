@@ -91,20 +91,31 @@ class StringCrypto(object):
         return string
 
 
-# 将加密后的PNG图片在内存中解密后显示出来
+# 将加密后的PNG/GIF图片在内存中解密后显示出来
 # 注意本演示窗口类对于高分辨率图片会显示不全，是因为Tkinter的PhotoImage部件的缺陷
 class Window(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master, padding=2)
         self.master = master
+        # 存储PNG图片
         self.img = None
+        # 存储GIF动图的每一帧
+        self._gif_frames = []
+        # 当前GIF动图正在显示的帧编号
+        self._frame_count = 0
+        # 保存定时顺序显示GIF每一帧事件
+        self._gif_timer = None
+        # 设置GIF动图运行的标志
+        self._gif_running = False
+        # 主要窗口部件
         self.passwordEntry = ttk.Entry(self, width=100, show="*")
         self.passwordShowButton = ttk.Button(self, text="密码", width=10, command=self.password_show)
         self.textFromEntry = ttk.Entry(self, width=100)
         self.fileFromChooseButton = ttk.Button(self, text="来源", width=10, command=self.file_from_choose)
         self.showButton = ttk.Button(self, text="Go", width=10, command=self.show_img)
+        # 使用Label部件显示解密后的图片
         self.label = ttk.Label(self)
-
+        # 将窗口部件布局
         pad_w_e = dict(sticky=(tk.W, tk.E), padx="0.5m", pady="0.5m")
         self.passwordEntry.grid(row=0, column=0, **pad_w_e)
         self.passwordShowButton.grid(row=0, column=1, **pad_w_e)
@@ -114,36 +125,81 @@ class Window(ttk.Frame):
         self.label.grid(row=2, column=0, columnspan=3, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
+    # 选择需要显示的加密图片
     def file_from_choose(self):
         file_path = filedialog.askopenfilename()
         # 选择输入文件路径后，在文件浏览器中选中的文件
         self.textFromEntry.delete(0, len(self.textFromEntry.get()))
         self.textFromEntry.insert(0, file_path)
 
+    # 显隐密码
     def password_show(self):
         if self.passwordEntry["show"] == "*":
             self.passwordEntry["show"] = ""
         else:
             self.passwordEntry["show"] = "*"
 
+    # 初始化GIF动图，将GIF动图每一帧保存起来准备显示
+    def set_gif(self, encodestr):
+        self._gif_frames = []
+        self._frame_count = 0
+        while True:
+            try:
+                photo = tk.PhotoImage(data=encodestr, format='gif -index %i' % (self._frame_count))
+                self._gif_frames.append(photo)
+                self._frame_count += 1
+            except tk.TclError:
+                break
+
+    # 定时更新GIF动图的每一帧
+    def update_gif(self, ind):
+        frame = self._gif_frames[ind]
+        ind += 1
+        if ind >= self._frame_count:
+            ind = 0
+        self.label.configure(image=frame)
+        self._gif_timer = self.master.after(100, self.update_gif, ind)
+
     def show_img(self):
         password = self.passwordEntry.get()
         img_path = self.textFromEntry.get()
         img_name = os.path.split(img_path)[1]
+
         # 解密文件名后设置窗口标题
         titlestr = StringCrypto(password).decrypt(img_name)
         self.master.title(titlestr)
-        # 在内存中解密PNG文件后显示出来
+        # 获取图片后缀名
+        ext = os.path.splitext(titlestr)[1].lower()
+        # 解密图片后转为Base64字符串保存
         encodestr = base64.b64encode(ByteCrypto(password).decrypt(img_path))
-        # 注意使用base64字符串时，需要指定为data参数
-        self.img = tk.PhotoImage(data=encodestr)
-        self.label.config(image=self.img)
+
+        # 如果当前GIF动图正在运行，则停止这个定时事件
+        if self._gif_running:
+            # 停止定时器
+            self.master.after_cancel(self._gif_timer)
+            self._gif_running = False
+
+        if ext == '.png':
+            # 注意使用base64字符串时，需要指定为data参数
+            self.img = tk.PhotoImage(data=encodestr)
+            self.label.config(image=self.img)
+        elif ext == '.gif':
+            # 设置GIF图片运行标志
+            self._gif_running = True
+            # 将GIF图片每一帧都保存在self._gif_frames列表里
+            self.set_gif(encodestr)
+            # 设置更新图片事件
+            self._gif_timer = self.master.after(0, self.update_gif, 0)
+        else:
+            # 清空label中的图像显示
+            self.label.config(image='')
+            self.label.config(text='Not support this image format: %s' % ext)
 
 
 def main():
     root = tk.Tk()
     Window(master=root)
-    root.title("加密PNG图片显示器")
+    root.title("加密PNG/GIF图片显示器")
     root.mainloop()
 
 

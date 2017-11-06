@@ -140,12 +140,12 @@ class Window(ttk.Frame):
             self.passwordEntry["show"] = "*"
 
     # 初始化GIF动图，将GIF动图每一帧保存起来准备显示
-    def set_gif(self, encodestr):
+    def init_gif(self, encode_str):
         self._gif_frames = []
         self._frame_count = 0
         while True:
             try:
-                photo = tk.PhotoImage(data=encodestr, format='gif -index %i' % (self._frame_count))
+                photo = tk.PhotoImage(data=encode_str, format='gif -index %i' % (self._frame_count))
                 self._gif_frames.append(photo)
                 self._frame_count += 1
             except tk.TclError:
@@ -160,39 +160,58 @@ class Window(ttk.Frame):
         self.label.configure(image=frame)
         self._gif_timer = self.master.after(100, self.update_gif, ind)
 
+    # 启动GIF动图
+    def start_gif(self):
+        # 设置GIF图片运行标志
+        self._gif_running = True
+        # 设置更新图片事件
+        self._gif_timer = self.master.after(0, self.update_gif, 0)
+
+    # 停止当前的GIF动图
+    def stop_gif(self):
+        # 停止定时器
+        self.master.after_cancel(self._gif_timer)
+        self._gif_running = False
+
+    # 清空图片显示
+    def cancel_img(self):
+        # 如果有GIF动图正在运行，则停止这个定时事件
+        if self._gif_running:
+            self.stop_gif()
+        self.master.title('')
+        self.label.config(image='')
+
     def show_img(self):
         password = self.passwordEntry.get()
         img_path = self.textFromEntry.get()
         img_name = os.path.split(img_path)[1]
 
-        # 解密文件名后设置窗口标题
-        titlestr = StringCrypto(password).decrypt(img_name)
-        self.master.title(titlestr)
-        # 获取图片后缀名
-        ext = os.path.splitext(titlestr)[1].lower()
-        # 解密图片后转为Base64字符串保存
-        encodestr = base64.b64encode(ByteCrypto(password).decrypt(img_path))
+        try:
+            # 解密文件名
+            title_str = StringCrypto(password).decrypt(img_name)
+            # 解密图片后转为Base64字符串保存
+            encode_str = base64.b64encode(ByteCrypto(password).decrypt(img_path))
+        except Exception as error:
+            print(error)
+            self.cancel_img()
+            self.label.config(text='Decrypt File: password error or image format error !')
+            return
 
-        # 如果当前GIF动图正在运行，则停止这个定时事件
-        if self._gif_running:
-            # 停止定时器
-            self.master.after_cancel(self._gif_timer)
-            self._gif_running = False
+        # 清空原来的图片显示
+        self.cancel_img()
+        # 设置窗口标题
+        self.master.title(title_str)
+        # 获取图片后缀名
+        ext = os.path.splitext(title_str)[1].lower()
 
         if ext == '.png':
             # 注意使用base64字符串时，需要指定为data参数
-            self.img = tk.PhotoImage(data=encodestr)
+            self.img = tk.PhotoImage(data=encode_str)
             self.label.config(image=self.img)
         elif ext == '.gif':
-            # 设置GIF图片运行标志
-            self._gif_running = True
-            # 将GIF图片每一帧都保存在self._gif_frames列表里
-            self.set_gif(encodestr)
-            # 设置更新图片事件
-            self._gif_timer = self.master.after(0, self.update_gif, 0)
+            self.init_gif(encode_str)
+            self.start_gif()
         else:
-            # 清空label中的图像显示
-            self.label.config(image='')
             self.label.config(text='Not support this image format: %s' % ext)
 
 

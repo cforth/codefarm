@@ -107,23 +107,31 @@ class Window(ttk.Frame):
         self._gif_timer = None
         # 设置GIF动图运行的标志
         self._gif_running = False
+        # 存储当前图片所在的文件夹内的文件列表，用来点击下一个图片
+        self._img_list = []
         # 主要窗口部件
         self.passwordEntry = ttk.Entry(self, width=100, show="*")
         self.passwordShowButton = ttk.Button(self, text="密码", width=10, command=self.password_show)
         self.textFromEntry = ttk.Entry(self, width=100)
         self.fileFromChooseButton = ttk.Button(self, text="来源", width=10, command=self.file_from_choose)
         self.showButton = ttk.Button(self, text="Go", width=10, command=self.show_img)
+        self.nextFileButton = ttk.Button(self, text=" > ", width=10, command=self.next_img)
+        self.priorFileButton = ttk.Button(self, text=" < ", width=10, command=self.prior_img)
         # 使用Label部件显示解密后的图片
         self.label = ttk.Label(self)
         # 将窗口部件布局
         pad_w_e = dict(sticky=(tk.W, tk.E), padx="0.5m", pady="0.5m")
-        self.passwordEntry.grid(row=0, column=0, **pad_w_e)
-        self.passwordShowButton.grid(row=0, column=1, **pad_w_e)
-        self.textFromEntry.grid(row=1, column=0, **pad_w_e)
-        self.fileFromChooseButton.grid(row=1, column=1, **pad_w_e)
-        self.showButton.grid(row=1, column=2, **pad_w_e)
-        self.label.grid(row=2, column=0, columnspan=3, sticky=(tk.N, tk.S, tk.E, tk.W))
-        self.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        pad_n_s = dict(sticky=(tk.N, tk.S), padx="0.5m", pady="0.5m")
+        pad_n_s_e_w = dict(sticky=(tk.N, tk.S, tk.E, tk.W), padx="0.5m", pady="0.5m")
+        self.passwordEntry.grid(row=0, column=1, **pad_w_e)
+        self.passwordShowButton.grid(row=0, column=0, **pad_w_e)
+        self.textFromEntry.grid(row=1, column=1, **pad_w_e)
+        self.fileFromChooseButton.grid(row=1, column=0, **pad_w_e)
+        self.showButton.grid(row=0, column=2, rowspan=2, **pad_n_s_e_w)
+        self.priorFileButton.grid(row=2, column=0, **pad_n_s)
+        self.nextFileButton.grid(row=2, column=2, **pad_n_s)
+        self.label.grid(row=2, column=1, **pad_n_s_e_w)
+        self.grid(row=0, column=0, **pad_n_s_e_w)
 
     # 选择需要显示的加密图片
     def file_from_choose(self):
@@ -181,6 +189,7 @@ class Window(ttk.Frame):
         self.master.title('')
         self.label.config(image='')
 
+    # 点击按钮解密并显示图片
     def show_img(self):
         password = self.passwordEntry.get()
         img_path = self.textFromEntry.get()
@@ -213,6 +222,47 @@ class Window(ttk.Frame):
             self.start_gif()
         else:
             self.label.config(text='Not support this image format: %s' % ext)
+
+    # 根据方向设置图片地址
+    def set_direction_path(self, direction):
+        img_path = self.textFromEntry.get()
+        img_name = os.path.split(os.path.realpath(img_path))[1]
+        dir_path = os.path.split(os.path.realpath(img_path))[0]
+        img_name_list = self.set_img_list(dir_path)
+        length = len(img_name_list)
+        index = img_name_list.index(img_name)
+        if direction == 'next':
+            if index < length - 1:
+                next_img = img_name_list[index + 1]
+                self.textFromEntry.delete(0, len(self.textFromEntry.get()))
+                self.textFromEntry.insert(0, os.path.join(dir_path, next_img))
+        elif direction == 'prior':
+            if index > 0:
+                prior_img = img_name_list[index - 1]
+                self.textFromEntry.delete(0, len(self.textFromEntry.get()))
+                self.textFromEntry.insert(0, os.path.join(dir_path, prior_img))
+
+    # 返回当前图片所在的文件夹的所有图片列表
+    def set_img_list(self, dir_path):
+        img_name_list = []
+        for path, subdir, files in os.walk(dir_path):
+            for f in files:
+                img_name_list.append(f)
+        return img_name_list
+
+    # 点击下一个按钮解密并显示文件夹内下一个图片
+    def next_img(self):
+        img_path = self.textFromEntry.get()
+        if img_path and os.path.exists(img_path):
+            self.set_direction_path('next')
+            self.show_img()
+
+    # 点击上一个按钮解密并显示文件夹内上一个图片
+    def prior_img(self):
+        img_path = self.textFromEntry.get()
+        if img_path and os.path.exists(img_path):
+            self.set_direction_path('prior')
+            self.show_img()
 
 
 def main():

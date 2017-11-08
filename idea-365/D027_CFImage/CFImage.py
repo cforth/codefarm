@@ -255,14 +255,18 @@ class Window(ttk.Frame):
         img_path = self.textFromEntry.get()
         if img_path and os.path.exists(img_path):
             self.set_direction_path('next')
-            self.show_img()
+            next_path = self.textFromEntry.get()
+            if img_path != next_path:
+                self.show_img()
 
     # 点击上一个按钮解密并显示文件夹内上一个图片
     def prior_img(self):
         img_path = self.textFromEntry.get()
         if img_path and os.path.exists(img_path):
             self.set_direction_path('prior')
-            self.show_img()
+            prior_path = self.textFromEntry.get()
+            if img_path != prior_path:
+                self.show_img()
 
 
 def main():

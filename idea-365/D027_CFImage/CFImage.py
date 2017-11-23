@@ -91,12 +91,33 @@ class StringCrypto(object):
         return string
 
 
+# 读取文件到内存
+def read_file(file_path):
+    if not os.path.exists(file_path):
+        raise ValueError('Input file path not exists: %s ', file_path)
+
+    with open(file_path, 'rb') as f:
+        data = f.read()
+    return data
+
+
+# 设置下拉列表框的内容
+def set_combobox_item(combobox, text, fuzzy=False):
+    for index, value in enumerate(combobox.cget("values")):
+        if (fuzzy and text in value) or (value == text):
+            combobox.current(index)
+            return
+    combobox.current(0 if len(combobox.cget("values")) else -1)
+
+
 # 将加密后的PNG/GIF图片在内存中解密后显示出来
 # 注意本演示窗口类对于高分辨率图片会显示不全，是因为Tkinter的PhotoImage部件的缺陷
 class Window(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master, padding=2)
         self.master = master
+        # 选择是否解密文件
+        self.cryptoOption = tk.StringVar()
         # 存储PNG图片
         self.img = None
         # 存储GIF动图的每一帧
@@ -112,6 +133,13 @@ class Window(ttk.Frame):
         # 主要窗口部件
         self.passwordEntry = ttk.Entry(self, width=100, show="*")
         self.passwordShowButton = ttk.Button(self, text="密码", width=10, command=self.password_show)
+        # 选择是否解密文件
+        self.cryptoOptionCombobox = ttk.Combobox(self, width=10, textvariable=self.cryptoOption)
+        self.cryptoOptionCombobox.state(('readonly',))
+        self.cryptoOptionCombobox.config(values=["解密文件", "不需解密"])
+        set_combobox_item(self.cryptoOptionCombobox, "解密文件", True)
+        # 绑定选择事件
+        self.cryptoOptionCombobox.bind("<<ComboboxSelected>>", self.crypto_choose_event)
         self.textFromEntry = ttk.Entry(self, width=100)
         self.fileFromChooseButton = ttk.Button(self, text="来源", width=10, command=self.file_from_choose)
         self.showButton = ttk.Button(self, text="Go", width=10, command=self.show_img)
@@ -125,13 +153,22 @@ class Window(ttk.Frame):
         pad_n_s_e_w = dict(sticky=(tk.N, tk.S, tk.E, tk.W), padx="0.5m", pady="0.5m")
         self.passwordEntry.grid(row=0, column=1, **pad_w_e)
         self.passwordShowButton.grid(row=0, column=0, **pad_w_e)
+        self.cryptoOptionCombobox.grid(row=0, column=2, **pad_w_e)
         self.textFromEntry.grid(row=1, column=1, **pad_w_e)
         self.fileFromChooseButton.grid(row=1, column=0, **pad_w_e)
-        self.showButton.grid(row=0, column=2, rowspan=2, **pad_n_s_e_w)
+        self.showButton.grid(row=1, column=2, **pad_w_e)
         self.priorFileButton.grid(row=2, column=0, **pad_n_s)
         self.nextFileButton.grid(row=2, column=2, **pad_n_s)
         self.label.grid(row=2, column=1, **pad_n_s_e_w)
         self.grid(row=0, column=0, **pad_n_s_e_w)
+
+    # 设置路径输入是否可用
+    def crypto_choose_event(self, event=None):
+        if self.cryptoOptionCombobox.get() == "解密文件":
+            self.passwordEntry["state"] = "normal"
+        elif self.cryptoOptionCombobox.get() == "不需解密":
+            self.passwordEntry.delete(0, len(self.passwordEntry.get()))
+            self.passwordEntry["state"] = "disable"
 
     # 选择需要显示的加密图片
     def file_from_choose(self):
@@ -194,12 +231,17 @@ class Window(ttk.Frame):
         password = self.passwordEntry.get()
         img_path = self.textFromEntry.get()
         img_name = os.path.split(img_path)[1]
+        is_encrypt = True if self.cryptoOptionCombobox.get() == "解密文件" else False
 
         try:
-            # 解密文件名
-            title_str = StringCrypto(password).decrypt(img_name)
-            # 解密图片后转为Base64字符串保存
-            encode_str = base64.b64encode(ByteCrypto(password).decrypt(img_path))
+            if is_encrypt:
+                # 解密文件名
+                title_str = StringCrypto(password).decrypt(img_name)
+                # 解密图片后转为Base64字符串保存
+                encode_str = base64.b64encode(ByteCrypto(password).decrypt(img_path))
+            else:
+                title_str = img_name
+                encode_str = base64.b64encode(read_file(img_path))
         except Exception as error:
             print(error)
             self.cancel_img()

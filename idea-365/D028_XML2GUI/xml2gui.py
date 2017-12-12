@@ -1,57 +1,71 @@
 from xml.parsers.expat import ParserCreate
-from tkinter import *
+import tkinter.ttk as ttk
+import logging
 
-global_window = None
+logging.basicConfig(level=logging.ERROR)
+XML_FILE = "my_window.xml"
 
-class DefaultSaxHandler(object):
+
+class MySaxHandler(object):
+    def __init__(self):
+        self.window = None
+
     def start_element(self, name, attrs):
-        global global_window
-        if name == "Window":
-            global_window = {}
+        if name == "Root":
+            self.window = {}
             for k in attrs:
-                global_window[k] = attrs[k]
-        elif isinstance(global_window, dict):
-                global_window[name] = attrs
+                self.window[k] = attrs[k]
+        elif isinstance(self.window, dict):
+            self.window[name] = attrs
 
     def end_element(self, name):
-        if name == "Window":
-            pass
+        if name == "Root":
+            logging.info(self.window)
 
     def char_data(self, text):
         pass
 
 
-
 class WindowMetaclass(type):
     def __new__(cls, name, bases, attrs):
-        global global_window
-        with open('my_window.xml', 'r', encoding='utf-8') as f:
-            xml = f.read()
-        if xml:
-            handler = DefaultSaxHandler()
-            parser = ParserCreate()
-            parser.StartElementHandler = handler.start_element
-            parser.EndElementHandler = handler.end_element
-            parser.CharacterDataHandler = handler.char_data
-            parser.Parse(xml)
-            attrs['my_widget'] = global_window
+        try:
+            with open(XML_FILE, 'r', encoding='utf-8') as f:
+                xml = f.read()
+            if xml:
+                handler = MySaxHandler()
+                parser = ParserCreate()
+                parser.StartElementHandler = handler.start_element
+                parser.EndElementHandler = handler.end_element
+                parser.CharacterDataHandler = handler.char_data
+                parser.Parse(xml)
+                attrs['my_widget'] = handler.window
+        except Exception as err:
+            attrs['my_widget'] = {}
+            logging.error('Err: %s' % err)
         return type.__new__(cls, name, bases, attrs)
 
 
-class Window(Frame, metaclass=WindowMetaclass):
+class Window(ttk.Frame, metaclass=WindowMetaclass):
     def __init__(self, master=None):
-        Frame.__init__(self, master)
-        for k in self.my_widget:
-            if self.my_widget[k]["type"] == "Entry":
-                self.__dict__[k] = Entry(self, text=self.my_widget[k]["text"])
-            elif self.my_widget[k]["type"] == "Button":
-                self.__dict__[k] = Button(self, text=self.my_widget[k]["text"])
-            self.__dict__[k].grid(row=int(self.my_widget[k]["row"]), column=int(self.my_widget[k]["column"]))
+        super().__init__(master, padding=2)
+        self.create_widgets_layout()
         self.grid(row=0, column=0)
+
+    def create_widgets_layout(self):
+        widgets = Window.__dict__['my_widget'] if Window.__dict__.get('my_widget') else None
+        if widgets:
+            for k in widgets:
+                if widgets[k]["type"] == "Entry":
+                    self.__dict__[k] = ttk.Entry(self, text=widgets[k]["text"])
+                elif widgets[k]["type"] == "Button":
+                    self.__dict__[k] = ttk.Button(self, text=widgets[k]["text"])
+                elif widgets[k]["type"] == "Label":
+                    self.__dict__[k] = ttk.Label(self, text=widgets[k]["text"])
+                self.__dict__[k].grid(row=int(widgets[k]["row"]), column=int(widgets[k]["column"]))
 
 
 app = Window()
 # 设置窗口标题:
-app.master.title('Hello World')
+app.master.title('测试')
 # 主消息循环:
 app.mainloop()

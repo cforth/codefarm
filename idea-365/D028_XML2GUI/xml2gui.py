@@ -2,25 +2,30 @@ from xml.parsers.expat import ParserCreate
 import tkinter.ttk as ttk
 import logging
 
-logging.basicConfig(level=logging.ERROR)
+logging.basicConfig(level=logging.INFO)
 XML_FILE = "my_window.xml"
 
 
 class MySaxHandler(object):
     def __init__(self):
         self.window = None
+        self.stack = []
 
     def start_element(self, name, attrs):
-        if name == "Root":
+        if name == 'Root':
             self.window = {}
-            for k in attrs:
-                self.window[k] = attrs[k]
-        elif isinstance(self.window, dict):
-            self.window[name] = attrs
+        else:
+            if not self.stack:
+                self.window[name] = {}
+                self.stack.append(name)
+            else:
+                self.window[self.stack[-1]][name] = attrs
 
     def end_element(self, name):
-        if name == "Root":
-            logging.info(self.window)
+        if self.stack and self.stack[-1] == name:
+            self.stack.pop()
+        elif name == 'Root':
+            logging.info(str(self.window))
 
     def char_data(self, text):
         pass
@@ -55,13 +60,17 @@ class Window(ttk.Frame, metaclass=WindowMetaclass):
         widgets = Window.__dict__['my_widget'] if Window.__dict__.get('my_widget') else None
         if widgets:
             for k in widgets:
-                if widgets[k]["type"] == "Entry":
-                    self.__dict__[k] = ttk.Entry(self, text=widgets[k]["text"])
-                elif widgets[k]["type"] == "Button":
-                    self.__dict__[k] = ttk.Button(self, text=widgets[k]["text"])
-                elif widgets[k]["type"] == "Label":
-                    self.__dict__[k] = ttk.Label(self, text=widgets[k]["text"])
-                self.__dict__[k].grid(row=int(widgets[k]["row"]), column=int(widgets[k]["column"]))
+                # 动态生成控件，并添加字符串类型的参数（若有）
+                if widgets[k]["type"]["type"] == "Entry":
+                    self.__dict__[k] = ttk.Entry(self, **widgets[k]["strParm"])
+                elif widgets[k]["type"]["type"] == "Button":
+                    self.__dict__[k] = ttk.Button(self, **widgets[k]["strParm"])
+                elif widgets[k]["type"]["type"] == "Label":
+                    self.__dict__[k] = ttk.Label(self, **widgets[k]["strParm"])
+                # 为每个控件添加数值类型的参数（若有）
+                for pk in widgets[k]["intParm"]:
+                    self.__dict__[k][pk] = int(widgets[k]["intParm"][pk])
+                self.__dict__[k].grid(**widgets[k]["grid"])
 
 
 app = Window()

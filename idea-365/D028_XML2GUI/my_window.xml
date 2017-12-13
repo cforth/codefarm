@@ -1,11 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Root>
-    <passwordShowButton type = "Button" row="0" column="0" text="显隐密码"/>
-    <passwordEntry type = "Entry" row="0" column="1" text="请输入密码"/>
-    <fileFromButton type = "Button" row="1" column="0" text="输入路径"/>
-    <fileFromEntry type = "Entry" row="1" column="1" text="输入路径"/>
-    <fileToButton type = "Button" row="2" column="0" text="输出路径"/>
-    <fileToEntry type = "Entry" row="2" column="1" text="输出路径"/>
-    <infoLabel1 type="Label" row="3" column="0" text="注意"/>
-    <infoLabel2 type="Label" row="3" column="1" text="这是个简单的测试"/>
+    <passwordShowButton>
+        <type type= "Button"/>
+        <strParm text="显隐密码"/>
+        <intParm width="10"/>
+        <grid row="0" column="0"/>
+    </passwordShowButton>
+    <passwordEntry>
+        <type type= "Entry"/>
+        <strParm show="*"/>
+        <intParm width="50"/>
+        <grid row="0" column="1"/>
+    </passwordEntry>
+    <fileFromButton>
+        <type type= "Button"/>
+        <strParm text="输入路径" state="disable"/>
+        <intParm width="10"/>
+        <grid row="1" column="0"/>
+    </fileFromButton>
+    <fileFromEntry>
+        <type type= "Entry"/>
+        <strParm/>
+        <intParm width="50"/>
+        <grid row="1" column="1"/>
+    </fileFromEntry>
+    <fileToButton>
+        <type type= "Button"/>
+        <strParm text="输出路径"/>
+        <intParm width="10"/>
+        <grid row="2" column="0"/>
+    </fileToButton>
+    <fileToEntry>
+        <type type= "Entry"/>
+        <strParm/>
+        <intParm width="50"/>
+        <grid row="2" column="1"/>
+    </fileToEntry>
+    <doButton>
+        <type type= "Button"/>
+        <strParm text="Just Do it"/>
+        <intParm width="25"/>
+        <grid row="3" column="0" columnspan="2"/>
+    </doButton>
+    <infoLabel1>
+        <type type= "Label"/>
+        <strParm text="这是个简单的测试，从xml文件生成UI控件"/>
+        <intParm/>
+        <grid row="4" column="0" columnspan="2"/>
+    </infoLabel1>
 </Root>

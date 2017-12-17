@@ -46,7 +46,7 @@
     </doButton>
     <infoLabel>
         <type name= "Label"/>
-        <strParm text="这是个简单的测试，从xml文件生成UI控件"/>
+        <var name="info"/>
         <grid row="4" column="0" columnspan="2"/>
     </infoLabel>
 </Root>

@@ -8,28 +8,28 @@ class Window(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master, padding=2)
         # 从xml文件自动设置UI控件
-        create_ui_from_xml(self, "my_window.xml")
-        self.create_bindings()
+        create_ui(self, "my_window.xml")
+        # 为控件绑定指令
+        create_command(self, "passwordShowButton", self.password_show_button_callback)
+        create_command(self, "fileFromButton", self.file_from_button_callback)
+        create_command(self, "fileToButton", self.file_to_button_callback)
+        create_command(self, "doButton", self.do_button_callback)
         self.grid(row=0, column=0)
 
-    def create_bindings(self):
-        # 以下控件没有手工定义，由create_ui_from_xml生成
-        self.passwordShowButton["command"] = self.password_show_button_callback
-        self.fileFromButton["command"] = self.file_from_button_callback
-        self.fileToButton["command"] = self.file_to_button_callback
-        self.doButton["command"] = self.do_button_callback
-
     def password_show_button_callback(self, event=None):
-        self.passwordEntry["show"] = "" if self.passwordEntry["show"] == "*" else "*"
+        self.__dict__["passwordEntry"]["show"] = "" if self.__dict__["passwordEntry"]["show"] == "*" else "*"
 
     def file_from_button_callback(self, event=None):
-        self.fileFrom.set(filedialog.askopenfilename())
+        self.__dict__["fileFrom"].set(filedialog.askopenfilename())
 
     def file_to_button_callback(self, event=None):
-        self.fileTo.set(filedialog.askdirectory())
+        self.__dict__["fileTo"].set(filedialog.askdirectory())
 
     def do_button_callback(self, event=None):
-        self.info.set("密码：%s\n 输入路径：%s\n 输出路径：%s" % (self.password.get(), self.fileFrom.get(), self.fileTo.get()))
+        self.__dict__["info"].set("密码：%s\n输入路径：%s\n输出路径：%s" %
+                                  (self.__dict__["password"].get(),
+                                   self.__dict__["fileFrom"].get(),
+                                   self.__dict__["fileTo"].get()))
 
 
 app = Window()

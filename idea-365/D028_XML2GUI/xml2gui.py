@@ -33,7 +33,7 @@ class MySaxHandler(object):
 
 
 # 从xml文件自动设置UI控件
-def create_ui_from_xml(self, xml_file):
+def create_ui(self, xml_file):
     try:
         with open(xml_file, 'r', encoding='utf-8') as f:
             xml = f.read()
@@ -68,3 +68,8 @@ def create_ui_from_xml(self, xml_file):
                 self.__dict__[widget_var["name"]] = tk.StringVar()
                 self.__dict__[k]["textvariable"] = self.__dict__[widget_var["name"]]
             self.__dict__[k].grid(**widget[k]["grid"])
+
+
+# 绑定控件的指令
+def create_command(self, widget, command):
+    self.__dict__[widget]["command"] = command

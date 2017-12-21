@@ -1,0 +1,50 @@
+{
+  "passwordShowButton": {
+    "type": "Button",
+    "strParm": {"text": "显隐密码"},
+    "intParm": {"width": 10},
+    "grid": {"row": 0, "column": 0}
+  },
+  "passwordEntry": {
+    "type": "Entry",
+    "strParm": {"show": "*"},
+    "intParm": {"width": 50},
+    "var": "password",
+    "grid": {"row": 0, "column": 1}
+  },
+  "fileFromButton": {
+    "type": "Button",
+    "strParm": {"text": "输入路径"},
+    "intParm": {"width": 10},
+    "grid": {"row": 1, "column": 0}
+  },
+  "fileFromEntry": {
+    "type": "Entry",
+    "intParm": {"width": 50},
+    "var": "fileFrom",
+    "grid": {"row": 1, "column": 1}
+  },
+  "fileToButton": {
+    "type": "Button",
+    "strParm": {"text": "输出路径"},
+    "intParm": {"width": 10},
+    "grid": {"row": 2, "column": 0}
+  },
+  "fileToEntry": {
+    "type": "Entry",
+    "var": "fileTo",
+    "intParm": {"width": 50},
+    "grid": {"row": 2, "column": 1}
+  },
+  "doButton": {
+    "type": "Button",
+    "strParm": {"text": "Just Do it"},
+    "intParm": {"width": 25},
+    "grid": {"row": 3, "column": 0, "columnspan": 2}
+  },
+  "infoLabel": {
+    "type": "Label",
+    "var": "info",
+    "grid": {"row": 4, "column": 0, "columnspan": 2}
+  }
+}

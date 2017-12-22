@@ -16,9 +16,17 @@ def create_ui(self, json_file):
 
     if widget:
         for k in widget:
-            widget_class = widget[k]["type"]
-            widget_str_parm = widget[k]["strParm"] if widget[k].get("strParm") else {}
-            widget_int_parm = widget[k]["intParm"] if widget[k].get("intParm") else {}
+            # "class"和"grid"参数不存在直接弹出异常
+            if not widget[k].get("class"):
+                raise NameError("Parameter loss: class")
+
+            if not widget[k].get("grid"):
+                raise NameError("Parameter loss: grid")
+
+            widget_class = widget[k]["class"]
+            widget_grid = widget[k]["grid"]
+            widget_str_parm = widget[k]["string"] if widget[k].get("string") else {}
+            widget_int_parm = widget[k]["int"] if widget[k].get("int") else {}
             widget_var = widget[k]["var"] if widget[k].get("var") else None
 
             # 动态生成控件，并添加字符串类型的参数（若有）
@@ -30,7 +38,8 @@ def create_ui(self, json_file):
             if widget_var:
                 self.__dict__[widget_var] = tk.StringVar()
                 self.__dict__[k]["textvariable"] = self.__dict__[widget_var]
-            self.__dict__[k].grid(**widget[k]["grid"])
+            # 使用grid布局控件
+            self.__dict__[k].grid(**widget_grid)
 
 
 # 绑定控件的指令

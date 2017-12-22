@@ -30,7 +30,7 @@ def create_ui(self, json_file):
             widget_var = widget[k]["var"] if widget[k].get("var") else None
 
             # 动态生成控件，并添加字符串类型的参数（若有）
-            self.__dict__[k] = ttk.__dict__[widget_class](self, **widget_str_parm)
+            self.__dict__[k] = tk.__dict__[widget_class](self, **widget_str_parm)
             # 为每个控件添加数值类型的参数（若有）
             for pk in widget_int_parm:
                 self.__dict__[k][pk] = int(widget_int_parm[pk])
@@ -45,3 +45,8 @@ def create_ui(self, json_file):
 # 绑定控件的指令
 def create_command(self, widget, command):
     self.__dict__[widget]["command"] = command
+
+
+# 绑定事件
+def create_bind(self, widget, event_handle):
+    self.__dict__[widget].bind("<Button-1>", event_handle)

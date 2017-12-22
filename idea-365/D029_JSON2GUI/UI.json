@@ -1,50 +1,123 @@
 {
-  "passwordShowButton": {
-    "class": "Button",
-    "string": {"text": "显隐密码"},
-    "int": {"width": 10},
-    "grid": {"row": 0, "column": 0}
-  },
-  "passwordEntry": {
-    "class": "Entry",
-    "string": {"show": "*"},
-    "int": {"width": 50},
-    "var": "password",
-    "grid": {"row": 0, "column": 1}
-  },
-  "fileFromButton": {
-    "class": "Button",
-    "string": {"text": "输入路径"},
-    "int": {"width": 10},
-    "grid": {"row": 1, "column": 0}
-  },
-  "fileFromEntry": {
-    "class": "Entry",
-    "int": {"width": 50},
-    "var": "fileFrom",
-    "grid": {"row": 1, "column": 1}
-  },
-  "fileToButton": {
-    "class": "Button",
-    "string": {"text": "输出路径"},
-    "int": {"width": 10},
-    "grid": {"row": 2, "column": 0}
-  },
-  "fileToEntry": {
-    "class": "Entry",
-    "var": "fileTo",
-    "int": {"width": 50},
-    "grid": {"row": 2, "column": 1}
-  },
-  "doButton": {
-    "class": "Button",
-    "string": {"text": "Just Do it"},
-    "int": {"width": 25},
-    "grid": {"row": 3, "column": 0, "columnspan": 2}
-  },
-  "infoLabel": {
+  "outputLable": {
     "class": "Label",
-    "var": "info",
-    "grid": {"row": 4, "column": 0, "columnspan": 2}
+    "var": "output",
+    "int": {"width": 40, "height": 4},
+    "string": {"anchor": "e"},
+    "grid": {"row":0, "column":0, "columnspan": 4}
+  },
+  "acButton": {
+    "class": "Button",
+    "string": {"text": "清空"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":1, "column":0}
+  },
+  "backButton": {
+    "class": "Button",
+    "string": {"text": "退格"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":1, "column":1}
+  },
+  "divButton": {
+    "class": "Button",
+    "string": {"text": "除"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":1, "column":2}
+  },
+  "mulButton": {
+    "class": "Button",
+    "string": {"text": "乘"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":1, "column":3}
+  },
+  "sevenButton": {
+    "class": "Button",
+    "string": {"text": "7"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":2, "column":0}
+  },
+  "eightButton": {
+    "class": "Button",
+    "string": {"text": "8"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":2, "column":1}
+  },
+  "nineButton": {
+    "class": "Button",
+    "string": {"text": "9"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":2, "column":2}
+  },
+  "minusButton": {
+    "class": "Button",
+    "string": {"text": "减"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":2, "column":3}
+  },
+  "fourButton": {
+    "class": "Button",
+    "string": {"text": "4"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":3, "column":0}
+  },
+  "fiveButton": {
+    "class": "Button",
+    "string": {"text": "5"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":3, "column":1}
+  },
+  "sixButton": {
+    "class": "Button",
+    "string": {"text": "6"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":3, "column":2}
+  },
+  "plusButton": {
+    "class": "Button",
+    "string": {"text": "加"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":3, "column":3}
+  },
+  "oneButton": {
+    "class": "Button",
+    "string": {"text": "1"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":4, "column":0}
+  },
+  "twoButton": {
+    "class": "Button",
+    "string": {"text": "2"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":4, "column":1}
+  },
+  "threeButton": {
+    "class": "Button",
+    "string": {"text": "3"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":4, "column":2}
+  },
+  "equalButton": {
+    "class": "Button",
+    "string": {"text": "等于"},
+    "int": {"width": 10, "height": 5},
+    "grid": {"row":4, "column":3, "rowspan": 2}
+  },
+  "modButton": {
+    "class": "Button",
+    "string": {"text": "取余"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":5, "column":0}
+  },
+  "zeroButton": {
+    "class": "Button",
+    "string": {"text": "0"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":5, "column":1}
+  },
+  "spotButton": {
+    "class": "Button",
+    "string": {"text": "点"},
+    "int": {"width": 10, "height": 2},
+    "grid": {"row":5, "column":2}
   }
 }

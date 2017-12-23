@@ -1,6 +1,8 @@
 import json
 import codecs
 import tkinter as tk
+import logging
+logging.basicConfig(level=logging.INFO)
 
 
 def read_json_file(json_file):
@@ -12,6 +14,7 @@ def read_json_file(json_file):
 # 从json文件创建UI
 def create_ui(self, json_file):
     widget = read_json_file(json_file)
+    logging.info("JSON Object: %s" % str(widget))
 
     if not widget:
         raise NameError("JSON is empty")
@@ -40,7 +43,21 @@ def create_ui(self, json_file):
             self.__dict__[widget_var] = tk.StringVar()
             self.__dict__[k]["textvariable"] = self.__dict__[widget_var]
         # 使用grid布局控件
-        self.__dict__[k].grid(**widget_grid)
+        if widget_grid.get("sticky"):
+            grid_sticky = []
+            for p in widget_grid["sticky"]:
+                if p == "E":
+                    grid_sticky.append(tk.E)
+                elif p == "W":
+                    grid_sticky.append(tk.W)
+                elif p == "N":
+                    grid_sticky.append(tk.N)
+                elif p == "S":
+                    grid_sticky.append(tk.S)
+            widget_grid.pop("sticky")
+            self.__dict__[k].grid(sticky=tuple(grid_sticky), **widget_grid)
+        else:
+            self.__dict__[k].grid(**widget_grid)
 
 
 # 通过json文件给控件绑定事件（若有）

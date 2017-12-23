@@ -2,141 +2,141 @@
   "outputLable": {
     "class": "Label",
     "var": "output",
-    "int": {"width": 40, "height": 4},
+    "int": {"height": 4},
     "string": {"anchor": "e", "font": "Arial, 12"},
-    "grid": {"row":0, "column":0, "columnspan": 4}
+    "grid": {"row":0, "column":0, "columnspan": 4, "sticky":["W", "E"]}
   },
   "acButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "AC"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":1, "column":0}
+    "grid": {"row":1, "column":0, "sticky":["W", "E"]}
   },
   "backButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "<-"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":1, "column":1}
+    "grid": {"row":1, "column":1, "sticky":["W", "E"]}
   },
   "divButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "/"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":1, "column":2}
+    "grid": {"row":1, "column":2, "sticky":["W", "E"]}
   },
   "mulButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "*"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":1, "column":3}
+    "grid": {"row":1, "column":3, "sticky":["W", "E"]}
   },
   "sevenButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "7"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":2, "column":0}
+    "grid": {"row":2, "column":0, "sticky":["W", "E"]}
   },
   "eightButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "8"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":2, "column":1}
+    "grid": {"row":2, "column":1, "sticky":["W", "E"]}
   },
   "nineButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "9"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":2, "column":2}
+    "grid": {"row":2, "column":2, "sticky":["W", "E"]}
   },
   "minusButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "-"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":2, "column":3}
+    "grid": {"row":2, "column":3, "sticky":["W", "E"]}
   },
   "fourButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "4"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":3, "column":0}
+    "grid": {"row":3, "column":0, "sticky":["W", "E"]}
   },
   "fiveButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "5"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":3, "column":1}
+    "grid": {"row":3, "column":1, "sticky":["W", "E"]}
   },
   "sixButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "6"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":3, "column":2}
+    "grid": {"row":3, "column":2, "sticky":["W", "E"]}
   },
   "plusButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "+"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":3, "column":3}
+    "grid": {"row":3, "column":3, "sticky":["W", "E"]}
   },
   "oneButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "1"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":4, "column":0}
+    "grid": {"row":4, "column":0, "sticky":["W", "E"]}
   },
   "twoButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "2"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":4, "column":1}
+    "grid": {"row":4, "column":1, "sticky":["W", "E"]}
   },
   "threeButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "3"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":4, "column":2}
+    "grid": {"row":4, "column":2, "sticky":["W", "E"]}
   },
   "equalButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "="},
     "int": {"width": 10, "height": 5},
-    "grid": {"row":4, "column":3, "rowspan": 2}
+    "grid": {"row":4, "column":3, "rowspan": 2, "sticky":["W", "E"]}
   },
   "modButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "%"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":5, "column":0}
+    "grid": {"row":5, "column":0, "sticky":["W", "E"]}
   },
   "zeroButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "0"},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":5, "column":1}
+    "grid": {"row":5, "column":1, "sticky":["W", "E"]}
   },
   "spotButton": {
     "class": "Button",
     "bind": {"<Button-1>": "callback"},
     "string": {"text": "."},
     "int": {"width": 10, "height": 2},
-    "grid": {"row":5, "column":2}
+    "grid": {"row":5, "column":2, "sticky":["W", "E"]}
   }
 }

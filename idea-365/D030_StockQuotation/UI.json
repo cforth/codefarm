@@ -1,0 +1,22 @@
+{
+  "stockCodeEntry": {
+    "class": "Entry",
+    "var": "stockCode",
+    "int": {"width": 50},
+    "grid": {"row":0, "column":0, "sticky":["W", "E"]}
+  },
+  "displayButton": {
+    "class": "Button",
+    "bind": {"<Button-1>": "get_quotation"},
+    "int": {"width": 10},
+    "string": {"text": "显示行情"},
+    "grid": {"row":0, "column":1}
+  },
+  "outputLabel": {
+    "class": "Label",
+    "var": "output",
+    "int": {"height": 10},
+    "string": {"font": "Arial, 12"},
+    "grid": {"row":1, "column":0, "columnspan": 2, "sticky":["W", "E", "N", "S"]}
+  }
+}

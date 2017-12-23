@@ -3,120 +3,139 @@
     "class": "Label",
     "var": "output",
     "int": {"width": 40, "height": 4},
-    "string": {"anchor": "e"},
+    "string": {"anchor": "e", "font": "Arial, 12"},
     "grid": {"row":0, "column":0, "columnspan": 4}
   },
   "acButton": {
     "class": "Button",
-    "string": {"text": "清空"},
+    "bind": {"<Button-1>": "callback"},
+    "string": {"text": "AC"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":1, "column":0}
   },
   "backButton": {
     "class": "Button",
-    "string": {"text": "退格"},
+    "bind": {"<Button-1>": "callback"},
+    "string": {"text": "<-"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":1, "column":1}
   },
   "divButton": {
     "class": "Button",
-    "string": {"text": "除"},
+    "bind": {"<Button-1>": "callback"},
+    "string": {"text": "/"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":1, "column":2}
   },
   "mulButton": {
     "class": "Button",
-    "string": {"text": "乘"},
+    "bind": {"<Button-1>": "callback"},
+    "string": {"text": "*"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":1, "column":3}
   },
   "sevenButton": {
     "class": "Button",
+    "bind": {"<Button-1>": "callback"},
     "string": {"text": "7"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":2, "column":0}
   },
   "eightButton": {
     "class": "Button",
+    "bind": {"<Button-1>": "callback"},
     "string": {"text": "8"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":2, "column":1}
   },
   "nineButton": {
     "class": "Button",
+    "bind": {"<Button-1>": "callback"},
     "string": {"text": "9"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":2, "column":2}
   },
   "minusButton": {
     "class": "Button",
-    "string": {"text": "减"},
+    "bind": {"<Button-1>": "callback"},
+    "string": {"text": "-"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":2, "column":3}
   },
   "fourButton": {
     "class": "Button",
+    "bind": {"<Button-1>": "callback"},
     "string": {"text": "4"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":3, "column":0}
   },
   "fiveButton": {
     "class": "Button",
+    "bind": {"<Button-1>": "callback"},
     "string": {"text": "5"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":3, "column":1}
   },
   "sixButton": {
     "class": "Button",
+    "bind": {"<Button-1>": "callback"},
     "string": {"text": "6"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":3, "column":2}
   },
   "plusButton": {
     "class": "Button",
-    "string": {"text": "加"},
+    "bind": {"<Button-1>": "callback"},
+    "string": {"text": "+"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":3, "column":3}
   },
   "oneButton": {
     "class": "Button",
+    "bind": {"<Button-1>": "callback"},
     "string": {"text": "1"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":4, "column":0}
   },
   "twoButton": {
     "class": "Button",
+    "bind": {"<Button-1>": "callback"},
     "string": {"text": "2"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":4, "column":1}
   },
   "threeButton": {
     "class": "Button",
+    "bind": {"<Button-1>": "callback"},
     "string": {"text": "3"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":4, "column":2}
   },
   "equalButton": {
     "class": "Button",
-    "string": {"text": "等于"},
+    "bind": {"<Button-1>": "callback"},
+    "string": {"text": "="},
     "int": {"width": 10, "height": 5},
     "grid": {"row":4, "column":3, "rowspan": 2}
   },
   "modButton": {
     "class": "Button",
-    "string": {"text": "取余"},
+    "bind": {"<Button-1>": "callback"},
+    "string": {"text": "%"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":5, "column":0}
   },
   "zeroButton": {
     "class": "Button",
+    "bind": {"<Button-1>": "callback"},
     "string": {"text": "0"},
     "int": {"width": 10, "height": 2},
     "grid": {"row":5, "column":1}
   },
   "spotButton": {
     "class": "Button",
-    "string": {"text": "点"},
+    "bind": {"<Button-1>": "callback"},
+    "string": {"text": "."},
     "int": {"width": 10, "height": 2},
     "grid": {"row":5, "column":2}
   }

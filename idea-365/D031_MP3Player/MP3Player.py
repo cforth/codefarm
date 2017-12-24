@@ -14,6 +14,8 @@ class Player(threading.Thread):
         self.file_path = file_path
         # 用于控制音乐播放与停止
         self.stop_state = False
+        # 用于控制音乐的暂停和恢复
+        self.pause_state = False
 
     def run(self):
         try:
@@ -27,7 +29,6 @@ class Player(threading.Thread):
             if self.master:
                 self.master.event_generate("<<MusicError>>", when="tail")
 
-        # 通过self.stop_state判断音乐是否要停止
         while True:
             time.sleep(1)
             # 若停止播放或播放结束，则结束这个线程
@@ -38,6 +39,10 @@ class Player(threading.Thread):
                 if self.master:
                     self.master.event_generate("<<MusicStop>>", when="tail")
                 return
+            elif not self.stop_state and self.pause_state:
+                track.pause()  # 暂停播放
+            elif not self.stop_state and not self.pause_state:
+                track.unpause()  # 恢复播放
 
 
 # 窗口类
@@ -64,6 +69,7 @@ class Window(tk.Frame):
         music_path = self.__dict__["musicPath"].get()
         music_name = music_path[music_path.rindex("/") + 1:]
         self.__dict__["info"].set(music_name)
+        self.__dict__["pauseButton"]["text"] = "暂停"
 
         # 如果已经存在播放器，则停止它
         if self.player:
@@ -82,6 +88,17 @@ class Window(tk.Frame):
         if self.player:
             self.player.stop_state = True
             self.player = None
+
+    def music_pause(self, event=None):
+        # 暂停和恢复切换事件
+        if self.player and self.player.pause_state:
+            self.__dict__["pauseButton"]["text"] = "暂停"
+            self.__dict__["musicProgressBar"].start()
+            self.player.pause_state = False
+        elif self.player and not self.player.pause_state:
+            self.__dict__["pauseButton"]["text"] = "恢复"
+            self.__dict__["musicProgressBar"].stop()
+            self.player.pause_state = True
 
     # 在顶层窗口关闭时，先结束音乐播放线程
     def close_event(self, event=None):

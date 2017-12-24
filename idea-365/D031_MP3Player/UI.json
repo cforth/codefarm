@@ -1,0 +1,43 @@
+{
+  "fileFromButton": {
+    "class": "Button",
+    "int": {"width": 10},
+    "string": {"text": "选择文件"},
+    "command": "file_from_button_callback",
+    "grid": {"row":0, "column":0}
+  },
+  "musicPathEntry": {
+    "class": "Entry",
+    "var": "musicPath",
+    "int": {"width": 60},
+    "string": {"state": "disable"},
+    "grid": {"row":0, "column":1, "sticky":["W", "E"]}
+  },
+  "startButton": {
+    "class": "Button",
+    "bind": {"<Button-1>": "music_start"},
+    "int": {"width": 10},
+    "string": {"text": "播放"},
+    "grid": {"row":0, "column":2}
+  },
+  "stopButton": {
+    "class": "Button",
+    "bind": {"<Button-1>": "music_stop"},
+    "int": {"width": 10},
+    "string": {"text": "停止"},
+    "grid": {"row":0, "column":3}
+  },
+  "infoLabel": {
+    "class": "Label",
+    "var": "info",
+    "int": {"height": 3},
+    "string": {"font": "Arial, 12", "background": "black", "foreground": "white"},
+    "grid": {"row":1, "column":0, "columnspan": 4, "sticky":["W", "E", "N", "S"]}
+  },
+  "musicProgressBar": {
+    "class": "Progressbar",
+    "string": {"orient": "horizontal", "mode": "determinate"},
+    "int": {"value": 0},
+    "grid": {"row":2, "column":0, "columnspan": 4, "sticky":["W", "E"]}
+  }
+}

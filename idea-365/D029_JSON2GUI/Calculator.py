@@ -1,4 +1,4 @@
-from json2gui import *
+from CFTookit.json2gui import *
 import tkinter as tk
 
 

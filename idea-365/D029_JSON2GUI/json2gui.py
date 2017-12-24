@@ -1,6 +1,7 @@
 import json
 import codecs
 import tkinter as tk
+import tkinter.ttk as ttk
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -34,7 +35,10 @@ def create_ui(self, json_file):
         widget_var = widget[k]["var"] if widget[k].get("var") else None
 
         # 动态生成控件，并添加字符串类型的参数（若有）
-        self.__dict__[k] = tk.__dict__[widget_class](self, **widget_str_parm)
+        if widget_class == "Progressbar":
+            self.__dict__[k] = ttk.__dict__[widget_class](self, **widget_str_parm)
+        else:
+            self.__dict__[k] = tk.__dict__[widget_class](self, **widget_str_parm)
         # 为每个控件添加数值类型的参数（若有）
         for pk in widget_int_parm:
             self.__dict__[k][pk] = int(widget_int_parm[pk])
@@ -66,5 +70,8 @@ def create_all_binds(self, json_file):
     for k in widget:
         if widget[k].get("bind"):
             for w in widget[k]["bind"]:
-                # 通过绑定方法的名称，来动态绑定给控件绑定事件
+                # 通过json中绑定方法的名称，来动态绑定控件event
                 self.__dict__[k].bind(w, getattr(self, widget[k]["bind"][w]))
+        elif widget[k].get("command"):
+            # 通过json中绑定command的名称，来动态绑定控件command
+            self.__dict__[k]["command"] = getattr(self, widget[k]["command"])

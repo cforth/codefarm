@@ -1,6 +1,7 @@
 import time
 import threading
 import pygame
+import os
 import tkinter.filedialog as filedialog
 from CFTookit.json2gui import *
 
@@ -54,19 +55,44 @@ class Window(tk.Frame):
         create_ui(self, ui_json)
         # 从json自动绑定事件
         create_all_binds(self, ui_json)
+        # 顶层窗口事件绑定
+        self.bind_window_event()
+        # 初始化音乐播放列表
+        self.init_music_list()
+        self.grid(row=0, column=0)
+
+    def bind_window_event(self):
         # 音乐读取错误或播放完毕时，触发自定义事件
         self.bind("<<MusicError>>", self.music_stop)
         self.bind("<<MusicStop>>", self.music_stop)
-        # 为顶层窗口绑定关闭事件
+        # 绑定关闭事件
         self.master.protocol("WM_DELETE_WINDOW", self.close_event)
-        self.grid(row=0, column=0)
+        # 绑定键盘事件
+        self.master.bind("<Key>", self.key_event)
 
     def file_from_button_callback(self, event=None):
         self.__dict__["musicPath"].set(filedialog.askopenfilename())
+        # 在音乐播放列表中填充内容
+        self.set_music_list()
+
+    def key_event(self, event=None):
+        # 摁空格键暂停或恢复音乐播放
+        if event.char == " ":
+            self.music_pause()
+
+    # 在顶层窗口关闭时，先结束音乐播放线程
+    def close_event(self, event=None):
+        self.music_stop()
+        self.master.destroy()
 
     def music_start(self, event=None):
         # 设置正在播放的音乐信息
         music_path = self.__dict__["musicPath"].get()
+        # 如果不存在这个路径，则退出播放
+        if not music_path or not os.path.exists(music_path):
+            self.__dict__["musicPath"].set("")
+            return
+
         music_name = music_path[music_path.rindex("/") + 1:]
         self.__dict__["info"].set(music_name)
         self.__dict__["pauseButton"]["text"] = "暂停"
@@ -100,10 +126,50 @@ class Window(tk.Frame):
             self.__dict__["musicProgressBar"].stop()
             self.player.pause_state = True
 
-    # 在顶层窗口关闭时，先结束音乐播放线程
-    def close_event(self, event=None):
-        self.music_stop()
-        self.master.destroy()
+    # 初始化音乐播放列表表格
+    def init_music_list(self):
+        # 找到musicListTreeview控件和的musicListVbar控件的引用
+        music_list = getattr(self, "musicListTreeview")
+        music_list_vbar = getattr(self, "musicListVbar")
+        music_list_vbar["command"] = music_list.yview
+        # 定义树形结构与滚动条
+        music_list.configure(yscrollcommand=music_list_vbar.set)
+        # 表格的标题
+        music_list.column("a", width=50, anchor="center")
+        music_list.column("b", width=700, anchor="w")
+        music_list.heading("a", text="序号")
+        music_list.heading("b", text="音乐名称")
+
+    # 设置音乐播放列表
+    def set_music_list(self):
+        music_path = self.__dict__["musicPath"].get()
+        # 如果不存在这个路径，则退出播放
+        if not music_path or not os.path.exists(music_path):
+            self.__dict__["musicPath"].set("")
+            return
+        music_name = music_path[:music_path.rindex("/")]
+        self.insert_music_list(music_name)
+
+    # 表格内容插入
+    def insert_music_list(self, dir_path):
+        # 找到musicListTreeview控件的引用
+        music_list = getattr(self, "musicListTreeview")
+        # 删除原节点
+        for _ in map(music_list.delete, music_list.get_children("")):
+            pass
+        # 获取音乐播放列表
+        music_name_list = [f for f in os.listdir(dir_path) if f.endswith(".MP3") or f.endswith(".mp3")]
+        # 更新插入新节点
+        for i in range(0, len(music_name_list)):
+            music_list.insert("", "end", values=(i + 1, music_name_list[i]))
+
+    # 音乐列表双击事件处理
+    def double_click_music_callback(self, event=None):
+        new_music_name = event.widget.item(event.widget.selection(), 'values')[1]
+        old_music_path = self.__dict__["musicPath"].get()
+        new_music_path = os.path.join(old_music_path[:old_music_path.rindex("/")+1], new_music_name)
+        self.__dict__["musicPath"].set(new_music_path)
+        self.music_start()
 
 
 if __name__ == '__main__':

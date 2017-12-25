@@ -35,7 +35,8 @@ def create_ui(self, json_file):
         widget_var = widget[k]["var"] if widget[k].get("var") else None
 
         # 动态生成控件，并添加字符串类型的参数（若有）
-        if widget_class == "Progressbar":
+        ttk_class_list = ["Progressbar", "Treeview", "Scrollbar"]
+        if widget_class in ttk_class_list:
             self.__dict__[k] = ttk.__dict__[widget_class](self, **widget_str_parm)
         else:
             self.__dict__[k] = tk.__dict__[widget_class](self, **widget_str_parm)

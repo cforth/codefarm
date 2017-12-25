@@ -46,5 +46,17 @@
     "string": {"orient": "horizontal", "mode": "determinate"},
     "int": {"value": 0},
     "grid": {"row":2, "column":0, "columnspan": 5, "sticky":["W", "E"]}
+  },
+  "musicListTreeview": {
+    "class": "Treeview",
+    "bind": {"<Double-1>": "double_click_music_callback"},
+    "string": {"show": "headings", "columns": ["a", "b"]},
+    "int": {"height":10},
+    "grid": {"row":3, "column":0, "columnspan": 5, "sticky":["W", "E", "N", "S"]}
+  },
+  "musicListVbar": {
+    "class": "Scrollbar",
+    "string": {"orient": "vertical"},
+    "grid": {"row":3, "column":5, "sticky":["N", "S"]}
   }
 }

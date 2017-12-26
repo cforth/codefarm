@@ -35,8 +35,12 @@ def create_ui(self, json_file):
         widget_var = widget[k]["var"] if widget[k].get("var") else None
 
         # 动态生成控件，并添加字符串类型的参数（若有）
-        ttk_class_list = ["Progressbar", "Treeview", "Scrollbar"]
+        ttk_class_list = ["Progressbar", "Treeview", "Scrollbar", "Combobox"]
+        # 若控件类属于ttk控件，则使用ttk
         if widget_class in ttk_class_list:
+            self.__dict__[k] = ttk.__dict__[widget_class](self, **widget_str_parm)
+        # 若Button控件类有高度属性，使用tk，否则是用ttk
+        elif widget_class == "Button" and "height" not in widget_int_parm:
             self.__dict__[k] = ttk.__dict__[widget_class](self, **widget_str_parm)
         else:
             self.__dict__[k] = tk.__dict__[widget_class](self, **widget_str_parm)

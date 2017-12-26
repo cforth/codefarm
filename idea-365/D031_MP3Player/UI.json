@@ -13,50 +13,57 @@
     "string": {"state": "disable"},
     "grid": {"row":0, "column":1, "sticky":["W", "E"]}
   },
+  "playOptionCombobox": {
+    "class": "Combobox",
+    "var": "playOption",
+    "int": {"width": 10},
+    "string": {"state": ["readonly"], "values": ["单曲播放", "顺序播放"]},
+    "grid": {"row":0, "column":2}
+  },
   "startButton": {
     "class": "Button",
     "bind": {"<Button-1>": "music_start"},
     "int": {"width": 10},
     "string": {"text": "播放"},
-    "grid": {"row":0, "column":2}
+    "grid": {"row":0, "column":3}
   },
   "pauseButton": {
     "class": "Button",
     "bind": {"<Button-1>": "music_pause"},
     "int": {"width": 10},
     "string": {"text": "暂停"},
-    "grid": {"row":0, "column":3}
+    "grid": {"row":0, "column":4}
   },
   "stopButton": {
     "class": "Button",
     "bind": {"<Button-1>": "music_stop"},
     "int": {"width": 10},
     "string": {"text": "停止"},
-    "grid": {"row":0, "column":4}
+    "grid": {"row":0, "column":5}
   },
   "infoLabel": {
     "class": "Label",
     "var": "info",
     "int": {"height": 3},
     "string": {"font": "Arial, 12", "background": "black", "foreground": "white"},
-    "grid": {"row":1, "column":0, "columnspan": 5, "sticky":["W", "E", "N", "S"]}
+    "grid": {"row":1, "column":0, "columnspan": 6, "sticky":["W", "E", "N", "S"]}
   },
   "musicProgressBar": {
     "class": "Progressbar",
     "string": {"orient": "horizontal", "mode": "determinate"},
     "int": {"value": 0},
-    "grid": {"row":2, "column":0, "columnspan": 5, "sticky":["W", "E"]}
+    "grid": {"row":2, "column":0, "columnspan": 6, "sticky":["W", "E"]}
   },
   "musicListTreeview": {
     "class": "Treeview",
     "bind": {"<Double-1>": "double_click_music_callback"},
     "string": {"show": "headings", "columns": ["a", "b"]},
     "int": {"height":10},
-    "grid": {"row":3, "column":0, "columnspan": 5, "sticky":["W", "E", "N", "S"]}
+    "grid": {"row":3, "column":0, "columnspan": 6, "sticky":["W", "E", "N", "S"]}
   },
   "musicListVbar": {
     "class": "Scrollbar",
     "string": {"orient": "vertical"},
-    "grid": {"row":3, "column":5, "sticky":["N", "S"]}
+    "grid": {"row":3, "column":6, "sticky":["N", "S"]}
   }
 }

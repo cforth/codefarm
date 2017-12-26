@@ -38,7 +38,7 @@ class Player(threading.Thread):
                 return
             elif not track.get_busy():
                 if self.master:
-                    self.master.event_generate("<<MusicStop>>", when="tail")
+                    self.master.event_generate("<<CouldMusicStop>>", when="tail")
                 return
             elif not self.stop_state and self.pause_state:
                 track.pause()  # 暂停播放
@@ -47,9 +47,9 @@ class Player(threading.Thread):
 
 
 # 窗口类
-class Window(tk.Frame):
+class Window(ttk.Frame):
     def __init__(self, ui_json, master=None):
-        super().__init__(master)
+        super().__init__(master, padding=2)
         self.player = None
         # 从json自动设置UI控件
         create_ui(self, ui_json)
@@ -57,14 +57,33 @@ class Window(tk.Frame):
         create_all_binds(self, ui_json)
         # 顶层窗口事件绑定
         self.bind_window_event()
+        # 初始化音乐循环下拉列表
+        self.init_play_option_combobox()
+        # 初始化音乐播放列表窗口
+        self.init_music_list_window()
         # 初始化音乐播放列表
-        self.init_music_list()
+        self.music_play_list = []
         self.grid(row=0, column=0)
 
+    # 设置下拉列表框的内容
+    @staticmethod
+    def set_combobox_item(combobox, text, fuzzy=False):
+        for index, value in enumerate(combobox.cget("values")):
+            if (fuzzy and text in value) or (value == text):
+                combobox.current(index)
+                return
+        combobox.current(0 if len(combobox.cget("values")) else -1)
+
+    # 设置默认的音乐播放下拉列表值
+    def init_play_option_combobox(self):
+        Window.set_combobox_item(self.__dict__["playOptionCombobox"], "单曲播放", True)
+
+    # 顶层窗口事件绑定
     def bind_window_event(self):
         # 音乐读取错误或播放完毕时，触发自定义事件
         self.bind("<<MusicError>>", self.music_stop)
         self.bind("<<MusicStop>>", self.music_stop)
+        self.bind("<<CouldMusicStop>>", self.could_music_stop)
         # 绑定关闭事件
         self.master.protocol("WM_DELETE_WINDOW", self.close_event)
         # 绑定键盘事件
@@ -74,6 +93,15 @@ class Window(tk.Frame):
         self.__dict__["musicPath"].set(filedialog.askopenfilename())
         # 在音乐播放列表中填充内容
         self.set_music_list()
+        # 获取音乐文件夹路径
+        music_path = self.__dict__["musicPath"].get()
+        if os.path.exists(music_path):
+            music_dir_path = music_path[:music_path.rindex("/") + 1]
+            music_play_list = []
+            for m in os.listdir(music_dir_path):
+                if m.endswith(".MP3") or m.endswith(".mp3"):
+                    music_play_list.append(os.path.join(music_dir_path, m))
+            self.music_play_list = music_play_list
 
     def key_event(self, event=None):
         # 摁空格键暂停或恢复音乐播放
@@ -109,11 +137,26 @@ class Window(tk.Frame):
         self.__dict__["musicProgressBar"].start()
         self.player.start()
 
+    def next_music(self):
+        old_music_path = self.__dict__["musicPath"].get()
+        index = self.music_play_list.index(old_music_path)
+        if index == len(self.music_play_list) - 1:
+            return
+        else:
+            new_music_path = self.music_play_list[index + 1]
+            self.__dict__["musicPath"].set(new_music_path)
+            self.music_start()
+
     def music_stop(self, event=None):
         self.__dict__["musicProgressBar"].stop()
         if self.player:
             self.player.stop_state = True
             self.player = None
+
+    def could_music_stop(self, event=None):
+        self.music_stop()
+        if self.__dict__["playOption"].get() == "顺序播放":
+            self.next_music()
 
     def music_pause(self, event=None):
         # 暂停和恢复切换事件
@@ -126,8 +169,8 @@ class Window(tk.Frame):
             self.__dict__["musicProgressBar"].stop()
             self.player.pause_state = True
 
-    # 初始化音乐播放列表表格
-    def init_music_list(self):
+    # 初始化音乐播放列表窗口
+    def init_music_list_window(self):
         # 找到musicListTreeview控件和的musicListVbar控件的引用
         music_list = getattr(self, "musicListTreeview")
         music_list_vbar = getattr(self, "musicListVbar")
@@ -165,9 +208,11 @@ class Window(tk.Frame):
 
     # 音乐列表双击事件处理
     def double_click_music_callback(self, event=None):
+        if not event.widget.item(event.widget.selection(), 'values'):
+            return
         new_music_name = event.widget.item(event.widget.selection(), 'values')[1]
         old_music_path = self.__dict__["musicPath"].get()
-        new_music_path = os.path.join(old_music_path[:old_music_path.rindex("/")+1], new_music_name)
+        new_music_path = os.path.join(old_music_path[:old_music_path.rindex("/") + 1], new_music_name)
         self.__dict__["musicPath"].set(new_music_path)
         self.music_start()
 

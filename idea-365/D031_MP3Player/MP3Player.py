@@ -8,7 +8,7 @@ from CFTookit.json2gui import *
 
 # 音乐播放器类，使用pygame实现
 class Player(threading.Thread):
-    def __init__(self, file_path, master=None):
+    def __init__(self, file_path, volume=1.0, master=None):
         threading.Thread.__init__(self)
         # 传入主窗口的指针，用于触发主窗口事件(若有)
         self.master = master
@@ -17,14 +17,25 @@ class Player(threading.Thread):
         self.stop_state = False
         # 用于控制音乐的暂停和恢复
         self.pause_state = False
+        # 控制默认音量
+        self.volume = volume
+        # 初始化mixer
+        pygame.mixer.init()  # 初始化音频
+        self.track = pygame.mixer.music
+
+    def set_volume(self, volume):
+        self.volume = volume
+        self.track.set_volume(self.volume)
+
+    def get_volume(self):
+        return self.volume
 
     def run(self):
         try:
             file = self.file_path
-            pygame.mixer.init()  # 初始化音频
-            track = pygame.mixer.music
-            track.load(file)  # 载入音乐文件
-            track.play()  # 开始播放
+            self.track.load(file)  # 载入音乐文件
+            self.track.set_volume(self.volume)  # 设置音量
+            self.track.play()  # 开始播放
         except Exception as e:
             logging.warning(e)
             if self.master:
@@ -34,22 +45,23 @@ class Player(threading.Thread):
             time.sleep(1)
             # 若停止播放或播放结束，则结束这个线程
             if self.stop_state:
-                track.stop()  # 停止播放
+                self.track.stop()  # 停止播放
                 return
-            elif not track.get_busy():
+            elif not self.track.get_busy():
                 if self.master:
                     self.master.event_generate("<<CouldMusicStop>>", when="tail")
                 return
             elif not self.stop_state and self.pause_state:
-                track.pause()  # 暂停播放
+                self.track.pause()  # 暂停播放
             elif not self.stop_state and not self.pause_state:
-                track.unpause()  # 恢复播放
+                self.track.unpause()  # 恢复播放
 
 
 # 窗口类
 class Window(ttk.Frame):
     def __init__(self, ui_json, master=None):
         super().__init__(master, padding=2)
+        # 初始化音乐播放器对象的引用
         self.player = None
         # 从json自动设置UI控件
         create_ui(self, ui_json)
@@ -57,8 +69,8 @@ class Window(ttk.Frame):
         create_all_binds(self, ui_json)
         # 顶层窗口事件绑定
         self.bind_window_event()
-        # 初始化音乐循环下拉列表
-        self.init_play_option_combobox()
+        # 初始化音乐循环下拉列表，设置默认的音量值
+        self.init_default_play_option()
         # 初始化音乐播放列表窗口
         self.init_music_list_window()
         # 初始化音乐播放列表
@@ -74,9 +86,10 @@ class Window(ttk.Frame):
                 return
         combobox.current(0 if len(combobox.cget("values")) else -1)
 
-    # 设置默认的音乐播放下拉列表值
-    def init_play_option_combobox(self):
+    # 初始化音乐循环下拉列表，设置默认的音量值
+    def init_default_play_option(self):
         Window.set_combobox_item(self.__dict__["playOptionCombobox"], "单曲播放", True)
+        self.__dict__["musicVolumeScale"].set(60)
 
     # 顶层窗口事件绑定
     def bind_window_event(self):
@@ -132,7 +145,8 @@ class Window(ttk.Frame):
             time.sleep(1)
 
         # 中文路径必须编码后才可以
-        self.player = Player(self.__dict__["musicPath"].get().encode('utf-8'), self)
+        now_volume = self.__dict__["musicVolumeScale"].get() / 100.0
+        self.player = Player(self.__dict__["musicPath"].get().encode('utf-8'), now_volume, self)
         # 启动进度条
         self.__dict__["musicProgressBar"].start()
         self.player.start()
@@ -168,6 +182,13 @@ class Window(ttk.Frame):
             self.__dict__["pauseButton"]["text"] = "恢复"
             self.__dict__["musicProgressBar"].stop()
             self.player.pause_state = True
+
+    # 设置播放音乐的音量
+    def set_music_volume(self, event=None):
+        # 获取Player类需要的音量值，在0到1之间
+        now_volume = self.__dict__["musicVolumeScale"].get() / 100.0
+        if self.player:
+            self.player.set_volume(now_volume)
 
     # 初始化音乐播放列表窗口
     def init_music_list_window(self):

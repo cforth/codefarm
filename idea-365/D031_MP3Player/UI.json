@@ -65,5 +65,18 @@
     "class": "Scrollbar",
     "string": {"orient": "vertical"},
     "grid": {"row":3, "column":6, "sticky":["N", "S"]}
+  },
+  "volumeLabel": {
+    "class": "Label",
+    "int": {"width": 10},
+    "string": {"text": "音量调整 : "},
+    "grid": {"row":4, "column":3, "sticky":["W", "E"]}
+  },
+  "musicVolumeScale": {
+    "class": "Scale",
+    "string": {"orient": "horizontal"},
+    "int": {"from_": 0, "to": 100},
+    "bind": {"<ButtonRelease-1>": "set_music_volume"},
+    "grid": {"row":4, "column":4, "columnspan": 2, "sticky":["W", "E"]}
   }
 }

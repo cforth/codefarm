@@ -35,7 +35,7 @@ def create_ui(self, json_file):
         widget_var = widget[k]["var"] if widget[k].get("var") else None
 
         # 动态生成控件，并添加字符串类型的参数（若有）
-        ttk_class_list = ["Progressbar", "Treeview", "Scrollbar", "Combobox"]
+        ttk_class_list = ["Progressbar", "Treeview", "Scrollbar", "Combobox", "Scale"]
         # 若控件类属于ttk控件，则使用ttk
         if widget_class in ttk_class_list:
             self.__dict__[k] = ttk.__dict__[widget_class](self, **widget_str_parm)
@@ -49,8 +49,13 @@ def create_ui(self, json_file):
             self.__dict__[k][pk] = int(widget_int_parm[pk])
         # 为每个控件绑定变量（若有）
         if widget_var:
-            self.__dict__[widget_var] = tk.StringVar()
-            self.__dict__[k]["textvariable"] = self.__dict__[widget_var]
+            # Scale控件绑定的变量使用Double类型
+            if widget_class == "Scale":
+                self.__dict__[widget_var] = tk.DoubleVar()
+                self.__dict__[k]["variable"] = self.__dict__[widget_var]
+            else:
+                self.__dict__[widget_var] = tk.StringVar()
+                self.__dict__[k]["textvariable"] = self.__dict__[widget_var]
         # 使用grid布局控件
         if widget_grid.get("sticky"):
             grid_sticky = []

@@ -17,7 +17,7 @@
     "class": "Combobox",
     "var": "playOption",
     "int": {"width": 10},
-    "string": {"state": ["readonly"], "values": ["单曲播放", "顺序播放"]},
+    "string": {"state": ["readonly"], "values": ["单曲播放", "顺序播放", "随机播放"]},
     "grid": {"row":0, "column":2}
   },
   "startButton": {

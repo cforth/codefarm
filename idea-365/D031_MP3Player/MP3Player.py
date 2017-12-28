@@ -2,6 +2,7 @@ import time
 import threading
 import pygame
 import os
+import random
 import tkinter.filedialog as filedialog
 from CFTookit.json2gui import *
 
@@ -161,22 +162,38 @@ class Window(ttk.Frame):
         self.player.start()
 
     def next_music(self, event=None):
-        old_music_path = self.__dict__["musicPath"].get()
-        index = self.music_play_list.index(old_music_path)
-        if not self.music_play_list or index == len(self.music_play_list) - 1:
-            return
+        if self.__dict__["playOption"].get() == "随机播放":
+            self.random_music()
         else:
-            new_music_path = self.music_play_list[index + 1]
-            self.__dict__["musicPath"].set(new_music_path)
-            self.music_start()
+            old_music_path = self.__dict__["musicPath"].get()
+            index = self.music_play_list.index(old_music_path)
+            if not self.music_play_list or index == len(self.music_play_list) - 1:
+                return
+            else:
+                new_music_path = self.music_play_list[index + 1]
+                self.__dict__["musicPath"].set(new_music_path)
+                self.music_start()
 
     def prev_music(self, event=None):
-        old_music_path = self.__dict__["musicPath"].get()
-        index = self.music_play_list.index(old_music_path)
-        if not self.music_play_list or index == 0:
+        if self.__dict__["playOption"].get() == "随机播放":
+            self.random_music()
+        else:
+            old_music_path = self.__dict__["musicPath"].get()
+            index = self.music_play_list.index(old_music_path)
+            if not self.music_play_list or index == 0:
+                return
+            else:
+                new_music_path = self.music_play_list[index - 1]
+                self.__dict__["musicPath"].set(new_music_path)
+                self.music_start()
+
+    def random_music(self, event=None):
+        music_play_list_length = len(self.music_play_list)
+        index = random.randint(0, music_play_list_length)
+        if not self.music_play_list:
             return
         else:
-            new_music_path = self.music_play_list[index - 1]
+            new_music_path = self.music_play_list[index]
             self.__dict__["musicPath"].set(new_music_path)
             self.music_start()
 
@@ -190,6 +207,8 @@ class Window(ttk.Frame):
         self.music_stop()
         if self.__dict__["playOption"].get() == "顺序播放":
             self.next_music()
+        elif self.__dict__["playOption"].get() == "随机播放":
+            self.random_music()
 
     def music_pause(self, event=None):
         # 暂停和恢复切换事件

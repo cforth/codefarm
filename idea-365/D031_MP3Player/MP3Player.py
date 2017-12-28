@@ -173,6 +173,7 @@ class Window(ttk.Frame):
                 new_music_path = self.music_play_list[index + 1]
                 self.__dict__["musicPath"].set(new_music_path)
                 self.music_start()
+                self.set_music_list_window_selection(index + 1)
 
     def prev_music(self, event=None):
         if self.__dict__["playOption"].get() == "随机播放":
@@ -186,6 +187,7 @@ class Window(ttk.Frame):
                 new_music_path = self.music_play_list[index - 1]
                 self.__dict__["musicPath"].set(new_music_path)
                 self.music_start()
+                self.set_music_list_window_selection(index - 1)
 
     def random_music(self, event=None):
         music_play_list_length = len(self.music_play_list)
@@ -196,6 +198,7 @@ class Window(ttk.Frame):
             new_music_path = self.music_play_list[index]
             self.__dict__["musicPath"].set(new_music_path)
             self.music_start()
+            self.set_music_list_window_selection(index)
 
     def music_stop(self, event=None):
         self.__dict__["musicProgressBar"].stop()
@@ -281,6 +284,16 @@ class Window(ttk.Frame):
         new_music_path = os.path.join(old_music_path[:old_music_path.rindex("/") + 1], new_music_name)
         self.__dict__["musicPath"].set(new_music_path)
         self.music_start()
+
+    # 根据行号设置音乐列表窗口的已选择行
+    def set_music_list_window_selection(self, index):
+        # 找到musicListTreeview控件的引用
+        music_list_widget = getattr(self, "musicListTreeview")
+        music_list_widget_index = index + 1
+        hex_index = hex(music_list_widget_index)[2:].upper()
+        length = len(hex_index)
+        sel_index = "I000"[0:4 - length] + hex_index
+        music_list_widget.selection_set((sel_index,))
 
 
 if __name__ == '__main__':

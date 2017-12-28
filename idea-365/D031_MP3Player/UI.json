@@ -66,6 +66,20 @@
     "string": {"orient": "vertical"},
     "grid": {"row":3, "column":6, "sticky":["N", "S"]}
   },
+    "prevMusicButton": {
+    "class": "Button",
+    "bind": {"<Button-1>": "prev_music"},
+    "int": {"width": 10},
+    "string": {"text": "前一首"},
+    "grid": {"row":4, "column":0}
+  },
+    "nextMusicButton": {
+    "class": "Button",
+    "bind": {"<Button-1>": "next_music"},
+    "int": {"width": 10},
+    "string": {"text": "下一首"},
+    "grid": {"row":4, "column":2}
+  },
   "volumeLabel": {
     "class": "Label",
     "int": {"width": 10},

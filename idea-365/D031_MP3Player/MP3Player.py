@@ -104,8 +104,11 @@ class Window(ttk.Frame):
 
     def file_from_button_callback(self, event=None):
         self.__dict__["musicPath"].set(filedialog.askopenfilename())
-        # 在音乐播放列表中填充内容
-        self.set_music_list()
+        if self.__dict__["musicPath"].get():
+            # 在音乐播放列表中填充内容
+            self.set_music_list_window()
+        else:
+            self.clear_music_list_window()
         # 获取音乐文件夹路径
         music_path = self.__dict__["musicPath"].get()
         if os.path.exists(music_path):
@@ -151,13 +154,23 @@ class Window(ttk.Frame):
         self.__dict__["musicProgressBar"].start()
         self.player.start()
 
-    def next_music(self):
+    def next_music(self, event=None):
         old_music_path = self.__dict__["musicPath"].get()
         index = self.music_play_list.index(old_music_path)
-        if index == len(self.music_play_list) - 1:
+        if not self.music_play_list or index == len(self.music_play_list) - 1:
             return
         else:
             new_music_path = self.music_play_list[index + 1]
+            self.__dict__["musicPath"].set(new_music_path)
+            self.music_start()
+
+    def prev_music(self, event=None):
+        old_music_path = self.__dict__["musicPath"].get()
+        index = self.music_play_list.index(old_music_path)
+        if not self.music_play_list or index == 0:
+            return
+        else:
+            new_music_path = self.music_play_list[index - 1]
             self.__dict__["musicPath"].set(new_music_path)
             self.music_start()
 
@@ -205,7 +218,7 @@ class Window(ttk.Frame):
         music_list.heading("b", text="音乐名称")
 
     # 设置音乐播放列表
-    def set_music_list(self):
+    def set_music_list_window(self):
         music_path = self.__dict__["musicPath"].get()
         # 如果不存在这个路径，则退出播放
         if not music_path or not os.path.exists(music_path):
@@ -214,13 +227,20 @@ class Window(ttk.Frame):
         music_name = music_path[:music_path.rindex("/")]
         self.insert_music_list(music_name)
 
-    # 表格内容插入
-    def insert_music_list(self, dir_path):
+    # 清空表格
+    def clear_music_list_window(self):
         # 找到musicListTreeview控件的引用
         music_list = getattr(self, "musicListTreeview")
         # 删除原节点
         for _ in map(music_list.delete, music_list.get_children("")):
             pass
+        self.music_play_list = []
+
+    # 表格内容插入
+    def insert_music_list(self, dir_path):
+        self.clear_music_list_window()
+        # 找到musicListTreeview控件的引用
+        music_list = getattr(self, "musicListTreeview")
         # 获取音乐播放列表
         music_name_list = [f for f in os.listdir(dir_path) if f.endswith(".MP3") or f.endswith(".mp3")]
         # 更新插入新节点

@@ -123,6 +123,12 @@ class Window(ttk.Frame):
         # 摁空格键暂停或恢复音乐播放
         if event.char == " ":
             self.music_pause()
+        # 右方向键下一首
+        elif event.keycode == 39:
+            self.next_music()
+        # 左方向键上一首
+        elif event.keycode == 37:
+            self.prev_music()
 
     # 在顶层窗口关闭时，先结束音乐播放线程
     def close_event(self, event=None):

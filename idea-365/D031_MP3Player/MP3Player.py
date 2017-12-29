@@ -294,6 +294,8 @@ class Window(ttk.Frame):
         length = len(hex_index)
         sel_index = "I000"[0:4 - length] + hex_index
         music_list_widget.selection_set((sel_index,))
+        # 使选中的行可见
+        music_list_widget.see((sel_index,))
 
 
 if __name__ == '__main__':

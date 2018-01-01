@@ -1,39 +1,60 @@
 {
+  "passwordShowButton": {
+    "class": "Button",
+    "int": {"width": 10},
+    "string": {"text": "显隐密码"},
+    "command": "password_show_button_callback",
+    "grid": {"row":0, "column":0, "sticky":["W", "E"]}
+  },
+  "passwordEntry": {
+    "class": "Entry",
+    "var": "password",
+    "int": {"width": 80},
+    "string": {"show": "*"},
+    "grid": {"row":0, "column":1, "sticky":["W", "E"]}
+  },
+    "cryptoOptionCombobox": {
+    "class": "Combobox",
+    "var": "cryptoOption",
+    "int": {"width": 10},
+    "string": {"state": ["readonly"], "values": ["解密文件", "不需解密"]},
+    "grid": {"row":0, "column":2, "sticky":["W", "E"]}
+  },
   "fileFromButton": {
     "class": "Button",
     "int": {"width": 10},
     "string": {"text": "选择文件"},
     "command": "file_from_button_callback",
-    "grid": {"row":0, "column":0, "sticky":["W"]}
+    "grid": {"row":1, "column":0, "sticky":["W", "E"]}
   },
   "imgPathEntry": {
     "class": "Entry",
     "var": "imgPath",
     "int": {"width": 80},
     "string": {"state": "disable"},
-    "grid": {"row":0, "column":1, "sticky":["W", "E"]}
+    "grid": {"row":1, "column":1, "sticky":["W", "E"]}
   },
     "showButton": {
     "class": "Button",
     "bind": {"<Button-1>": "img_show"},
     "int": {"width": 10},
     "string": {"text": "显示"},
-    "grid": {"row":0, "column":2, "sticky":["E"]}
+    "grid": {"row":1, "column":2, "sticky":["W", "E"]}
   },
   "prevImgButton": {
     "class": "Button",
     "string": {"text": "<"},
     "command": "prev_img_button_callback",
-    "grid": {"row":1, "column":0, "sticky":["N", "S"]}
+    "grid": {"row":2, "column":0, "sticky":["N", "S"]}
   },
     "imgLabel": {
     "class": "Label",
-    "grid": {"row":1, "column":1, "sticky":["W", "E", "N", "S"]}
+    "grid": {"row":2, "column":1, "sticky":["W", "E", "N", "S"]}
   },
   "nextImgButton": {
     "class": "Button",
     "string": {"text": ">"},
     "command": "next_img_button_callback",
-    "grid": {"row":1, "column":2, "sticky":["N", "S"]}
+    "grid": {"row":2, "column":2, "sticky":["N", "S"]}
   }
 }

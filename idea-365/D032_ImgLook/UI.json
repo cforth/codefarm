@@ -17,7 +17,7 @@
     "class": "Combobox",
     "var": "cryptoOption",
     "int": {"width": 10},
-    "string": {"state": ["readonly"], "values": ["解密文件", "不需解密"]},
+    "string": {"state": ["readonly"], "values": ["解密文件", "不需解密", "解密保名"]},
     "grid": {"row":0, "column":2, "sticky":["W", "E"]}
   },
   "fileFromButton": {

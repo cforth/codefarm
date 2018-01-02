@@ -163,6 +163,11 @@ class Window(ttk.Frame):
                 self.default_gif_show(img_path)
             else:
                 self.default_img_show(img_path)
+        elif crypto_option == "解密保名":
+            if img_path.endswith(".gif"):
+                self.crypto_gif_show(img_path)
+            else:
+                self.crypto_img_show(img_path)
 
 
 if __name__ == '__main__':

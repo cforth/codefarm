@@ -41,20 +41,27 @@
     "string": {"text": "显示"},
     "grid": {"row":1, "column":2, "sticky":["W", "E"]}
   },
+    "imgSizeScale": {
+    "class": "Scale",
+    "string": {"orient": "horizontal"},
+    "int": {"from_": 1, "to": 100},
+    "bind": {"<ButtonRelease-1>": "set_img_width"},
+    "grid": {"row":2, "column":0, "columnspan": 3, "sticky":["W", "E"]}
+  },
   "prevImgButton": {
     "class": "Button",
     "string": {"text": "<"},
     "command": "prev_img_button_callback",
-    "grid": {"row":2, "column":0, "sticky":["N", "S"]}
+    "grid": {"row":3, "column":0, "sticky":["N", "S"]}
   },
     "imgLabel": {
     "class": "Label",
-    "grid": {"row":2, "column":1, "sticky":["W", "E", "N", "S"]}
+    "grid": {"row":3, "column":1, "sticky":["W", "E", "N", "S"]}
   },
   "nextImgButton": {
     "class": "Button",
     "string": {"text": ">"},
     "command": "next_img_button_callback",
-    "grid": {"row":2, "column":2, "sticky":["N", "S"]}
+    "grid": {"row":3, "column":2, "sticky":["N", "S"]}
   }
 }

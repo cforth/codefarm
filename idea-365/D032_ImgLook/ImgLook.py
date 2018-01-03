@@ -22,6 +22,13 @@ class Window(ttk.Frame):
         self.init_default_crypto_option()
         # 设置gif图片默认运行状态为关闭
         self._gif_running = False
+        # 设置图片最大的宽度(gif图片不能缩放)
+        self.img_max_width = 1280
+        # 设置默认的图片宽度，并设置图片大小滑动条的位置
+        self.img_width = 500
+        self.__dict__["imgSizeScale"].set(self.img_width * 100 / self.img_max_width)
+        # 绑定键盘事件
+        self.master.bind("<Key>", self.key_event)
         self.grid(row=0, column=0)
 
     # 初始化下拉列表，设置默认值
@@ -33,6 +40,14 @@ class Window(ttk.Frame):
         img_path = getattr(self, "imgPath").get()
         img_dir_path = img_path[:img_path.rindex("/") + 1]
         self.img_list = [os.path.join(img_dir_path, img_name) for img_name in os.listdir(img_dir_path)]
+
+    def key_event(self, event=None):
+        # 右方向键下一首
+        if event.keycode == 39:
+            self.next_img_button_callback()
+        # 左方向键上一首
+        elif event.keycode == 37:
+            self.prev_img_button_callback()
 
     # 选择待显示的图片，填充图片路径，设置图片地址列表
     def file_from_button_callback(self, event=None):
@@ -67,6 +82,11 @@ class Window(ttk.Frame):
             new_music_path = self.img_list[index + 1]
             getattr(self, "imgPath").set(new_music_path)
             self.img_show()
+
+    # 设置当前显示的图片的大小，保持横纵比缩放
+    def set_img_width(self, event=None):
+        self.img_width = int(self.__dict__["imgSizeScale"].get() * self.img_max_width / 100)
+        self.img_show()
 
     # 初始化GIF动图，将GIF动图每一帧保存起来准备显示
     def init_gif(self, img_path):
@@ -121,7 +141,8 @@ class Window(ttk.Frame):
     def default_img_show(self, img_path):
         img_data = Image.open(img_path)
         (x, y) = img_data.size
-        x_s = 500
+        x_s = self.img_width
+        # 调整图片大小时保持横纵比
         y_s = y * x_s // x
         out = img_data.resize((x_s, y_s), Image.ANTIALIAS)
         self.img = ImageTk.PhotoImage(out)
@@ -151,6 +172,8 @@ class Window(ttk.Frame):
         self.cancel_img()
         crypto_option = self.__dict__["cryptoOption"].get()
         img_path = self.__dict__["imgPath"].get()
+        if not img_path or not os.path.exists(img_path):
+            return
         img_name = img_path[img_path.rindex("/") + 1:]
         if crypto_option == "解密文件":
             decrypt_img_name = StringCrypto(self.__dict__["password"].get()).decrypt(img_name)

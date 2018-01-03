@@ -14,42 +14,39 @@ class Window(ttk.Frame):
         create_ui(self, ui_json)
         # 从json自动绑定事件
         create_all_binds(self, ui_json)
-        # 存储图片对象
+        # 存储图片对象，若不存储，图片对象会被垃圾回收无法显示
         self.img = None
-        # 存储图片地址列表
+        # 存储图片地址列表，用于前后翻页
         self.img_list = []
+        # 初始化下拉列表，设置默认值
         self.init_default_crypto_option()
+        # 设置gif图片默认运行状态为关闭
         self._gif_running = False
         self.grid(row=0, column=0)
 
-    # 设置下拉列表框的内容
-    @staticmethod
-    def set_combobox_item(combobox, text, fuzzy=False):
-        for index, value in enumerate(combobox.cget("values")):
-            if (fuzzy and text in value) or (value == text):
-                combobox.current(index)
-                return
-        combobox.current(0 if len(combobox.cget("values")) else -1)
-
     # 初始化下拉列表，设置默认值
     def init_default_crypto_option(self):
-        Window.set_combobox_item(self.__dict__["cryptoOptionCombobox"], "不需解密", True)
+        set_combobox_item(self.__dict__["cryptoOptionCombobox"], "不需解密", True)
 
+    # 根据图片路径，将当前文件夹内所有图片保存在图片列表，用于前后翻页显示
     def set_img_list(self):
         img_path = getattr(self, "imgPath").get()
         img_dir_path = img_path[:img_path.rindex("/") + 1]
         self.img_list = [os.path.join(img_dir_path, img_name) for img_name in os.listdir(img_dir_path)]
 
+    # 选择待显示的图片，填充图片路径，设置图片地址列表
     def file_from_button_callback(self, event=None):
         self.__dict__["imgPath"].set(filedialog.askopenfilename())
         self.set_img_list()
 
+    # 设置密码输入栏中的内容显示或者隐藏
     def password_show_button_callback(self, event=None):
         if self.__dict__["passwordEntry"]["show"] == "*":
             self.__dict__["passwordEntry"]["show"] = ""
         else:
             self.__dict__["passwordEntry"]["show"] = "*"
 
+    # 向前翻页显示图片
     def prev_img_button_callback(self, event=None):
         old_img_path = getattr(self, "imgPath").get()
         index = self.img_list.index(old_img_path)
@@ -60,6 +57,7 @@ class Window(ttk.Frame):
             getattr(self, "imgPath").set(new_music_path)
             self.img_show()
 
+    # 向后翻页显示图片
     def next_img_button_callback(self, event=None):
         old_img_path = getattr(self, "imgPath").get()
         index = self.img_list.index(old_img_path)
@@ -69,19 +67,6 @@ class Window(ttk.Frame):
             new_music_path = self.img_list[index + 1]
             getattr(self, "imgPath").set(new_music_path)
             self.img_show()
-
-    def default_img_show(self, img_path):
-        img_data = Image.open(img_path)
-        (x, y) = img_data.size
-        x_s = 500
-        y_s = y * x_s // x
-        out = img_data.resize((x_s, y_s), Image.ANTIALIAS)
-        self.img = ImageTk.PhotoImage(out)
-        self.__dict__["imgLabel"].configure(image=self.img)
-
-    def crypto_img_show(self, img_path):
-        img_file_like = io.BytesIO(ByteCrypto(self.__dict__["password"].get()).decrypt(img_path))
-        self.default_img_show(img_file_like)
 
     # 初始化GIF动图，将GIF动图每一帧保存起来准备显示
     def init_gif(self, img_path):
@@ -97,10 +82,11 @@ class Window(ttk.Frame):
             pass  # we're done
         try:
             self.delay = im.info['duration']
-            if self.delay < 100:
-                self.delay = 100
+            # 将默认延时设置为50ms
+            if self.delay < 50:
+                self.delay = 50
         except KeyError:
-            self.delay = 100
+            self.delay = 50
         first = seq[0].convert('RGBA')
         self._gif_frames = [ImageTk.PhotoImage(first)]
         temp = seq[0]
@@ -132,12 +118,18 @@ class Window(ttk.Frame):
         self.master.after_cancel(self._gif_timer)
         self._gif_running = False
 
-    # 清空图片显示
-    def cancel_img(self):
-        # 如果有GIF动图正在运行，则停止这个定时事件
-        if self._gif_running:
-            self.stop_gif()
-        self.__dict__["imgLabel"].config(image='')
+    def default_img_show(self, img_path):
+        img_data = Image.open(img_path)
+        (x, y) = img_data.size
+        x_s = 500
+        y_s = y * x_s // x
+        out = img_data.resize((x_s, y_s), Image.ANTIALIAS)
+        self.img = ImageTk.PhotoImage(out)
+        self.__dict__["imgLabel"].configure(image=self.img)
+
+    def crypto_img_show(self, img_path):
+        img_file_like = io.BytesIO(ByteCrypto(self.__dict__["password"].get()).decrypt(img_path))
+        self.default_img_show(img_file_like)
 
     def default_gif_show(self, img_path):
         self.init_gif(img_path)
@@ -147,6 +139,14 @@ class Window(ttk.Frame):
         img_file_like = io.BytesIO(ByteCrypto(self.__dict__["password"].get()).decrypt(img_path))
         self.default_gif_show(img_file_like)
 
+    # 清空图片显示
+    def cancel_img(self):
+        # 如果有GIF动图正在运行，则停止这个定时事件
+        if self._gif_running:
+            self.stop_gif()
+        self.__dict__["imgLabel"].config(image='')
+
+    # 根据不同图片类型和解密选项，显示图片
     def img_show(self, event=None):
         self.cancel_img()
         crypto_option = self.__dict__["cryptoOption"].get()

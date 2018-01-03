@@ -78,18 +78,9 @@ class Window(ttk.Frame):
         self.music_play_list = []
         self.grid(row=0, column=0)
 
-    # 设置下拉列表框的内容
-    @staticmethod
-    def set_combobox_item(combobox, text, fuzzy=False):
-        for index, value in enumerate(combobox.cget("values")):
-            if (fuzzy and text in value) or (value == text):
-                combobox.current(index)
-                return
-        combobox.current(0 if len(combobox.cget("values")) else -1)
-
     # 初始化音乐循环下拉列表，设置默认的音量值
     def init_default_play_option(self):
-        Window.set_combobox_item(self.__dict__["playOptionCombobox"], "单曲播放", True)
+        set_combobox_item(self.__dict__["playOptionCombobox"], "单曲播放", True)
         self.__dict__["musicVolumeScale"].set(60)
 
     # 顶层窗口事件绑定

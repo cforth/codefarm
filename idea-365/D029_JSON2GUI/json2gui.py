@@ -6,10 +6,20 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 
+# 从json文件路径读取
 def read_json_file(json_file):
     with codecs.open(json_file, 'r', "utf-8") as f:
         data = json.load(f)
     return data
+
+
+# 设置下拉列表框的内容
+def set_combobox_item(combobox, text, fuzzy=False):
+    for index, value in enumerate(combobox.cget("values")):
+        if (fuzzy and text in value) or (value == text):
+            combobox.current(index)
+            return
+    combobox.current(0 if len(combobox.cget("values")) else -1)
 
 
 # 从json文件创建UI

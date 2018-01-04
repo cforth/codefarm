@@ -27,6 +27,7 @@ class Window(ttk.Frame):
         # 设置默认的图片宽度，并设置图片大小滑动条的位置
         self.img_width = 500
         self.__dict__["imgSizeScale"].set(self.img_width * 100 / self.img_max_width)
+        self.__dict__["imgSizeInfo"].set(str(self.img_width * 100 // self.img_max_width) + "%")
         # 绑定键盘事件
         self.master.bind("<Key>", self.key_event)
         self.grid(row=0, column=0)
@@ -83,9 +84,14 @@ class Window(ttk.Frame):
             getattr(self, "imgPath").set(new_music_path)
             self.img_show()
 
+    # 拖动图片大小滑动条时，显示图片大小百分比
+    def set_img_size_info(self, event=None):
+        self.img_width = int(self.__dict__["imgSizeScale"].get() * self.img_max_width / 100)
+        self.__dict__["imgSizeInfo"].set(str(self.img_width * 100 // self.img_max_width) + "%")
+
     # 设置当前显示的图片的大小，保持横纵比缩放
     def set_img_width(self, event=None):
-        self.img_width = int(self.__dict__["imgSizeScale"].get() * self.img_max_width / 100)
+        self.set_img_size_info()
         self.img_show()
 
     # 初始化GIF动图，将GIF动图每一帧保存起来准备显示

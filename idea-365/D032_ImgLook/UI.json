@@ -41,12 +41,24 @@
     "string": {"text": "显示"},
     "grid": {"row":1, "column":2, "sticky":["W", "E"]}
   },
+  "imgSizeNameLabel": {
+    "class": "Label",
+    "int": {"width": 10},
+    "string": {"text": "调整大小"},
+    "grid": {"row":2, "column":0, "sticky":["W", "E"]}
+  },
     "imgSizeScale": {
     "class": "Scale",
     "string": {"orient": "horizontal"},
     "int": {"from_": 1, "to": 100},
-    "bind": {"<ButtonRelease-1>": "set_img_width"},
-    "grid": {"row":2, "column":0, "columnspan": 3, "sticky":["W", "E"]}
+    "bind": {"<ButtonRelease-1>": "set_img_width", "<B1-Motion>": "set_img_size_info"},
+    "grid": {"row":2, "column":1, "sticky":["W", "E"]}
+  },
+  "imgSizeInfoLabel": {
+    "class": "Label",
+    "int": {"width": 10},
+    "var": "imgSizeInfo",
+    "grid": {"row":2, "column":2, "sticky":["W", "E"]}
   },
   "prevImgButton": {
     "class": "Button",

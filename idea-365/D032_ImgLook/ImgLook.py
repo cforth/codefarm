@@ -6,6 +6,80 @@ from CFTookit.json2gui import *
 from CFTookit.CFCrypto import ByteCrypto, StringCrypto
 
 
+# GIF动图处理类
+class GifHandle(object):
+    def __init__(self, master_widget, img_path):
+        # 保存显示图片的控件引用
+        self.master_widget = master_widget
+        # 保存图片路径
+        self.img_path = img_path
+        # 保存gif格式图片当前显示的帧的数据
+        self._frame = None
+        # 保存gif格式图片每一帧
+        self._gif_frames = []
+        # 保存gif格式图片帧的数量
+        self._frame_count = 0
+        # 保存gif格式图片每一帧的延时
+        self.delay = 50
+        # 保存gif格式图片当前显示的帧的位置
+        self._ind = 0
+        # 设置gif图片默认运行状态为关闭
+        self._gif_running = False
+        # 初始化gif动图
+        self._init_gif()
+
+    # 初始化GIF动图，将GIF动图每一帧保存起来准备显示
+    def _init_gif(self):
+        im = Image.open(self.img_path)
+        seq = []
+        try:
+            while True:
+                seq.append(im.copy())
+                im.seek(len(seq))  # skip to next frame
+        except EOFError:
+            pass  # we're done
+        try:
+            self.delay = im.info['duration']
+            # 将默认延时设置为50ms
+            if self.delay < 50:
+                self.delay = 50
+        except KeyError:
+            self.delay = 50
+        first = seq[0].convert('RGBA')
+        self._gif_frames = [ImageTk.PhotoImage(first)]
+        temp = seq[0]
+        for image in seq[1:]:
+            temp.paste(image)
+            frame = temp.convert('RGBA')
+            self._gif_frames.append(ImageTk.PhotoImage(frame))
+            self._frame_count += 1
+
+    # 更新GIF动图的下一帧
+    def _update_gif(self):
+        self._frame = self._gif_frames[self._ind]
+        self._ind += 1
+        if self._ind >= self._frame_count:
+            self._ind = 0
+        # 将gif当前帧显示在widget容器中
+        self.master_widget.configure(image=self._frame)
+        # 设置定时器，更新widget容器显示的gif帧
+        self.master_widget.gif_timer = self.master_widget.after(self.delay, self._update_gif)
+
+    # 启动GIF动图
+    def start_gif(self):
+        # 设置gif图片运行标志
+        self._gif_running = True
+        # 在widget容器中设置定时器
+        self.master_widget.gif_timer = self.master_widget.after(0, self._update_gif)
+
+    # 停止当前的GIF动图
+    def stop_gif(self):
+        if self._gif_running:
+            # 停止定时器
+            self.master_widget.after_cancel(self.master_widget.gif_timer)
+            self._gif_running = False
+
+
 # 窗口类
 class Window(ttk.Frame):
     def __init__(self, ui_json, master=None):
@@ -14,14 +88,14 @@ class Window(ttk.Frame):
         create_ui(self, ui_json)
         # 从json自动绑定事件
         create_all_binds(self, ui_json)
-        # 存储图片对象，若不存储，图片对象会被垃圾回收无法显示
+        # 存储GIF动图对象，若不存储，图片对象会被垃圾回收无法显示
+        self.gif = None
+        # 存储静态图片对象，若不存储，图片对象会被垃圾回收无法显示
         self.img = None
         # 存储图片地址列表，用于前后翻页
         self.img_list = []
         # 初始化下拉列表，设置默认值
         self.init_default_crypto_option()
-        # 设置gif图片默认运行状态为关闭
-        self._gif_running = False
         # 设置图片最大的宽度(gif图片不能缩放)
         self.img_max_width = 1280
         # 设置默认的图片宽度，并设置图片大小滑动条的位置
@@ -94,56 +168,6 @@ class Window(ttk.Frame):
         self.set_img_size_info()
         self.img_show()
 
-    # 初始化GIF动图，将GIF动图每一帧保存起来准备显示
-    def init_gif(self, img_path):
-        self._gif_frames = []
-        self._frame_count = 0
-        im = Image.open(img_path)
-        seq = []
-        try:
-            while True:
-                seq.append(im.copy())
-                im.seek(len(seq))  # skip to next frame
-        except EOFError:
-            pass  # we're done
-        try:
-            self.delay = im.info['duration']
-            # 将默认延时设置为50ms
-            if self.delay < 50:
-                self.delay = 50
-        except KeyError:
-            self.delay = 50
-        first = seq[0].convert('RGBA')
-        self._gif_frames = [ImageTk.PhotoImage(first)]
-        temp = seq[0]
-        for image in seq[1:]:
-            temp.paste(image)
-            frame = temp.convert('RGBA')
-            self._gif_frames.append(ImageTk.PhotoImage(frame))
-            self._frame_count += 1
-
-    # 定时更新GIF动图的每一帧
-    def update_gif(self, ind):
-        frame = self._gif_frames[ind]
-        ind += 1
-        if ind >= self._frame_count:
-            ind = 0
-        self.__dict__["imgLabel"].configure(image=frame)
-        self._gif_timer = self.master.after(self.delay, self.update_gif, ind)
-
-    # 启动GIF动图
-    def start_gif(self):
-        # 设置GIF图片运行标志
-        self._gif_running = True
-        # 设置更新图片事件
-        self._gif_timer = self.master.after(0, self.update_gif, 0)
-
-    # 停止当前的GIF动图
-    def stop_gif(self):
-        # 停止定时器
-        self.master.after_cancel(self._gif_timer)
-        self._gif_running = False
-
     def default_img_show(self, img_path):
         img_data = Image.open(img_path)
         (x, y) = img_data.size
@@ -159,8 +183,9 @@ class Window(ttk.Frame):
         self.default_img_show(img_file_like)
 
     def default_gif_show(self, img_path):
-        self.init_gif(img_path)
-        self.start_gif()
+        # 建立gif动图处理类
+        self.gif = GifHandle(self.__dict__["imgLabel"], img_path)
+        self.gif.start_gif()
 
     def crypto_gif_show(self, img_path):
         img_file_like = io.BytesIO(ByteCrypto(self.__dict__["password"].get()).decrypt(img_path))
@@ -169,8 +194,10 @@ class Window(ttk.Frame):
     # 清空图片显示
     def cancel_img(self):
         # 如果有GIF动图正在运行，则停止这个定时事件
-        if self._gif_running:
-            self.stop_gif()
+        if self.gif:
+            self.gif.stop_gif()
+        self.img = None
+        self.gif = None
         self.__dict__["imgLabel"].config(image='')
 
     # 根据不同图片类型和解密选项，显示图片

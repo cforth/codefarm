@@ -104,7 +104,11 @@ class Window(ttk.Frame):
         self.__dict__["imgSizeInfo"].set(str(self.img_width * 100 // self.img_max_width) + "%")
         # 绑定键盘事件
         self.master.bind("<Key>", self.key_event)
-        self.grid(row=0, column=0)
+        self.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.master.columnconfigure(0, weight=1)
+        self.master.rowconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+        self.rowconfigure(3, weight=1)
 
     # 初始化下拉列表，设置默认值
     def init_default_crypto_option(self):

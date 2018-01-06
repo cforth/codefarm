@@ -6,43 +6,45 @@ import tkinter.ttk as ttk
 class UI(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master, padding=2)
-        self.cryptoOptionCombobox = ttk.Combobox(self, **{'state': ['readonly'], 'values': ['解密文件', '不需解密', '解密保名']}, **{'width': 10})
-        self.cryptoOption = tk.StringVar()
-        self.cryptoOptionCombobox['textvariable'] = self.cryptoOption
-        self.cryptoOptionCombobox.grid(sticky=('w', 'e'), **{'column': 2, 'row': 0})
-        self.imgSizeNameLabel = tk.Label(self, **{'text': '调整大小'}, **{'width': 10})
-        self.imgSizeNameLabel.grid(sticky=('w', 'e'), **{'column': 0, 'row': 2})
-        self.fileFromButton = ttk.Button(self, **{'text': '选择文件'}, **{'width': 10})
-        self.fileFromButton.grid(sticky=('w', 'e'), **{'column': 0, 'row': 1})
-        self.fileFromButton['command'] = self.file_from_button_callback
-        self.nextImgButton = ttk.Button(self, **{'text': '>'}, **{})
-        self.nextImgButton.grid(sticky=('n', 's'), **{'column': 2, 'row': 3})
-        self.nextImgButton['command'] = self.next_img_button_callback
-        self.imgSizeInfoLabel = tk.Label(self, **{}, **{'width': 10})
-        self.imgSizeInfo = tk.StringVar()
-        self.imgSizeInfoLabel['textvariable'] = self.imgSizeInfo
-        self.imgSizeInfoLabel.grid(sticky=('w', 'e'), **{'column': 2, 'row': 2})
-        self.imgLabel = tk.Label(self, **{}, **{})
-        self.imgLabel.grid(sticky=('w', 'e', 'n', 's'), **{'column': 1, 'row': 3})
         self.passwordShowButton = ttk.Button(self, **{'text': '显隐密码'}, **{'width': 10})
-        self.passwordShowButton.grid(sticky=('w', 'e'), **{'column': 0, 'row': 0})
+        self.passwordShowButton.grid(sticky=('w', 'e'), **{'row': 0, 'column': 0})
         self.passwordShowButton['command'] = self.password_show_button_callback
-        self.showButton = ttk.Button(self, **{'text': '显示'}, **{'width': 10})
-        self.showButton.grid(sticky=('w', 'e'), **{'column': 2, 'row': 1})
-        self.showButton.bind('<Button-1>', self.img_show)
-        self.prevImgButton = ttk.Button(self, **{'text': '<'}, **{})
-        self.prevImgButton.grid(sticky=('n', 's'), **{'column': 0, 'row': 3})
-        self.prevImgButton['command'] = self.prev_img_button_callback
-        self.imgPathEntry = tk.Entry(self, **{'state': 'disable'}, **{'width': 80})
-        self.imgPath = tk.StringVar()
-        self.imgPathEntry['textvariable'] = self.imgPath
-        self.imgPathEntry.grid(sticky=('w', 'e'), **{'column': 1, 'row': 1})
         self.passwordEntry = tk.Entry(self, **{'show': '*'}, **{'width': 80})
         self.password = tk.StringVar()
         self.passwordEntry['textvariable'] = self.password
-        self.passwordEntry.grid(sticky=('w', 'e'), **{'column': 1, 'row': 0})
+        self.passwordEntry.grid(sticky=('w', 'e'), **{'row': 0, 'column': 1})
+        self.cryptoOptionCombobox = ttk.Combobox(self, **{'state': ['readonly'], 'values': ['解密文件', '不需解密', '解密保名']}, **{'width': 10})
+        self.cryptoOption = tk.StringVar()
+        self.cryptoOptionCombobox['textvariable'] = self.cryptoOption
+        self.cryptoOptionCombobox.grid(sticky=('w', 'e'), **{'row': 0, 'column': 2})
+        self.fileFromButton = ttk.Button(self, **{'text': '选择文件'}, **{'width': 10})
+        self.fileFromButton.grid(sticky=('w', 'e'), **{'row': 1, 'column': 0})
+        self.fileFromButton['command'] = self.file_from_button_callback
+        self.imgPathEntry = tk.Entry(self, **{'state': 'disable'}, **{'width': 80})
+        self.imgPath = tk.StringVar()
+        self.imgPathEntry['textvariable'] = self.imgPath
+        self.imgPathEntry.grid(sticky=('w', 'e'), **{'row': 1, 'column': 1})
+        self.showButton = ttk.Button(self, **{'text': '显示'}, **{'width': 10})
+        self.showButton.grid(sticky=('w', 'e'), **{'row': 1, 'column': 2})
+        self.showButton.bind('<Button-1>', self.img_show)
+        self.imgSizeNameLabel = tk.Label(self, **{'text': '调整大小'}, **{'width': 10})
+        self.imgSizeNameLabel.grid(sticky=('w', 'e'), **{'row': 2, 'column': 0})
         self.imgSizeScale = ttk.Scale(self, **{'orient': 'horizontal'}, **{'from_': 1, 'to': 100})
-        self.imgSizeScale.grid(sticky=('w', 'e'), **{'column': 1, 'row': 2})
+        self.imgSizeScale.grid(sticky=('w', 'e'), **{'row': 2, 'column': 1})
         self.imgSizeScale.bind('<ButtonRelease-1>', self.set_img_width)
         self.imgSizeScale.bind('<B1-Motion>', self.set_img_size_info)
-        self.grid(row=0, column=0)
+        self.imgSizeInfoLabel = tk.Label(self, **{}, **{'width': 10})
+        self.imgSizeInfo = tk.StringVar()
+        self.imgSizeInfoLabel['textvariable'] = self.imgSizeInfo
+        self.imgSizeInfoLabel.grid(sticky=('w', 'e'), **{'row': 2, 'column': 2})
+        self.prevImgButton = ttk.Button(self, **{'text': '<'}, **{})
+        self.prevImgButton.grid(sticky=('n', 's'), **{'row': 3, 'column': 0})
+        self.prevImgButton['command'] = self.prev_img_button_callback
+        self.imgLabel = tk.Label(self, **{}, **{})
+        self.imgLabel.grid(sticky=('w', 'e', 'n', 's'), **{'row': 3, 'column': 1})
+        self.nextImgButton = ttk.Button(self, **{'text': '>'}, **{})
+        self.nextImgButton.grid(sticky=('n', 's'), **{'row': 3, 'column': 2})
+        self.nextImgButton['command'] = self.next_img_button_callback
+        self.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.master.columnconfigure(0, weight=1)
+        self.master.rowconfigure(0, weight=1)

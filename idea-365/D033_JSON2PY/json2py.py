@@ -28,6 +28,13 @@ def head_string(tkinter_class):
     return string
 
 
+def tail_string():
+    string =  "        self.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))\n"
+    string += "        self.master.columnconfigure(0, weight=1)\n"
+    string += "        self.master.rowconfigure(0, weight=1)\n"
+    return string
+
+
 # 从json文件创建UI
 def create_ui(json_file, output_file):
     widget = read_json_file(json_file)
@@ -99,7 +106,7 @@ def create_ui(json_file, output_file):
         elif widget[k].get("command"):
             write_python_file(output_file, "        self.%s['command'] = self.%s\n" % (k, widget[k]["command"]))
 
-    write_python_file(output_file, "        self.grid(row=0, column=0)\n")
+    write_python_file(output_file, tail_string())
 
 
 if __name__ == '__main__':

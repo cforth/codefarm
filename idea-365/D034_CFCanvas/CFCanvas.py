@@ -2,6 +2,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from PIL import Image, ImageTk
 import tkinter.filedialog as filedialog
+import os
 
 
 def get_screen_size(window):
@@ -19,14 +20,15 @@ def get_window_current_size(window):
 def center_window(root, width, height):
     screenwidth = root.winfo_screenwidth()
     screenheight = root.winfo_screenheight()
-    size = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
+    size = '%dx%d+%d+%d' % (
+    root.winfo_reqwidth(), root.winfo_reqheight(), (screenwidth - width) / 2, (screenheight - height) / 2)
     print(size)
     root.geometry(size)
 
 
 # 窗口类
 class CFCanvas(ttk.Frame):
-    def __init__(self, master=None):
+    def __init__(self, default_width, default_height, master=None):
         super().__init__(master, padding=2)
         self.img_data = None
         self.img = None
@@ -34,8 +36,8 @@ class CFCanvas(ttk.Frame):
         self.img_position_y = 0
         self.canvas_img_id = None
         self.screenwidth, self.screenheight = get_screen_size(self)
-        self.canvas_width, self.canvas_height = 500, 500
-        self.img_width, self.img_height = 500, 500
+        self.canvas_width, self.canvas_height = default_width, default_height
+        self.img_width, self.img_height = default_width, default_height
 
         self.canvas = tk.Canvas(self, width=self.canvas_width, height=self.canvas_height,
                                 scrollregion=(0, 0, self.img_width, self.img_height))
@@ -51,9 +53,10 @@ class CFCanvas(ttk.Frame):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 
-    def img_show(self, img_path):
+    def default_img_show(self, img_path):
         self.img_data = Image.open(img_path)
-        self.img_width, self.img_height = self.img_data.size
+        width, height = self.img_data.size
+        self.img_height = self.img_width * height / width
         self.img_adjust_size(self.img_width, self.img_height)
 
     def img_adjust_size(self, width, height):
@@ -105,11 +108,11 @@ class Window(ttk.Frame):
         self.file_path = ""
         self.increase_button = ttk.Button(self, text="放大", command=self.increase)
         self.decrease_button = ttk.Button(self, text="缩小", command=self.decrease)
-        self.show_button = ttk.Button(self, text="选择", command=self.set_img_path)
+        self.show_button = ttk.Button(self, text="选择", command=self.show)
         self.increase_button.grid(row=0, column=0, sticky=tk.W)
         self.decrease_button.grid(row=0, column=1, sticky=tk.W)
         self.show_button.grid(row=0, column=2, sticky=tk.W)
-        self.img_canvas = CFCanvas(self)
+        self.img_canvas = CFCanvas(500, 500, self)
         self.img_canvas.grid(row=1, column=0, columnspan=3, sticky=tk.N + tk.S + tk.E + tk.W)
         self.grid(row=0, column=0, sticky=tk.N + tk.S + tk.E + tk.W)
         self.master.columnconfigure(0, weight=1)
@@ -118,9 +121,10 @@ class Window(ttk.Frame):
         self.rowconfigure(1, weight=1)
         self.master.bind("<Configure>", self.img_canvas.img_center)
 
-    def set_img_path(self, event=None):
+    def show(self, event=None):
         self.file_path = filedialog.askopenfilename()
-        self.img_canvas.img_show(self.file_path)
+        if self.file_path and os.path.exists(self.file_path):
+            self.img_canvas.default_img_show(self.file_path)
 
     def increase(self, event=None):
         if self.img_canvas.img_width > 5000 or self.img_canvas.img_height > 5000:

@@ -2,7 +2,8 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from PIL import Image, ImageTk
 import tkinter.filedialog as filedialog
-import os
+import io
+from libs.CFCrypto import *
 
 
 def get_screen_size(window):
@@ -112,19 +113,29 @@ class Window(ttk.Frame):
         self.increase_button.grid(row=0, column=0, sticky=tk.W)
         self.decrease_button.grid(row=0, column=1, sticky=tk.W)
         self.show_button.grid(row=0, column=2, sticky=tk.W)
+        self.password_label = ttk.Label(self, text="输入密码")
+        self.password_entry = ttk.Entry(self, show="*")
+        self.password_label.grid(row=1, column=0, sticky=tk.E)
+        self.password_entry.grid(row=1, column=1, sticky=tk.W)
         self.img_canvas = CFCanvas(500, 500, self)
-        self.img_canvas.grid(row=1, column=0, columnspan=3, sticky=tk.N + tk.S + tk.E + tk.W)
+        self.img_canvas.grid(row=2, column=0, columnspan=3, sticky=tk.N + tk.S + tk.E + tk.W)
         self.grid(row=0, column=0, sticky=tk.N + tk.S + tk.E + tk.W)
         self.master.columnconfigure(0, weight=1)
         self.master.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
-        self.rowconfigure(1, weight=1)
+        self.rowconfigure(2, weight=1)
         self.master.bind("<Configure>", self.img_canvas.img_center)
 
     def show(self, event=None):
         self.file_path = filedialog.askopenfilename()
-        if self.file_path and os.path.exists(self.file_path):
+        if self.file_path and os.path.exists(self.file_path) and not self.password_entry.get():
             self.img_canvas.default_img_show(self.file_path)
+        else:
+            self.crypto_show(self.file_path)
+
+    def crypto_show(self, img_path):
+        img_file_like = io.BytesIO(ByteCrypto(self.password_entry.get()).decrypt(img_path))
+        self.img_canvas.default_img_show(img_file_like)
 
     def increase(self, event=None):
         if self.img_canvas.img_width > 5000 or self.img_canvas.img_height > 5000:

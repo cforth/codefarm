@@ -1,0 +1,84 @@
+{
+  "ffmpegFromButton": {
+    "class": "Button",
+    "int": {"width": 10},
+    "string": {"text": "FFmpeg路径: "},
+    "command": "ffmpeg_from_button_callback",
+    "grid": {"row":0, "column":0, "sticky":["W", "E"]}
+  },
+  "ffmpegPathEntry": {
+    "class": "Entry",
+    "int": {"width": 40},
+    "var": "ffmpeg_path",
+    "grid": {"row":0, "column":1, "sticky":["W", "E"]}
+  },
+  "fileFromButton": {
+    "class": "Button",
+    "int": {"width": 10},
+    "string": {"text": "视频文件"},
+    "command": "file_from_button_callback",
+    "grid": {"row":1, "column":0, "sticky":["W", "E"]}
+  },
+  "currentVideoPathEntry": {
+    "class": "Entry",
+    "int": {"width": 40},
+    "var": "current_video_path",
+    "grid": {"row":1, "column":1, "sticky":["W", "E"]}
+  },
+  "videoStartTimeLabel": {
+    "class": "Label",
+    "int": {"width": 10},
+    "string": {"text": "开始时间: "},
+    "grid": {"row":2, "column":0, "sticky":["W", "E"]}
+  },
+  "videoStartTimeEntry": {
+    "class": "Entry",
+    "int": {"width": 40},
+    "var": "video_start_time",
+    "grid": {"row":2, "column":1, "sticky":["W", "E"]}
+  },
+  "interceptTimeLabel": {
+    "class": "Label",
+    "int": {"width": 10},
+    "string": {"text": "截取时间: "},
+    "grid": {"row":3, "column":0, "sticky":["W", "E"]}
+  },
+  "interceptTimeEntry": {
+    "class": "Entry",
+    "int": {"width": 40},
+    "var": "intercept_time",
+    "grid": {"row":3, "column":1, "sticky":["W", "E"]}
+  },
+  "fileToButton": {
+    "class": "Button",
+    "int": {"width": 10},
+    "string": {"text": "保存文件夹"},
+    "command": "file_to_button_callback",
+    "grid": {"row":4, "column":0, "sticky":["W", "E"]}
+  },
+  "videoSaveDirPathEntry": {
+    "class": "Entry",
+    "int": {"width": 40},
+    "var": "video_save_dir_path",
+    "grid": {"row":4, "column":1, "sticky":["W", "E"]}
+  },
+  "fileNameLabel": {
+    "class": "Label",
+    "int": {"width": 10},
+    "string": {"text": "保存文件名: "},
+    "grid": {"row":5, "column":0, "sticky":["W", "E"]}
+  },
+  "videoSaveNameEntry": {
+    "class": "Entry",
+    "int": {"width": 40},
+    "var": "video_save_name",
+    "grid": {"row":5, "column":1, "sticky":["W", "E"]}
+  },
+  "interceptVideoButton": {
+    "class": "Button",
+    "int": {"width": 10},
+    "string": {"text": "截取视频"},
+    "command": "intercept_video_button_callback",
+    "grid": {"row":6, "column":0}
+  }
+}

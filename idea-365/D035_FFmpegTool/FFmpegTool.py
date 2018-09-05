@@ -4,10 +4,13 @@ import tkinter.filedialog as filedialog
 from json2gui import *
 
 
-# 需要下载ffmpeg才可以使用
+# 需要下载ffmpeg才可以使用,windows平台
 def intercept_video(ffmpeg_path, media_path, video_start_time, intercept_time, video_save_dir):
-    cmd = ffmpeg_path + ' -y -i ' + media_path + ' -ss ' + video_start_time + ' -t ' + intercept_time + \
-          ' -acodec copy -vcodec copy -async 1 ' + video_save_dir
+    ffmpeg_abspath = r'"' + os.path.abspath(ffmpeg_path).replace('/', '\\') + r'"'
+    media_abspath = r'"' + os.path.abspath(media_path).replace('/', '\\') + r'"'
+    video_save_absdir = r'"' + os.path.abspath(video_save_dir).replace('/', '\\') + r'"'
+    cmd = ffmpeg_abspath + ' -y -i ' + media_abspath + ' -ss ' + video_start_time + ' -t ' + intercept_time + \
+          ' -acodec copy -vcodec copy -async 1 ' + video_save_absdir
     subprocess.call(cmd, shell=True)
 
 

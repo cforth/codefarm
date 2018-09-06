@@ -8,9 +8,9 @@
   },
   "ffmpegPathEntry": {
     "class": "Entry",
-    "int": {"width": 40},
+    "int": {"width": 30},
     "var": "ffmpeg_path",
-    "grid": {"row":0, "column":1, "sticky":["W", "E"]}
+    "grid": {"row":0, "column":1, "columnspan":6, "sticky":["W", "E"]}
   },
   "fileFromButton": {
     "class": "Button",
@@ -21,9 +21,9 @@
   },
   "currentVideoPathEntry": {
     "class": "Entry",
-    "int": {"width": 40},
+    "int": {"width": 30},
     "var": "current_video_path",
-    "grid": {"row":1, "column":1, "sticky":["W", "E"]}
+    "grid": {"row":1, "column":1, "columnspan":6, "sticky":["W", "E"]}
   },
   "videoStartTimeLabel": {
     "class": "Label",
@@ -31,11 +31,41 @@
     "string": {"text": "开始时间: "},
     "grid": {"row":2, "column":0, "sticky":["W", "E"]}
   },
-  "videoStartTimeEntry": {
+  "videoStartTimeHourEntry": {
     "class": "Entry",
-    "int": {"width": 40},
-    "var": "video_start_time",
+    "int": {"width": 5},
+    "var": "video_start_hour_time",
     "grid": {"row":2, "column":1, "sticky":["W", "E"]}
+  },
+  "videoStartTimeHourLabel": {
+    "class": "Label",
+    "int": {"width": 5},
+    "string": {"text": "时"},
+    "grid": {"row":2, "column":2, "sticky":["W", "E"]}
+  },
+  "videoStartTimeMinuteEntry": {
+    "class": "Entry",
+    "int": {"width": 5},
+    "var": "video_start_minute_time",
+    "grid": {"row":2, "column":3, "sticky":["W", "E"]}
+  },
+  "videoStartTimeMinuteLabel": {
+    "class": "Label",
+    "int": {"width": 5},
+    "string": {"text": "分"},
+    "grid": {"row":2, "column":4, "sticky":["W", "E"]}
+  },
+  "videoStartTimeSecondEntry": {
+    "class": "Entry",
+    "int": {"width": 5},
+    "var": "video_start_second_time",
+    "grid": {"row":2, "column":5, "sticky":["W", "E"]}
+  },
+  "videoStartTimeSecondLabel": {
+    "class": "Label",
+    "int": {"width": 5},
+    "string": {"text": "秒"},
+    "grid": {"row":2, "column":6, "sticky":["W", "E"]}
   },
   "interceptTimeLabel": {
     "class": "Label",
@@ -43,11 +73,41 @@
     "string": {"text": "截取时间: "},
     "grid": {"row":3, "column":0, "sticky":["W", "E"]}
   },
-  "interceptTimeEntry": {
+  "interceptTimeHourEntry": {
     "class": "Entry",
-    "int": {"width": 40},
-    "var": "intercept_time",
+    "int": {"width": 5},
+    "var": "intercept_hour_time",
     "grid": {"row":3, "column":1, "sticky":["W", "E"]}
+  },
+  "interceptTimeHourLabel": {
+    "class": "Label",
+    "int": {"width": 5},
+    "string": {"text": "时"},
+    "grid": {"row":3, "column":2, "sticky":["W", "E"]}
+  },
+  "interceptTimeMinuteEntry": {
+    "class": "Entry",
+    "int": {"width": 5},
+    "var": "intercept_minute_time",
+    "grid": {"row":3, "column":3, "sticky":["W", "E"]}
+  },
+  "interceptTimeMinuteLabel": {
+    "class": "Label",
+    "int": {"width": 5},
+    "string": {"text": "分"},
+    "grid": {"row":3, "column":4, "sticky":["W", "E"]}
+  },
+  "interceptTimeSecondEntry": {
+    "class": "Entry",
+    "int": {"width": 5},
+    "var": "intercept_second_time",
+    "grid": {"row":3, "column":5, "sticky":["W", "E"]}
+  },
+  "interceptTimeSecondLabel": {
+    "class": "Label",
+    "int": {"width": 5},
+    "string": {"text": "秒"},
+    "grid": {"row":3, "column":6, "sticky":["W", "E"]}
   },
   "fileToButton": {
     "class": "Button",
@@ -58,9 +118,9 @@
   },
   "videoSaveDirPathEntry": {
     "class": "Entry",
-    "int": {"width": 40},
+    "int": {"width": 30},
     "var": "video_save_dir_path",
-    "grid": {"row":4, "column":1, "sticky":["W", "E"]}
+    "grid": {"row":4, "column":1, "columnspan":6, "sticky":["W", "E"]}
   },
   "fileNameLabel": {
     "class": "Label",
@@ -70,9 +130,15 @@
   },
   "videoSaveNameEntry": {
     "class": "Entry",
-    "int": {"width": 40},
+    "int": {"width": 25},
     "var": "video_save_name",
-    "grid": {"row":5, "column":1, "sticky":["W", "E"]}
+    "grid": {"row":5, "column":1, "columnspan":5, "sticky":["W", "E"]}
+  },
+  "videoSaveSuffixLabel": {
+    "class": "Label",
+    "int": {"width": 5},
+    "string": {"text": ".后缀"},
+    "grid": {"row":5, "column":6, "sticky":["W", "E"]}
   },
   "interceptVideoButton": {
     "class": "Button",
@@ -80,5 +146,12 @@
     "string": {"text": "截取视频"},
     "command": "intercept_video_button_callback",
     "grid": {"row":6, "column":0}
+  },
+  "screenShotButton": {
+    "class": "Button",
+    "int": {"width": 5},
+    "string": {"text": "截图"},
+    "command": "screen_shot_button_callback",
+    "grid": {"row":6, "column":6}
   }
 }

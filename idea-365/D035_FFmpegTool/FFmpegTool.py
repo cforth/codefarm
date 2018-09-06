@@ -5,12 +5,20 @@ from json2gui import *
 
 
 # 需要下载ffmpeg才可以使用,windows平台
-def intercept_video(ffmpeg_path, media_path, video_start_time, intercept_time, video_save_dir):
+def intercept_video(ffmpeg_path, media_path, video_start_time, intercept_time, video_save_path):
     ffmpeg_abspath = r'"' + os.path.abspath(ffmpeg_path).replace('/', '\\') + r'"'
     media_abspath = r'"' + os.path.abspath(media_path).replace('/', '\\') + r'"'
-    video_save_absdir = r'"' + os.path.abspath(video_save_dir).replace('/', '\\') + r'"'
+    video_save_abspath = r'"' + os.path.abspath(video_save_path).replace('/', '\\') + r'"'
     cmd = ffmpeg_abspath + ' -y -i ' + media_abspath + ' -ss ' + video_start_time + ' -t ' + intercept_time + \
-          ' -acodec copy -vcodec copy -async 1 ' + video_save_absdir
+          ' -acodec copy -vcodec copy -async 1 ' + video_save_abspath
+    subprocess.call(cmd, shell=True)
+
+
+def screen_shot(ffmpeg_path, media_path, video_start_time, screen_shot_save_path):
+    ffmpeg_abspath = r'"' + os.path.abspath(ffmpeg_path).replace('/', '\\') + r'"'
+    media_abspath = r'"' + os.path.abspath(media_path).replace('/', '\\') + r'"'
+    screen_shot_save_abspath = r'"' + os.path.abspath(screen_shot_save_path).replace('/', '\\') + r'"'
+    cmd = ffmpeg_abspath + ' -i ' + media_abspath + ' -ss ' + video_start_time + ' -vframes 1 ' + screen_shot_save_abspath
     subprocess.call(cmd, shell=True)
 
 
@@ -28,9 +36,21 @@ class Window(ttk.Frame):
         self.columnconfigure(1, weight=1)
 
     def intercept_video_button_callback(self, event=None):
-        intercept_video(self.ffmpeg_path.get(), self.current_video_path.get(),
-                        self.video_start_time.get(), self.intercept_time.get(),
-                        os.path.join(self.video_save_dir_path.get(), self.video_save_name.get()))
+        video_start_time = self.video_start_hour_time.get() + \
+                           ":" + self.video_start_minute_time.get() + \
+                           ":" + self.video_start_second_time.get()
+        intercept_time = self.intercept_hour_time.get() + \
+                         ":" + self.intercept_minute_time.get() + \
+                         ":" + self.intercept_second_time.get()
+        intercept_video(self.ffmpeg_path.get(), self.current_video_path.get(), video_start_time, intercept_time,
+                        os.path.join(self.video_save_dir_path.get(), self.video_save_name.get()) + ".mp4")
+
+    def screen_shot_button_callback(self, event=None):
+        video_start_time = self.video_start_hour_time.get() + \
+                           ":" + self.video_start_minute_time.get() + \
+                           ":" + self.video_start_second_time.get()
+        screen_shot(self.ffmpeg_path.get(), self.current_video_path.get(), video_start_time,
+                    os.path.join(self.video_save_dir_path.get(), self.video_save_name.get()) + ".png")
 
     def ffmpeg_from_button_callback(self, event=None):
         ffmpeg_path = filedialog.askopenfilename()

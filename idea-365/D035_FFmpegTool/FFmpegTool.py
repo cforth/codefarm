@@ -60,6 +60,8 @@ class Window(ttk.Frame):
             json.dump(config_dir, f)
 
     def read_config(self):
+        if not os.path.exists("FFmpegConfig.json"):
+            return
         with open("FFmpegConfig.json", "r") as f:
             config_dir = json.load(f)
             if config_dir and "ffmpeg_path" in config_dir:

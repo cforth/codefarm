@@ -45,36 +45,45 @@ def gen_aes_key(password, salt, use_md5):
 # 字符串加密解密类
 class StringCrypto(object):
     def __init__(self, password, salt="", use_md5=False, use_urlsafe=False):
+        # 是否使用urlsafe模式下的base64编码
         self.use_urlsafe = use_urlsafe
         # 生成密钥时，选择是否加盐，是否使用md5值
         self.key = gen_aes_key(password, salt, use_md5)
         self.cipher = None
 
-    # 加密字符串
-    def encrypt(self, string, iv):
+    # 加密字符串，iv默认为None时随机生成
+    def encrypt(self, string, iv_str=None):
+        # 将原字符串长度补齐到AES.block_size的整数倍长度
         pad_byte_string = pad(string.encode('utf-8'), AES.block_size)
-        if self.use_urlsafe:
-            iv_byte = base64.urlsafe_b64encode(iv)
-            self.cipher = AES.new(self.key, AES.MODE_CBC, iv_byte)
-            encrypt_byte_string = self.cipher.encrypt(pad_byte_string)
-            encrypt_string = base64.urlsafe_b64encode(encrypt_byte_string).decode('utf-8')
+        if iv_str:
+            # iv为初始化向量，AES为16字节
+            iv = base64.urlsafe_b64decode(iv_str) if self.use_urlsafe else base64.b64decode(iv_str)
+            self.cipher = AES.new(self.key, AES.MODE_CBC, iv)
         else:
-            iv_byte = base64.b64decode(iv)
-            self.cipher = AES.new(self.key, AES.MODE_CBC, iv_byte)
-            encrypt_byte_string = self.cipher.encrypt(pad_byte_string)
-            encrypt_string = base64.b64encode(encrypt_byte_string).decode('utf-8')
-        return iv, encrypt_string
+            # 未指定iv，则随机生成一个
+            self.cipher = AES.new(self.key, AES.MODE_CBC)
+            if self.use_urlsafe:
+                iv_str = base64.urlsafe_b64encode(self.cipher.iv).decode('utf-8')
+            else:
+                iv_str = base64.b64encode(self.cipher.iv).decode('utf-8')
+        # 使用AES-128的CBC模式加密字符串
+        ct_bytes = self.cipher.encrypt(pad_byte_string)
+        if self.use_urlsafe:
+            ct = base64.urlsafe_b64encode(ct_bytes).decode('utf-8')
+        else:
+            ct = base64.b64encode(ct_bytes).decode('utf-8')
+        return iv_str, ct
 
     # 解密字符串
-    def decrypt(self, encrypt_string, iv):
+    def decrypt(self, encrypt_string, iv_str):
         if self.use_urlsafe:
             encrypt_byte_string = base64.urlsafe_b64decode(bytes(map(ord, encrypt_string)))
-            iv_byte = base64.urlsafe_b64decode(iv)
+            iv = base64.urlsafe_b64decode(iv_str)
         else:
             encrypt_byte_string = base64.b64decode(bytes(map(ord, encrypt_string)))
-            iv_byte = base64.b64decode(iv)
-        # 使用CBC模式进行解密
-        self.cipher = AES.new(self.key, AES.MODE_CBC, iv_byte)
+            iv = base64.b64decode(iv_str)
+        # 使用AES-128的CBC模式进行解密
+        self.cipher = AES.new(self.key, AES.MODE_CBC, iv)
         pad_byte_string = self.cipher.decrypt(encrypt_byte_string)
         string = unpad(pad_byte_string, AES.block_size).decode('utf-8')
-        return string
+        return iv_str, string

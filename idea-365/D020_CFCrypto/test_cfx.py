@@ -30,6 +30,21 @@ class TestCrypto(unittest.TestCase):
         ivv, decrypt_str = my_cipher.decrypt(encrypt_str, ivv)
         self.assertEqual(string, decrypt_str)
 
+    def test_FileCrypto(self):
+        # 使用AES加密解密的演示
+        my_aes = ByteCrypto('this is very long password to test file crypto')
+        iv_str, my_data = my_aes.encrypt('./testdata/test.png')
+        print(iv_str)
+        with open('./testdata/test.png.aes', 'wb') as f:
+            f.write(my_data)
+        iv_str, my_dedata = my_aes.decrypt('./testdata/test.png.aes', iv_str)
+        with open('./testdata/aes_test.png', 'wb') as f:
+            f.write(my_dedata)
+        print(iv_str)
+        self.assertTrue(filecmp.cmp('./testdata/test.png', './testdata/aes_test.png'))
+        os.remove('./testdata/aes_test.png')
+        os.remove('./testdata/test.png.aes')
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,5 +1,6 @@
 import hashlib
 import base64
+import os
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 
@@ -87,3 +88,49 @@ class StringCrypto(object):
         pad_byte_string = self.cipher.decrypt(encrypt_byte_string)
         string = unpad(pad_byte_string, AES.block_size).decode('utf-8')
         return iv_str, string
+
+
+# 将文件加密或解密，返回二进制数据(用于小文件)
+class ByteCrypto(object):
+    def __init__(self, password, salt="", use_md5=False, use_urlsafe=False):
+        # 生成密钥时，选择是否加盐，是否使用md5值
+        self.key = gen_aes_key(password, salt, use_md5)
+        self.use_urlsafe = use_urlsafe
+        self.cipher = None
+
+    def encrypt(self, file_path, iv_str=None):
+        if not os.path.exists(file_path):
+            raise ValueError('Input file path not exists: %s ', file_path)
+
+        with open(file_path, 'rb') as f:
+            data_to_encrypt = f.read()
+
+        if iv_str:
+            # iv为初始化向量，AES为16字节
+            iv = base64.urlsafe_b64decode(iv_str) if self.use_urlsafe else base64.b64decode(iv_str)
+            self.cipher = AES.new(self.key, AES.MODE_CBC, iv)
+        else:
+            # 未指定iv，则随机生成一个
+            self.cipher = AES.new(self.key, AES.MODE_CBC)
+            if self.use_urlsafe:
+                iv_str = base64.urlsafe_b64encode(self.cipher.iv).decode('utf-8')
+            else:
+                iv_str = base64.b64encode(self.cipher.iv).decode('utf-8')
+
+        return iv_str, self.cipher.encrypt(pad(data_to_encrypt, AES.block_size))
+
+    def decrypt(self, file_path, iv_str):
+        if not os.path.exists(file_path):
+            raise ValueError('Input file path not exists: %s ', file_path)
+
+        with open(file_path, 'rb') as f:
+            data_to_decrypt = f.read()
+
+        if self.use_urlsafe:
+            iv = base64.urlsafe_b64decode(iv_str)
+        else:
+            iv = base64.b64decode(iv_str)
+
+        # 使用AES-128的CBC模式进行解密
+        self.cipher = AES.new(self.key, AES.MODE_CBC, iv)
+        return iv_str, unpad(self.cipher.decrypt(data_to_decrypt), AES.block_size)

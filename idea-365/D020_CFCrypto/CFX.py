@@ -1,5 +1,6 @@
 import hashlib
 import base64
+from functools import partial
 import os
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
@@ -90,7 +91,7 @@ class StringCrypto(object):
         return iv_str, string
 
 
-# 将文件加密或解密，返回二进制数据(用于小文件)
+# 将二进制数据加密或解密，返回二进制数据(一次性读入内存加密，用于小文件)
 class ByteCrypto(object):
     def __init__(self, password, salt="", use_md5=False, use_urlsafe=False):
         # 生成密钥时，选择是否加盐，是否使用md5值
@@ -98,13 +99,88 @@ class ByteCrypto(object):
         self.use_urlsafe = use_urlsafe
         self.cipher = None
 
-    def encrypt(self, file_path, iv_str=None):
+    def encrypt(self, data_to_encrypt, iv_str=None):
+        if iv_str:
+            # iv为初始化向量，AES为16字节
+            iv = base64.urlsafe_b64decode(iv_str) if self.use_urlsafe else base64.b64decode(iv_str)
+            self.cipher = AES.new(self.key, AES.MODE_CBC, iv)
+        else:
+            # 未指定iv，则随机生成一个
+            self.cipher = AES.new(self.key, AES.MODE_CBC)
+            if self.use_urlsafe:
+                iv_str = base64.urlsafe_b64encode(self.cipher.iv).decode('utf-8')
+            else:
+                iv_str = base64.b64encode(self.cipher.iv).decode('utf-8')
+        return iv_str, self.cipher.encrypt(pad(data_to_encrypt, AES.block_size))
+
+    def decrypt(self, data_to_decrypt, iv_str):
+        if self.use_urlsafe:
+            iv = base64.urlsafe_b64decode(iv_str)
+        else:
+            iv = base64.b64decode(iv_str)
+        # 使用AES-128的CBC模式进行解密
+        self.cipher = AES.new(self.key, AES.MODE_CBC, iv)
+        return iv_str, unpad(self.cipher.decrypt(data_to_decrypt), AES.block_size)
+
+
+# 将文件加密或解密，指定block_size作为每次读取写入的数据量，用于大文件
+class FileCrypto(object):
+    def __init__(self, password, salt="", use_md5=False, use_urlsafe=False, block_size=10 * 1024 * 1024):
+        # 生成密钥时，选择是否加盐，是否使用md5值
+        self.key = gen_aes_key(password, salt, use_md5)
+        self.use_urlsafe = use_urlsafe
+        self.block_size = block_size
+        self.cipher = None
+        # 加密解密的状态
+        self.crypto_status = False
+        # 已经读取的数据长度
+        self.read_len = 0
+        # 记录是否被外部中止
+        self.stop_flag = False
+
+    # 获取加密解密状态与已经读取的数据长度，用于显示状态
+    def get_status(self):
+        return self.crypto_status, self.read_len
+
+    # 停止任务
+    def stop_handle(self):
+        self.crypto_status = False
+        self.stop_flag = True
+
+    # 是否被外部中止任务
+    def if_stop(self):
+        return self.stop_flag
+
+    # 文件处理方法
+    def handle(self, file_path, output_file_path, data_handle_func, data_end_handle_func):
         if not os.path.exists(file_path):
             raise ValueError('Input file path not exists: %s ', file_path)
+        elif os.path.exists(output_file_path):
+            raise ValueError('Output file exists: %s', output_file_path)
 
-        with open(file_path, 'rb') as f:
-            data_to_encrypt = f.read()
+        file_len = os.path.getsize(file_path)
+        self.crypto_status = True
+        self.stop_flag = False
+        try:
+            with open(file_path, 'rb') as f:
+                self.read_len = 0
+                data_iter = iter(partial(f.read, self.block_size), b'')
+                for data in data_iter:
+                    if not self.crypto_status:
+                        break
+                    self.read_len += len(data)
+                    if self.read_len == file_len:
+                        data = data_end_handle_func(data)
+                    else:
+                        data = data_handle_func(data)
+                    with open(output_file_path, 'ab') as out:
+                        out.write(data)
+        except Exception as e:
+            raise e
+        finally:
+            self.crypto_status = False
 
+    def encrypt(self, file_path, output_file_path, iv_str=None):
         if iv_str:
             # iv为初始化向量，AES为16字节
             iv = base64.urlsafe_b64decode(iv_str) if self.use_urlsafe else base64.b64decode(iv_str)
@@ -117,15 +193,13 @@ class ByteCrypto(object):
             else:
                 iv_str = base64.b64encode(self.cipher.iv).decode('utf-8')
 
-        return iv_str, self.cipher.encrypt(pad(data_to_encrypt, AES.block_size))
+        data_handle_func = self.cipher.encrypt
+        # 读取到文件尾部时，执行尾部补位操作后加密
+        data_end_handle_func = lambda d: self.cipher.encrypt(pad(d, AES.block_size))
+        self.handle(file_path, output_file_path, data_handle_func, data_end_handle_func)
+        return iv_str
 
-    def decrypt(self, file_path, iv_str):
-        if not os.path.exists(file_path):
-            raise ValueError('Input file path not exists: %s ', file_path)
-
-        with open(file_path, 'rb') as f:
-            data_to_decrypt = f.read()
-
+    def decrypt(self, file_path, output_file_path, iv_str):
         if self.use_urlsafe:
             iv = base64.urlsafe_b64decode(iv_str)
         else:
@@ -133,4 +207,8 @@ class ByteCrypto(object):
 
         # 使用AES-128的CBC模式进行解密
         self.cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        return iv_str, unpad(self.cipher.decrypt(data_to_decrypt), AES.block_size)
+        data_handle_func = self.cipher.decrypt
+        # 读取到文件尾部时，执行解密后尾部去除补位
+        data_end_handle_func = lambda d: unpad(self.cipher.decrypt(d), AES.block_size)
+        self.handle(file_path, output_file_path, data_handle_func, data_end_handle_func)
+        return iv_str

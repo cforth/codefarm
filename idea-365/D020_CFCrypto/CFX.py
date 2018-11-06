@@ -6,17 +6,17 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 
 
-# '\0'填充密码
+# b'\0'填充密码
 def null_pad(data_to_pad):
     data_len = len(data_to_pad)
     # 不超过128位的密码填充长度（字节单位）
     if data_len <= 16:
         key_len = 16
     # 128位以上，不超过192位的密码填充长度（字节单位）
-    elif data_len > 16 and data_len <= 24:
+    elif 16 < data_len <= 24:
         key_len = 24
     # 192位以上，不超过256位的密码填充长度（字节单位）
-    elif data_len > 24 and data_len <= 32:
+    elif 24 < data_len <= 32:
         key_len = 32
     # 超过256位的密码直接截断到256位长度
     else:
@@ -30,11 +30,9 @@ def null_pad(data_to_pad):
 # 生成密钥
 def gen_aes_key(password, salt, use_md5):
     # 将密码加盐，防止泄露原始密码
-    if salt:
-        password += salt
-
+    password = password + salt if salt else password
+    # use_md5为True值时，将密码转为md5值作为密钥，否则使用b'\0'填充密码
     if use_md5:
-        # 将密码转为md5值作为密钥
         md5 = hashlib.md5()
         md5.update(password.encode('utf-8'))
         key = md5.digest()
@@ -53,10 +51,10 @@ class StringCrypto(object):
         self.key = gen_aes_key(password, salt, use_md5)
         self.cipher = None
 
-    # 加密字符串，iv默认为None时随机生成
-    def encrypt(self, string, iv_str=None):
+    # 加密字符串，iv_str默认为None时随机生成
+    def encrypt(self, original_string, iv_str=None):
         # 将原字符串长度补齐到AES.block_size的整数倍长度
-        pad_byte_string = pad(string.encode('utf-8'), AES.block_size)
+        pad_byte_string = pad(original_string.encode('utf-8'), AES.block_size)
         if iv_str:
             # iv为初始化向量，AES为16字节
             iv = base64.urlsafe_b64decode(iv_str) if self.use_urlsafe else base64.b64decode(iv_str)
@@ -71,10 +69,10 @@ class StringCrypto(object):
         # 使用AES-128的CBC模式加密字符串
         ct_bytes = self.cipher.encrypt(pad_byte_string)
         if self.use_urlsafe:
-            ct = base64.urlsafe_b64encode(ct_bytes).decode('utf-8')
+            encrypt_string = base64.urlsafe_b64encode(ct_bytes).decode('utf-8')
         else:
-            ct = base64.b64encode(ct_bytes).decode('utf-8')
-        return iv_str, ct
+            encrypt_string = base64.b64encode(ct_bytes).decode('utf-8')
+        return iv_str, encrypt_string
 
     # 解密字符串
     def decrypt(self, encrypt_string, iv_str):
@@ -87,8 +85,8 @@ class StringCrypto(object):
         # 使用AES-128的CBC模式进行解密
         self.cipher = AES.new(self.key, AES.MODE_CBC, iv)
         pad_byte_string = self.cipher.decrypt(encrypt_byte_string)
-        string = unpad(pad_byte_string, AES.block_size).decode('utf-8')
-        return iv_str, string
+        original_string = unpad(pad_byte_string, AES.block_size).decode('utf-8')
+        return iv_str, original_string
 
 
 # 将二进制数据加密或解密，返回二进制数据(一次性读入内存加密，用于小文件)
@@ -99,7 +97,7 @@ class ByteCrypto(object):
         self.use_urlsafe = use_urlsafe
         self.cipher = None
 
-    def encrypt(self, data_to_encrypt, iv_str=None):
+    def encrypt(self, original_data, iv_str=None):
         if iv_str:
             # iv为初始化向量，AES为16字节
             iv = base64.urlsafe_b64decode(iv_str) if self.use_urlsafe else base64.b64decode(iv_str)
@@ -111,7 +109,7 @@ class ByteCrypto(object):
                 iv_str = base64.urlsafe_b64encode(self.cipher.iv).decode('utf-8')
             else:
                 iv_str = base64.b64encode(self.cipher.iv).decode('utf-8')
-        return iv_str, self.cipher.encrypt(pad(data_to_encrypt, AES.block_size))
+        return iv_str, self.cipher.encrypt(pad(original_data, AES.block_size))
 
     def decrypt(self, data_to_decrypt, iv_str):
         if self.use_urlsafe:

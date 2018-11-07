@@ -79,6 +79,17 @@ class TestCrypto(unittest.TestCase):
         os.remove('./testdata/aes_test.mp4')
         os.remove('./testdata/test.mp4.aes')
 
+    def test_DirCrypto(self):
+        iv_str = "UEr9si9EynusD5GGVuiqKw=="
+        password = 'this is very long password to test file crypto'
+        my_cipher = DirFileCrypto(password, iv_str)
+        my_cipher.encrypt('./testdata/testdir/', './testdata/')
+        print(my_cipher.iv_str)
+        my_cipher.decrypt('./testdata/5OiNg8Gq2qWsdob6u5jlhg==/', './testdata/testdecrytdir/')
+        self.assertTrue(filecmp.cmp('./testdata/testdir/test.mp3', './testdata/testdecrytdir/testdir/test.mp3'))
+        shutil.rmtree('./testdata/testdecrytdir')
+        shutil.rmtree('./testdata/5OiNg8Gq2qWsdob6u5jlhg==')
+
 
 if __name__ == '__main__':
     unittest.main()

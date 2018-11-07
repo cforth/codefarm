@@ -12,14 +12,40 @@ BUFFER_SIZE = 10 * 1024 * 1024
 # 加密解密基类，设置密码和其他参数
 class BaseCrypto(object):
     def __init__(self, password, iv_str=None, salt=None, use_md5=False, use_urlsafe=False, buffer_size=BUFFER_SIZE):
-        self._iv_str = iv_str
         # 生成密钥时，选择是否加盐，是否使用md5值
         self.key = self.gen_aes_key(password, salt, use_md5)
+        # 使用base64模块将字节转与字符串互相转换时，是否用urlsafe模式
         self.use_urlsafe = use_urlsafe
+        # 处理文件时，指定每次读写的数据量
         self.buffer_size = buffer_size
+        # 内部的加密解密对象初始化，使用AES-128的CBC模式
         self.cipher = None
+        # AES-128的CBC模式时，初始化向量字节(密钥偏移量)
+        self._iv_bytes = None
+        # 使用base64模块将初始化向量字节(密钥偏移量)由字节转换为字符串时的表现形式
+        self._iv_str = iv_str
 
-    # 获得iv_str，初始化向量的字符串表现形式
+    # 生成加密解密对象，设置_iv_str和_iv_bytes
+    # 加密和解密方法使用前，必须生成新的cipher，不然无法使用
+    def gen_cipher(self):
+        # 使用AES-128的CBC模式加密解密，_iv_bytes为None时，随机指定一个
+        if self._iv_str:
+            if self.use_urlsafe:
+                self._iv_bytes = base64.urlsafe_b64decode(self._iv_str)
+            else:
+                self._iv_bytes = base64.b64decode(self._iv_str)
+            cipher = AES.new(self.key, AES.MODE_CBC, self._iv_bytes)
+        else:
+            cipher = AES.new(self.key, AES.MODE_CBC)
+            self._iv_bytes = cipher.iv
+            if self.use_urlsafe:
+                self._iv_str = base64.urlsafe_b64encode(self._iv_bytes).decode('utf-8')
+            else:
+                self._iv_str = base64.b64encode(self._iv_bytes).decode('utf-8')
+
+        return cipher
+
+    # 获得iv_str
     @property
     def iv_str(self):
         return self._iv_str
@@ -64,22 +90,11 @@ class StringCrypto(BaseCrypto):
     def __init__(self, password, iv_str=None, salt=None, use_md5=False, use_urlsafe=False):
         super().__init__(password, iv_str, salt, use_md5, use_urlsafe)
 
-    # 加密字符串，iv_str默认为None时随机生成
+    # 加密字符串
     def encrypt(self, original_string):
+        self.cipher = self.gen_cipher()
         # 将原字符串长度补齐到AES.block_size的整数倍长度
         pad_byte_string = pad(original_string.encode('utf-8'), AES.block_size)
-        if self._iv_str:
-            # iv为初始化向量，AES为16字节
-            iv = base64.urlsafe_b64decode(self._iv_str) if self.use_urlsafe else base64.b64decode(self._iv_str)
-            self.cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        else:
-            # 未指定iv，则随机生成一个，并设定iv_str
-            self.cipher = AES.new(self.key, AES.MODE_CBC)
-            if self.use_urlsafe:
-                self._iv_str = base64.urlsafe_b64encode(self.cipher.iv).decode('utf-8')
-            else:
-                self._iv_str = base64.b64encode(self.cipher.iv).decode('utf-8')
-        # 使用AES-128的CBC模式加密字符串
         ct_bytes = self.cipher.encrypt(pad_byte_string)
         if self.use_urlsafe:
             encrypt_string = base64.urlsafe_b64encode(ct_bytes).decode('utf-8')
@@ -89,14 +104,11 @@ class StringCrypto(BaseCrypto):
 
     # 解密字符串
     def decrypt(self, encrypt_string):
+        self.cipher = self.gen_cipher()
         if self.use_urlsafe:
             encrypt_byte_string = base64.urlsafe_b64decode(bytes(map(ord, encrypt_string)))
-            iv = base64.urlsafe_b64decode(self._iv_str)
         else:
             encrypt_byte_string = base64.b64decode(bytes(map(ord, encrypt_string)))
-            iv = base64.b64decode(self._iv_str)
-        # 使用AES-128的CBC模式进行解密
-        self.cipher = AES.new(self.key, AES.MODE_CBC, iv)
         pad_byte_string = self.cipher.decrypt(encrypt_byte_string)
         original_string = unpad(pad_byte_string, AES.block_size).decode('utf-8')
         return original_string
@@ -108,26 +120,11 @@ class ByteCrypto(BaseCrypto):
         super().__init__(password, iv_str, salt, use_md5, use_urlsafe)
 
     def encrypt(self, original_data):
-        if self._iv_str:
-            # iv为初始化向量，AES为16字节
-            iv = base64.urlsafe_b64decode(self._iv_str) if self.use_urlsafe else base64.b64decode(self._iv_str)
-            self.cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        else:
-            # 未指定iv，则随机生成一个
-            self.cipher = AES.new(self.key, AES.MODE_CBC)
-            if self.use_urlsafe:
-                self._iv_str = base64.urlsafe_b64encode(self.cipher.iv).decode('utf-8')
-            else:
-                self._iv_str = base64.b64encode(self.cipher.iv).decode('utf-8')
+        self.cipher = self.gen_cipher()
         return self.cipher.encrypt(pad(original_data, AES.block_size))
 
     def decrypt(self, data_to_decrypt):
-        if self.use_urlsafe:
-            iv = base64.urlsafe_b64decode(self._iv_str)
-        else:
-            iv = base64.b64decode(self._iv_str)
-        # 使用AES-128的CBC模式进行解密
-        self.cipher = AES.new(self.key, AES.MODE_CBC, iv)
+        self.cipher = self.gen_cipher()
         return unpad(self.cipher.decrypt(data_to_decrypt), AES.block_size)
 
 
@@ -185,31 +182,14 @@ class FileCrypto(BaseCrypto):
             self.crypto_status = False
 
     def encrypt(self, file_path, output_file_path):
-        if self._iv_str:
-            # iv为初始化向量，AES为16字节
-            iv = base64.urlsafe_b64decode(self._iv_str) if self.use_urlsafe else base64.b64decode(self._iv_str)
-            self.cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        else:
-            # 未指定iv，则随机生成一个
-            self.cipher = AES.new(self.key, AES.MODE_CBC)
-            if self.use_urlsafe:
-                self._iv_str = base64.urlsafe_b64encode(self.cipher.iv).decode('utf-8')
-            else:
-                self._iv_str = base64.b64encode(self.cipher.iv).decode('utf-8')
-
+        self.cipher = self.gen_cipher()
         data_handle_func = self.cipher.encrypt
         # 读取到文件尾部时，执行尾部补位操作后加密
         data_end_handle_func = lambda d: self.cipher.encrypt(pad(d, AES.block_size))
         self.handle(file_path, output_file_path, data_handle_func, data_end_handle_func)
 
     def decrypt(self, file_path, output_file_path):
-        if self.use_urlsafe:
-            iv = base64.urlsafe_b64decode(self._iv_str)
-        else:
-            iv = base64.b64decode(self._iv_str)
-
-        # 使用AES-128的CBC模式进行解密
-        self.cipher = AES.new(self.key, AES.MODE_CBC, iv)
+        self.cipher = self.gen_cipher()
         data_handle_func = self.cipher.decrypt
         # 读取到文件尾部时，执行解密后尾部去除补位
         data_end_handle_func = lambda d: unpad(self.cipher.decrypt(d), AES.block_size)

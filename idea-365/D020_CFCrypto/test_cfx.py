@@ -90,6 +90,17 @@ class TestCrypto(unittest.TestCase):
         shutil.rmtree('./testdata/testdecrytdir')
         shutil.rmtree('./testdata/5OiNg8Gq2qWsdob6u5jlhg==')
 
+    def test_ListCrypto(self):
+        iv_str = "UEr9si9EynusD5GGVuiqKw=="
+        password = 'this is very long password to test file crypto'
+        my_cipher = ListCrypto(password, iv_str)
+        my_cipher.encrypt(['./testdata/test.pdf', './testdata/testdir/', './testdata/test.png'], './testdata/testlist/')
+        print(my_cipher.iv_str)
+        my_cipher.decrypt(['./testdata/testlist/EQxPeHaoSakp41HUzNLAmQ==', './testdata/testlist/5OiNg8Gq2qWsdob6u5jlhg==/', './testdata/testlist/rrGDhLKxkcB4oTH4ezLOKA=='], './testdata/testdecrytlist/')
+        self.assertTrue(filecmp.cmp('./testdata/testdir/test.mp3', './testdata/testdecrytlist/testdir/test.mp3'))
+        shutil.rmtree('./testdata/testdecrytlist')
+        shutil.rmtree('./testdata/testlist')
+
 
 if __name__ == '__main__':
     unittest.main()

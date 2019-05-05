@@ -1,9 +1,6 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 from PIL import Image, ImageTk
-import tkinter.filedialog as filedialog
-import io
-from libs.CFCrypto import *
 
 
 def get_screen_size(window):
@@ -23,8 +20,135 @@ def center_window(root, width, height):
     screenheight = root.winfo_screenheight()
     size = '%dx%d+%d+%d' % (
     root.winfo_reqwidth(), root.winfo_reqheight(), (screenwidth - width) / 2, (screenheight - height) / 2)
-    print(size)
     root.geometry(size)
+
+
+# 读取PIL.Image对象img，调整宽度高度和角度后返回
+def pil_image_data_read(img, rotate_angle, zoom_width):
+    # 根据rotate_angle逆时针旋转图片
+    if rotate_angle == 0 or rotate_angle == 180:
+        img_data = img.rotate(rotate_angle, expand=True)  # 旋转图像, 长宽调整
+        x, y = img_data.size
+        x_s = int(zoom_width)
+        # 调整图片大小时保持横纵比
+        y_s = int(y * x_s // x)
+    elif rotate_angle == 90 or rotate_angle == 270:
+        img_data = img.rotate(rotate_angle, expand=True)  # 旋转图像, 长宽调整
+        x, y = img_data.size
+        y_s = int(zoom_width)
+        # 调整图片大小时保持横纵比
+        x_s = int(x * y_s // y)
+    else:
+        img_data = img.rotate(rotate_angle)  # 旋转图像, 长宽不变
+        x, y = img_data.size
+        x_s = int(zoom_width)
+        # 调整图片大小时保持横纵比
+        y_s = int(y * x_s // x)
+
+    return img_data.resize((x_s, y_s), Image.ANTIALIAS)
+
+
+# 读取图片地址，返回PIL.Image对象
+def pil_image_read(img_path, rotate_angle, zoom_width):
+    # 根据rotate_angle逆时针旋转图片
+    if rotate_angle == 0 or rotate_angle == 180:
+        img_data = Image.open(img_path).rotate(rotate_angle, expand=True)  # 旋转图像, 长宽调整
+        x, y = img_data.size
+        x_s = int(zoom_width)
+        # 调整图片大小时保持横纵比
+        y_s = int(y * x_s // x)
+    elif rotate_angle == 90 or rotate_angle == 270:
+        img_data = Image.open(img_path).rotate(rotate_angle, expand=True)  # 旋转图像, 长宽调整
+        x, y = img_data.size
+        y_s = int(zoom_width)
+        # 调整图片大小时保持横纵比
+        x_s = int(x * y_s // y)
+    else:
+        img_data = Image.open(img_path).rotate(rotate_angle)  # 旋转图像, 长宽不变
+        x, y = img_data.size
+        x_s = int(zoom_width)
+        # 调整图片大小时保持横纵比
+        y_s = int(y * x_s // x)
+
+    return img_data.resize((x_s, y_s), Image.ANTIALIAS)
+
+
+# GIF动图处理类
+class GifHandle(object):
+    def __init__(self, master_widget, img_path, rotate_angle, zoom_width):
+        # 保存显示图片的控件引用
+        self.master_widget = master_widget
+        # 保存图片路径
+        self.img_path = img_path
+        # 逆时针旋转的角度
+        self.rotate_angle = rotate_angle
+        # 计算图片的缩放
+        self.zoom_width = zoom_width
+        # 保存gif格式图片当前显示的帧的数据
+        self._frame = None
+        # 保存gif格式图片每一帧
+        self._gif_frames = []
+        # 保存gif格式图片帧的数量
+        self._frame_count = 0
+        # 保存gif格式图片每一帧的延时
+        self.delay = 50
+        # 保存gif格式图片当前显示的帧的位置
+        self._ind = 0
+        # 设置gif图片默认运行状态为关闭
+        self._gif_running = False
+        # 初始化gif动图
+        self._init_gif()
+
+    # 初始化GIF动图，将GIF动图每一帧保存起来准备显示
+    def _init_gif(self):
+        im = Image.open(self.img_path)
+        seq = []
+        try:
+            while True:
+                seq.append(im.copy())
+                im.seek(len(seq))  # skip to next frame
+        except EOFError:
+            pass  # we're done
+        try:
+            self.delay = im.info['duration']
+            # 将默认延时设置为50ms
+            if self.delay < 50:
+                self.delay = 50
+        except KeyError:
+            self.delay = 50
+        first = seq[0].convert('RGBA')
+        self._gif_frames = [first]
+        temp = seq[0]
+        for image in seq[1:]:
+            temp.paste(image)
+            frame = temp.convert('RGBA')
+            self._gif_frames.append(frame)
+            self._frame_count += 1
+
+    # 更新GIF动图的下一帧
+    def _update_gif(self):
+        self._frame = self._gif_frames[self._ind]
+        self._ind += 1
+        if self._ind >= self._frame_count:
+            self._ind = 0
+        # 将gif当前帧显示在widget容器中
+        self.master_widget.gif_show(self._frame, self.rotate_angle, self.zoom_width)
+        # 设置定时器，更新widget容器显示的gif帧
+        self.master_widget.gif_timer = self.master_widget.after(self.delay, self._update_gif)
+
+    # 启动GIF动图
+    def start_gif(self):
+        # 设置gif图片运行标志
+        self._gif_running = True
+        # 在widget容器中设置定时器
+        self.master_widget.gif_timer = self.master_widget.after(0, self._update_gif)
+
+    # 停止当前的GIF动图
+    def stop_gif(self):
+        if self._gif_running:
+            # 停止定时器
+            self.master_widget.after_cancel(self.master_widget.gif_timer)
+            self._gif_running = False
 
 
 # 窗口类
@@ -32,7 +156,8 @@ class CFCanvas(ttk.Frame):
     def __init__(self, default_width, default_height, master=None):
         super().__init__(master, padding=2)
         self.img_data = None
-        self.img = None
+        self.gif_data = None
+        self.img_widget = None
         self.img_position_x = 0
         self.img_position_y = 0
         self.canvas_img_id = None
@@ -40,13 +165,17 @@ class CFCanvas(ttk.Frame):
         self.canvas_width, self.canvas_height = default_width, default_height
         self.img_width, self.img_height = default_width, default_height
 
-        self.canvas = tk.Canvas(self, width=self.canvas_width, height=self.canvas_height,
+        self.canvas = tk.Canvas(self, bg="black", width=self.canvas_width, height=self.canvas_height,
                                 scrollregion=(0, 0, self.img_width, self.img_height))
         self.ysb = tk.Scrollbar(self, orient='vertical', command=self.canvas.yview)
         self.xsb = tk.Scrollbar(self, orient='horizontal', command=self.canvas.xview)
         self.canvas['xscrollcommand'] = self.xsb.set
         self.canvas['yscrollcommand'] = self.ysb.set
-
+        # 以下两个值设置拖拽时，画布一次滚动一个像素
+        self.canvas.configure(xscrollincrement=1, yscrollincrement=1)
+        # 绑定鼠标拖拽事件
+        self.canvas.bind("<ButtonPress-1>", self.on_press)
+        self.canvas.bind("<B1-Motion>", self.on_motion)
         self.canvas.grid(row=0, column=0, sticky=tk.N + tk.S + tk.E + tk.W)
         self.ysb.grid(row=0, column=1, sticky=tk.N + tk.S)
         self.xsb.grid(row=1, column=0, sticky=tk.E + tk.W)
@@ -54,10 +183,34 @@ class CFCanvas(ttk.Frame):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 
-    def default_img_show(self, img_path):
-        self.img_data = Image.open(img_path)
-        width, height = self.img_data.size
-        self.img_height = self.img_width * height / width
+    def on_press(self, event):
+        self.last_x = event.x
+        self.last_y = event.y
+
+    def on_motion(self, event):
+        delta_x = event.x - self.last_x
+        delta_y = event.y - self.last_y
+        self.last_x = event.x
+        self.last_y = event.y
+        self.canvas.xview_scroll(-delta_x, "units")
+        self.canvas.yview_scroll(-delta_y, "units")
+
+    # 清空图片显示
+    def cancel_img(self):
+        # 如果有GIF动图正在运行，则停止这个定时事件
+        if self.gif_data:
+            self.gif_data.stop_gif()
+        self.gif_data = None
+        self.img_data = None
+
+    def gif_show(self, img_data, rotate_angle, zoom_width):
+        self.img_data = pil_image_data_read(img_data, rotate_angle, zoom_width)
+        self.img_width, self.img_height = self.img_data.size
+        self.img_adjust_size(self.img_width, self.img_height)
+
+    def img_show(self, img_data):
+        self.img_data = img_data
+        self.img_width, self.img_height = self.img_data.size
         self.img_adjust_size(self.img_width, self.img_height)
 
     def img_adjust_size(self, width, height):
@@ -75,7 +228,7 @@ class CFCanvas(ttk.Frame):
                 self.canvas.configure(height=self.screenheight)
 
         self.canvas.configure(scrollregion=(0, 0, self.img_width, self.img_height))
-        self.img = ImageTk.PhotoImage(self.img_data.resize((self.img_width, self.img_height), Image.ANTIALIAS))
+        self.img_widget = ImageTk.PhotoImage(self.img_data.resize((self.img_width, self.img_height), Image.ANTIALIAS))
         self.img_center()
 
     def img_center(self, event=None):
@@ -97,61 +250,36 @@ class CFCanvas(ttk.Frame):
 
             if self.canvas_img_id:
                 self.canvas.delete(self.canvas_img_id)
-            if self.img:
+            if self.img_widget:
                 self.canvas_img_id = self.canvas.create_image(self.img_position_x, self.img_position_y,
-                                                              anchor=tk.NW, image=self.img)
+                                                              anchor=tk.NW, image=self.img_widget)
 
+    # GIF动图显示
+    def default_gif_show(self, img_path, rotate_angle, zoom_width):
+        self.gif_data = GifHandle(self, img_path, rotate_angle, zoom_width)
+        self.gif_data.start_gif()
 
-class Window(ttk.Frame):
-    def __init__(self, master=None):
-        super().__init__(master, padding=2)
-        self.master = master
-        self.file_path = ""
-        self.increase_button = ttk.Button(self, text="放大", command=self.increase)
-        self.decrease_button = ttk.Button(self, text="缩小", command=self.decrease)
-        self.show_button = ttk.Button(self, text="选择", command=self.show)
-        self.increase_button.grid(row=0, column=0, sticky=tk.W)
-        self.decrease_button.grid(row=0, column=1, sticky=tk.W)
-        self.show_button.grid(row=0, column=2, sticky=tk.W)
-        self.password_label = ttk.Label(self, text="输入密码")
-        self.password_entry = ttk.Entry(self, show="*")
-        self.password_label.grid(row=1, column=0, sticky=tk.E)
-        self.password_entry.grid(row=1, column=1, sticky=tk.W)
-        self.img_canvas = CFCanvas(500, 500, self)
-        self.img_canvas.grid(row=2, column=0, columnspan=3, sticky=tk.N + tk.S + tk.E + tk.W)
-        self.grid(row=0, column=0, sticky=tk.N + tk.S + tk.E + tk.W)
-        self.master.columnconfigure(0, weight=1)
-        self.master.rowconfigure(0, weight=1)
-        self.columnconfigure(0, weight=1)
-        self.rowconfigure(2, weight=1)
-        self.master.bind("<Configure>", self.img_canvas.img_center)
+    # 静态图片显示
+    def default_img_show(self, img_path, rotate_angle, zoom_width):
+        self.img_show(pil_image_read(img_path, rotate_angle, zoom_width))
 
-    def show(self, event=None):
-        self.file_path = filedialog.askopenfilename()
-        if self.file_path and os.path.exists(self.file_path) and not self.password_entry.get():
-            self.img_canvas.default_img_show(self.file_path)
-        else:
-            self.crypto_show(self.file_path)
-
-    def crypto_show(self, img_path):
-        img_file_like = io.BytesIO(ByteCrypto(self.password_entry.get()).decrypt(img_path))
-        self.img_canvas.default_img_show(img_file_like)
-
-    def increase(self, event=None):
-        if self.img_canvas.img_width > 5000 or self.img_canvas.img_height > 5000:
-            return
-        else:
-            self.img_canvas.img_adjust_size(self.img_canvas.img_width * 1.2, self.img_canvas.img_height * 1.2)
-
-    def decrease(self, event=None):
-        if self.img_canvas.img_width < 10 or self.img_canvas.img_height < 10:
-            return
-        else:
-            self.img_canvas.img_adjust_size(self.img_canvas.img_width * 0.8, self.img_canvas.img_height * 0.8)
-
-
-if __name__ == '__main__':
-    master = tk.Tk()
-    app = Window(master)
-    # 主消息循环:
-    master.mainloop()
+    # 双页静态图片显示
+    def default_double_img_show(self, img_path, next_img_path, order_option, rotate_angle, zoom_width):
+        current_out = pil_image_read(img_path, rotate_angle, zoom_width)
+        next_out = pil_image_read(next_img_path, rotate_angle, zoom_width)
+        current_x, current_y = current_out.size
+        current_x_s = int(zoom_width)
+        current_y_s = int(current_y * current_x_s // current_x)
+        next_x, next_y = next_out.size
+        next_x_s = int(zoom_width)
+        next_y_s = int(next_y * next_x_s // next_x)
+        # 将两张图片合并为一张图片
+        to_image = Image.new('RGBA', (current_x_s + next_x_s, current_y_s if current_y_s > next_y_s else next_y_s))
+        if order_option == "左开":
+            to_image.paste(current_out, (0, 0))
+            to_image.paste(next_out, (current_x_s, 0))
+        elif order_option == "右开":
+            to_image.paste(next_out, (0, 0))
+            to_image.paste(current_out, (next_x_s, 0))
+        self.img_data = to_image
+        self.img_show(self.img_data)

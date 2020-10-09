@@ -2,6 +2,7 @@ import tkinter.ttk as ttk
 import tkinter as tk
 import logging
 from socket import *
+import tkinter.messagebox
 import threading
 
 logging.basicConfig(level=logging.ERROR)
@@ -32,39 +33,56 @@ class Window(ttk.Frame):
         self.chatEntry = ttk.Entry(self, width=40)
         self.chat_entry_var = tk.StringVar()
         self.chatEntry['textvariable'] = self.chat_entry_var
-        self.chatEntry.grid(row=2, column=0)
+        self.chatEntry.grid(row=2, column=0, sticky=(tk.E, tk.W))
         self.sendButton = ttk.Button(self, text="发送", command=self.send_callback)
         self.sendButton.grid(row=2, column=1)
 
         self.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+        self.master.columnconfigure(0, weight=1)
+        self.master.rowconfigure(0, weight=1)
+
+        # 绑定最顶层窗口的关闭按钮事件
+        self.master.protocol("WM_DELETE_WINDOW", self.quit_program)
 
         self.send_text = ""
-        self.local_server_ipaddr = '192.168.31.159'
+        self.local_server_ipaddr = '127.0.0.1'
         self.local_server_port = 10086
-        self.target_server_ipaddr = '192.168.31.82'
-        self.target_server_port = 10086
+        self.target_server_ipaddr = '127.0.0.1'
+        self.target_server_port = 10099
         self._init_server()
-        self.client_start(self.target_server_ipaddr, self.target_server_port)
-        # threading.Thread(target=self.client_listen, args=()).start()
+        self.tcp_client = None
+        self.tcp_server = None
+        self.conn = None
 
     def send_callback(self, event=None):
         self.send_text = self.chat_entry_var.get()
         self.chat_entry_var.set("")
         self.chatShowText.insert('end', "你说:" + self.send_text + "\n\n")
-        send_thread = threading.Thread(target=self.client_send, args=(self.send_text,))
-        send_thread.start()
-
-    def client_start(self, ipaddr, port):
-        self.tcp_client = socket(AF_INET, SOCK_STREAM)
-        self.tcp_client.connect((ipaddr, port))
+        self.chatShowText.see(self.chatShowText.index('end'))
+        if not self.tcp_client:
+            try:
+                self.tcp_client = socket(AF_INET, SOCK_STREAM)
+                self.tcp_client.connect((self.target_server_ipaddr, self.target_server_port))
+            except Exception as e:
+                print(e)
+                self.tcp_client.close()
+                self.tcp_client = None
+                self.send_text = ""
+                self.chatShowText.insert('end', "消息未送达，对方已离线！\n\n")
+        if self.send_text:
+            send_thread = threading.Thread(target=self.client_send, args=(self.send_text,))
+            send_thread.start()
 
     def client_send(self, send_text):
-        self.tcp_client.send(send_text.encode("utf-8"))
-
-    # def client_listen(self):
-    #     while True:
-    #         data = self.tcp_client.recv(1024)
-    #         self.chatShowText.insert('end', "对方说:" + data.decode("utf-8") + "\n\n")
+        try:
+            self.tcp_client.send(send_text.encode("utf-8"))
+        except Exception as e:
+            print(e)
+            self.chatShowText.insert('end', "消息未送达，对方已离线！\n\n")
+            self.tcp_client.close()
+            self.tcp_client = None
 
     def _init_server(self):
         server_thread = threading.Thread(target=self.server_start, args=(self.local_server_ipaddr, self.local_server_port))
@@ -72,22 +90,34 @@ class Window(ttk.Frame):
 
     def server_start(self, ipaddr, port):
         back_log = 5
-        tcp_server = socket(AF_INET, SOCK_STREAM)
-        tcp_server.bind((ipaddr, port))
-        tcp_server.listen(back_log)
+        self.tcp_server = socket(AF_INET, SOCK_STREAM)
+        self.tcp_server.bind((ipaddr, port))
+        self.tcp_server.listen(back_log)
 
         while True:
-            conn, addr = tcp_server.accept()
+            self.conn, addr = self.tcp_server.accept()
             while True:
-                data = conn.recv(1024)
+                data = self.conn.recv(1024)
                 if not data:
                     break
                 print("data is %s" % data.decode('utf-8'))
                 self.chatShowText.insert('end', "对方说:" + data.decode("utf-8") + "\n\n")
-                conn.send(data.upper())
+                self.chatShowText.see(self.chatShowText.index('end'))
+                # conn.send(data.upper())
 
-            conn.close()
-        tcp_server.close()
+            self.conn.close()
+        self.tcp_server.close()
+
+    def quit_program(self):
+        quit_result = tk.messagebox.askokcancel('提示', '真的要退出吗？')
+        if quit_result:
+            if self.tcp_server:
+                self.tcp_server.close()
+            if self.conn:
+                self.conn.close()
+            if self.tcp_client:
+                self.tcp_client.close()
+            self.master.quit()
 
 
 if __name__ == '__main__':

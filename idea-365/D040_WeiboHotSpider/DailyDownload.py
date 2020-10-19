@@ -30,15 +30,16 @@ wb.get(url)
 time.sleep(10)
 wb.get("https://weibo.com/a/hot/realtime")
 
-now_date = time.strftime("%Y%m%d", time.localtime())
+now_year = time.strftime("%Y年", time.localtime())
+now_date = time.strftime("%m月%d日", time.localtime())
 print(now_date)
-# 将实时热点主网页存入文件中, 自建日期文件夹，防止误操作，格式为 20201018
-with open("./"+now_date+"/main.html", 'wb') as f:
+# 将实时热点主网页存入文件中, 自建日期文件夹，防止误操作，格式为 10月18日
+with open("./data/" + now_year + "/" + now_date + "/main.html", 'wb') as f:
     f.write(wb.page_source.encode("utf-8", "ignore"))  # 忽略非法字符
     print('写入成功')
 
 # 获取所有热点的子网页链接
-with open("./"+now_date+"/main.html", 'r', encoding="utf-8") as f:
+with open("./data/" + now_year + "/" + now_date + "/main.html", 'r', encoding="utf-8") as f:
     redian_text = f.read()
 
 pattern = re.compile(r'<h3 class="list_title_b">(.*)</h3>')
@@ -52,6 +53,6 @@ for zi_href in href_list:
     wb.get(r_href)
     time.sleep(random.randint(5, 10))
     # 将当日实时热点的子网页存入文件中
-    with open("./"+now_date+"/" + str(index) + ".html", 'wb') as f:
+    with open("./data/" + now_year + "/" + now_date + "/" + str(index) + ".html", 'wb') as f:
         f.write(wb.page_source.encode("utf-8", "ignore"))  # 忽略非法字符
         print('写入成功' + str(index))

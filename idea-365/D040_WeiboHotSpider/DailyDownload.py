@@ -30,8 +30,8 @@ wb.get(url)
 time.sleep(10)
 wb.get("https://weibo.com/a/hot/realtime")
 
-now_year = time.strftime("%Y年", time.localtime())
-now_date = time.strftime("%m月%d日", time.localtime())
+now_year = time.strftime("%Y{y}", time.localtime()).format(y='年',)
+now_date = time.strftime("%m{m}%d{d}", time.localtime()).format(m='月', d='日')
 print(now_date)
 # 将实时热点主网页存入文件中, 自建日期文件夹，防止误操作，格式为 10月18日
 with open("./data/" + now_year + "/" + now_date + "/main.html", 'wb') as f:
